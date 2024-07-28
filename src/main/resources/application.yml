@@ -1,7 +1,7 @@
 #  DataBase
 spring:
   datasource:
-    url: jdbc:mariadb://127.0.0.1:3306/todo?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mariadb://127.0.0.1:3306/board?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: 1234
     driver-class-name: org.mariadb.jdbc.Driver
@@ -21,3 +21,4 @@ spring:
 # mybatis mapper 경로 설정
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: arraysort.project.board.app

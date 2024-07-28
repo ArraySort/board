@@ -6,6 +6,14 @@
     <title>Home</title>
 </head>
 <body>
-<h1>${message}</h1>
+
+<div>
+    <h1>${message}</h1>
+
+    <button type="button" onclick="location.href='/loginPage'">로그인 페이지로 이동</button>
+    <button type="button" onclick="location.href='/signupPage'">회원가입 페이지로 이동</button>
+
+</div>
+
 </body>
 </html>
