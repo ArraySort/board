@@ -14,6 +14,7 @@ public class UserController {
 
     private final UserService userService;
 
+    // 회원가입 요청
     @PostMapping("/process-signup")
     public String processSignup(@Valid @ModelAttribute UserSignupDto dto) {
         userService.addUser(dto);

@@ -21,4 +21,3 @@ spring:
 # mybatis mapper 경로 설정
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: arraysort.project.board.app
