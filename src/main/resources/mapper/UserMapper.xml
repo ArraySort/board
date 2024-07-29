@@ -5,14 +5,30 @@
 <mapper namespace="arraysort.project.board.app.user.mapper.UserMapper">
 
     <!-- 회원가입 -->
-    <insert id="insertUser" parameterType="user.domain.UserVO">
+    <insert id="insertUser" parameterType="arraysort.project.board.app.user.domain.UserVO">
         insert into user(user_id, user_password, user_name)
         values (#{userId}, #{userPassword}, #{userName})
     </insert>
 
-    <!-- 아이디 중복 확인을 위한 카운트-->
+    <!-- 아이디 중복 확인을 위한 카운트 -->
     <select id="selectUserCountByUserId" parameterType="String" resultType="int">
         select count(*)
+        from user
+        where user_id = #{userId}
+    </select>
+
+    <!-- 이름 중복 확인을 위한 카운트 -->
+    <select id="selectUserCountByUserName" parameterType="String" resultType="int">
+        select count(*)
+        from user
+        where user_name = #{userName}
+    </select>
+
+    <!-- 로그인 시 저장된 아이디 확인 -->
+    <select id="selectUserByUserId" parameterType="String" resultType="arraysort.project.board.app.user.domain.UserVO">
+        select user_id,
+               user_password,
+               user_name
         from user
         where user_id = #{userId}
     </select>
