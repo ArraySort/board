@@ -13,7 +13,7 @@ public class UserVO {
 
     private String userName;
 
-    public static UserVO of(UserSignupDto dto) {
+    public static UserVO of(UserSignupDTO dto) {
         return UserVO.builder()
                 .userId(dto.getUserId())
                 .userPassword(dto.getUserPassword())

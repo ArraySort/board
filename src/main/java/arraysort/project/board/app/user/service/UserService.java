@@ -1,7 +1,7 @@
 package arraysort.project.board.app.user.service;
 
 import arraysort.project.board.app.exception.DuplicatedUserException;
-import arraysort.project.board.app.user.domain.UserSignupDto;
+import arraysort.project.board.app.user.domain.UserSignupDTO;
 import arraysort.project.board.app.user.domain.UserVO;
 import arraysort.project.board.app.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class UserService implements UserDetailsService {
 
     // 회원가입
     @Transactional
-    public void addUser(UserSignupDto dto) {
+    public void addUser(UserSignupDTO dto) {
         validateAdd(dto);
 
         dto.encodePassword(passwordEncoder.encode(dto.getUserPassword()));
@@ -37,6 +37,7 @@ public class UserService implements UserDetailsService {
     }
 
     // 로그인 : Spring Security 적용
+    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         return userMapper.selectUserByUserId(userId)
@@ -49,7 +50,7 @@ public class UserService implements UserDetailsService {
      *
      * @param dto 회원가입 폼에서 사용자가 입력한 값
      */
-    private void validateAdd(UserSignupDto dto) {
+    private void validateAdd(UserSignupDTO dto) {
         if (userMapper.selectUserCountByUserId(dto.getUserId()) != 0) {
             throw new DuplicatedUserException("이미 가입된 아이디입니다.");
         }
