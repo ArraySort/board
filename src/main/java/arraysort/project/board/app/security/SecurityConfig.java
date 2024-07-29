@@ -15,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] permittedUrls = {"/", "/home", "/loginPage", "/process-login", "/signupPage", "/process-signup", "/WEB-INF/views/**"};
+    private final String[] permittedUrls = {"/", "/home", "/user/login", "/user/process-login", "/user/signup", "/user/process-signup", "/WEB-INF/views/**"};
 
     private final LoginFailureHandler loginFailureHandler;
 
@@ -29,8 +29,8 @@ public class SecurityConfig {
                 )
 
                 .formLogin(form -> form
-                        .loginPage("/loginPage")                // 로그인하지 않은 사용자의 허용되지 않은 페이지 요청 시 이동
-                        .loginProcessingUrl("/process-login")
+                        .loginPage("/user/login")
+                        .loginProcessingUrl("/user/process-login")
                         .usernameParameter("userId")
                         .passwordParameter("userPassword")
                         .failureHandler(loginFailureHandler)

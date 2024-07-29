@@ -39,7 +39,7 @@
 <div style="text-align: center">
     <h1>회원가입 페이지</h1>
 
-    <form method="post" action="<c:url value='/process-signup'/>" id="signupForm">
+    <form method="post" action="${pageContext.request.contextPath}/user/process-signup" id="signupForm">
         <sec:csrfInput/>
         <div>
             <div>

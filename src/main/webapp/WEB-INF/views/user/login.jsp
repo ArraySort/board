@@ -25,10 +25,11 @@
 <body>
 
 <div style="text-align: center">
+
     <h1>로그인 페이지</h1>
 
     <div>
-        <form method="post" action="${pageContext.request.contextPath}/process-login" id="loginForm">
+        <form method="post" action="${pageContext.request.contextPath}/user/process-login" id="loginForm">
             <sec:csrfInput/>
             <div>
                 <label for="userId">아이디 : </label>
@@ -46,6 +47,7 @@
 
     <button type="submit" id="loginButton" form="loginForm">로그인</button>
     <button type="button" onclick="location.href='../../..'">뒤로가기</button>
+
 </div>
 
 </body>

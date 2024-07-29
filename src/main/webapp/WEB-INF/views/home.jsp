@@ -21,8 +21,8 @@
     <h1>${message}</h1>
 
     <c:if test="${!isAuthenticatedUser}">
-        <button type="button" onclick="location.href='/loginPage'">로그인 페이지로 이동</button>
-        <button type="button" onclick="location.href='/signupPage'">회원가입 페이지로 이동</button>
+        <button type="button" onclick="location.href='/user/login'">로그인 페이지로 이동</button>
+        <button type="button" onclick="location.href='/user/signup'">회원가입 페이지로 이동</button>
     </c:if>
 
     <c:if test="${isAuthenticatedUser}">
