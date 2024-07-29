@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="arraysort.project.board.app.post.mapper.PostMapper">
+
+    <!-- 게시글 추가 -->
+    <insert id="insertPost" parameterType="arraysort.project.board.app.post.domain.PostVO">
+        insert into post(user_id, title, content, category, type)
+        values (#{userId}, #{title}, #{content}, #{category}, #{type});
+    </insert>
+
+</mapper>
