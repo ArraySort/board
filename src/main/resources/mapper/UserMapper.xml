@@ -6,8 +6,12 @@
 
     <!-- 회원가입 -->
     <insert id="insertUser" parameterType="arraysort.project.board.app.user.domain.UserVO">
-        insert into user(user_id, user_password, user_name)
-        values (#{userId}, #{userPassword}, #{userName})
+        insert into user(user_id,
+                         user_password,
+                         user_name)
+        values (#{userId},
+                #{userPassword},
+                #{userName})
     </insert>
 
     <!-- 아이디 중복 확인을 위한 카운트 -->
