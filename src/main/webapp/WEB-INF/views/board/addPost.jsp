@@ -30,9 +30,9 @@
                 if (!(category && title && content)) {
                     alertMessage(e, "카테고리, 제목, 내용은 필수 입력사항입니다.")
                 } else if (title.length < 1 && title.length > 50) {
-                    alertMessage(e, "제목은 최소 한글자, 최대 50글자이어야 합니다.");
+                    alertMessage(e, "제목은 최소 1글자, 최대 50글자이어야 합니다.");
                 } else if (content.length < 1 && content.length > 500) {
-                    alertMessage(e, "내용은 최소 한글자, 최대 500글자이어야 합니다.");
+                    alertMessage(e, "내용은 최소 1글자, 최대 500글자이어야 합니다.");
                 }
             });
         });
