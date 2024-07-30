@@ -6,8 +6,33 @@
 
     <!-- 게시글 추가 -->
     <insert id="insertPost" parameterType="arraysort.project.board.app.post.domain.PostVO">
-        insert into post(user_id, title, content, category, type)
-        values (#{userId}, #{title}, #{content}, #{category}, #{type});
+        insert into post(user_id,
+                         title,
+                         content,
+                         category,
+                         type)
+        values (#{userId},
+                #{title},
+                #{content},
+                #{category},
+                #{type});
     </insert>
+
+    <!-- 게시글 리스트 조회 -->
+    <select id="selectPostList" parameterType="arraysort.project.board.app.post.domain.PostListDTO"
+            resultType="arraysort.project.board.app.post.domain.PostVO">
+        select p.post_id,
+               p.user_id,
+               u.user_name,
+               p.title,
+               p.content,
+               p.created_at,
+               p.updated_at,
+               p.category,
+               p.type,
+               p.views
+        from post p
+        inner join user u on p.user_id = u.user_id
+    </select>
 
 </mapper>

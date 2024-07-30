@@ -18,9 +18,10 @@ public class PostController {
 
     private final PostService postService;
 
-    // 보드 페이지 이동
+    // 보드 페이지 이동, 게시글 리스트 조회
     @GetMapping
-    public String showBoardPage() {
+    public String showBoardPage(Model model) {
+        model.addAttribute("postLists", postService.findPostList());
         return "board/board";
     }
 

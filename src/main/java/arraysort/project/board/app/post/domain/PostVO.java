@@ -14,6 +14,8 @@ public class PostVO {
 
     private String userId;      // 사용자 ID
 
+    private String userName;    // 사용자 이름
+
     private String title;       // 제목
 
     private String content;     // 내용
@@ -24,7 +26,7 @@ public class PostVO {
 
     private String category;    // 카테고리
 
-    private BoardType type;        // 게시판 타입(일반 게시판, 이미지 개시판)
+    private BoardType type;     // 게시판 타입(GENERAL : 일반, GALLERY : 사진)
 
     private long views;         // 조회수
 
