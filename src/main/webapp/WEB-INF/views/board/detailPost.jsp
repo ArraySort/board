@@ -2,6 +2,7 @@
 <%@ page import="arraysort.project.board.app.utils.UserUtil" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,17 +48,24 @@
         <h3>수정 시간 : <fmt:formatDate value="${postDetail.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
         <h3>조회수 : ${postDetail.views}</h3>
 
-        <button type="button" onclick="location.href='/board'">보드 페이지로 이동</button>
+        <div class="d-flex justify-content-center">
+            <button type="button" onclick="location.href='/board'">보드 페이지로 이동</button>
 
-        <%
-            // 현재 로그인 한 유저의 값
-            String currentUserId = UserUtil.getCurrentLoginUserId();
-            pageContext.setAttribute("currentUserId", currentUserId);
-        %>
+            <%
+                // 현재 로그인 한 유저의 값
+                String currentUserId = UserUtil.getCurrentLoginUserId();
+                pageContext.setAttribute("currentUserId", currentUserId);
+            %>
 
-        <c:if test="${postDetail.userId == currentUserId}">
-            <button type="button" onclick="location.href='/board/post/detail/${postDetail.postId}/edit'">수정</button>
-        </c:if>
+            <c:if test="${postDetail.userId == currentUserId}">
+                <button type="button" onclick="location.href='/board/post/detail/${postDetail.postId}/edit'">수정
+                </button>
+                <form method="post" action="/board/post/detail/${postDetail.postId}/delete">
+                    <sec:csrfInput/>
+                    <button type="submit">삭제</button>
+                </form>
+            </c:if>
+        </div>
 
 
     </div>

@@ -71,4 +71,11 @@
           and user_id = #{userId}
     </select>
 
+    <!-- 게시글 삭제 -->
+    <delete id="deletePost">
+        delete
+        from post
+        where post_id = #{postId}
+    </delete>
+
 </mapper>

@@ -43,8 +43,15 @@ public class PostService {
     // 게시글 수정
     @Transactional
     public void modifyPost(PostEditDTO dto, long postId) {
-        validateModify(postId);
+        validatePostId(postId);
         postMapper.updatePost(PostVO.of(dto), postId);
+    }
+
+    // 게시글 삭제
+    @Transactional
+    public void removePost(long postId) {
+        validatePostId(postId);
+        postMapper.deletePost(postId);
     }
 
     /**
@@ -52,7 +59,7 @@ public class PostService {
      *
      * @param postId 수정 요청한 게시물 고유 번호
      */
-    private void validateModify(long postId) {
+    private void validatePostId(long postId) {
         Optional<Integer> validPostId = postMapper.selectExistPostId(postId, UserUtil.getCurrentLoginUserId());
         if (validPostId.isEmpty()) {
             throw new IdNotFoundException();

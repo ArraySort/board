@@ -62,6 +62,15 @@ public class PostController {
         return "common/alert";
     }
 
+    // 게시글 삭제 요청
+    @PostMapping("/post/detail/{postId}/delete")
+    public String processRemovePost(@PathVariable long postId, Model model) {
+        postService.removePost(postId);
+
+        addMessageAndRequest(model, "게시글이 삭제되었습니다.", "DELETE_POST");
+        return "common/alert";
+    }
+
     private void addMessageAndRequest(Model model, String message, String request) {
         model.addAttribute("message", message);
         model.addAttribute("request", request);
