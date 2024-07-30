@@ -15,7 +15,7 @@
 
     <div>
         <button type="button" onclick="location.href='/home'">홈 페이지로 이동</button>
-        <button type="button" onclick="location.href='/board/post/add'">게시글 추가</button>
+        <button type="button" onclick="location.href='/post/add'">게시글 추가</button>
     </div>
 
     <!-- 게시판 시작 -->
@@ -37,7 +37,7 @@
             <c:forEach var="post" items="${postLists}">
                 <tr>
                     <td>${post.postId}</td>
-                    <td><a href="board/post/detail/${post.postId}">${post.title}</a></td>
+                    <td><a href="/post/detail/${post.postId}">${post.title}</a></td>
                     <td>${post.userName}</td>
                     <td><fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/></td>
                     <td><fmt:formatDate value="${post.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></td>

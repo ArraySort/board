@@ -3,7 +3,6 @@ package arraysort.project.board.app.utils;
 import arraysort.project.board.app.exception.InvalidPrincipalException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserUtil {
 
@@ -22,9 +21,7 @@ public class UserUtil {
         if (!isValidAuthentication(authentication)) {
             throw new InvalidPrincipalException();
         }
-        Object principal = authentication.getPrincipal();
-
-        return ((UserDetails) principal).getUsername();
+        return authentication.getName();
     }
 
     /**

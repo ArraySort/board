@@ -39,7 +39,7 @@
 <div style="text-align: center">
     <h1>게시글 수정</h1>
     <div class="container" style="max-width: 850px;">
-        <form method="post" action="/board/post/detail/${postDetail.postId}/edit">
+        <form method="post" action="/post/detail/${postDetail.postId}/edit">
             <sec:csrfInput/>
 
             <h3>작성자 : ${postDetail.userName}</h3>
@@ -87,7 +87,7 @@
             </div>
 
             <button type="submit">저장</button>
-            <button type="button" onclick="location.href='/board/post/detail/${postDetail.postId}'">취소</button>
+            <button type="button" onclick="location.href='/post/detail/${postDetail.postId}'">취소</button>
         </form>
     </div>
 

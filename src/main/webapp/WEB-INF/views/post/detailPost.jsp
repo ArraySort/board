@@ -49,7 +49,7 @@
         <h3>조회수 : ${postDetail.views}</h3>
 
         <div class="d-flex justify-content-center">
-            <button type="button" onclick="location.href='/board'">보드 페이지로 이동</button>
+            <button type="button" onclick="location.href='/post'">목록</button>
 
             <%
                 // 현재 로그인 한 유저의 값
@@ -58,9 +58,9 @@
             %>
 
             <c:if test="${postDetail.userId == currentUserId}">
-                <button type="button" onclick="location.href='/board/post/detail/${postDetail.postId}/edit'">수정
+                <button type="button" onclick="location.href='/post/detail/${postDetail.postId}/edit'">수정
                 </button>
-                <form method="post" action="/board/post/detail/${postDetail.postId}/delete">
+                <form method="post" action="/post/detail/${postDetail.postId}/delete">
                     <sec:csrfInput/>
                     <button type="submit">삭제</button>
                 </form>

@@ -13,11 +13,11 @@
         if (request === "SIGNUP") {
             window.location.href = "/home";
         } else if (request === "ADD_POST") {
-            window.location.href = "/board";
+            window.location.href = "/post";
         } else if (request === "MODIFY_POST") {
-            window.location.href = "/board/post/detail/${postId}"
+            window.location.href = "/post/detail/${postId}"
         } else if (request === "DELETE_POST") {
-            window.location.href = "/board";
+            window.location.href = "/post";
         } else {
             window.history.back();
         }

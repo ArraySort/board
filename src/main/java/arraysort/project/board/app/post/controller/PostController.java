@@ -10,7 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/board")
+@RequestMapping("/post")
 @RequiredArgsConstructor
 public class PostController {
 
@@ -20,17 +20,17 @@ public class PostController {
     @GetMapping
     public String showBoardPage(Model model) {
         model.addAttribute("postLists", postService.findPostList());
-        return "board/board";
+        return "post/post";
     }
 
     // 게시글 추가 페이지 이동
-    @GetMapping("/post/add")
+    @GetMapping("/add")
     public String showAddPostPage() {
-        return "board/addPost";
+        return "post/addPost";
     }
 
     // 게시글 추가 요청
-    @PostMapping("/post/process-add-post")
+    @PostMapping("/process-add-post")
     public String processAddPost(@Valid @ModelAttribute PostAddDTO dto, Model model) {
         postService.addPost(dto);
 
@@ -39,21 +39,21 @@ public class PostController {
     }
 
     // 게시글 세부 페이지 이동
-    @GetMapping("/post/detail/{postId}")
+    @GetMapping("/detail/{postId}")
     public String showPostDetailPage(@PathVariable long postId, Model model) {
         model.addAttribute("postDetail", postService.findPostDetailByPostId(postId));
-        return "board/detailPost";
+        return "post/detailPost";
     }
 
     // 게시글 수정 페이지 이동
-    @GetMapping("/post/detail/{postId}/edit")
+    @GetMapping("/detail/{postId}/edit")
     public String showPostEditPage(@PathVariable long postId, Model model) {
         model.addAttribute("postDetail", postService.findPostDetailByPostId(postId));
-        return "board/editPost";
+        return "post/editPost";
     }
 
     // 게시글 수정 요청
-    @PostMapping("/post/detail/{postId}/edit")
+    @PostMapping("/detail/{postId}/edit")
     public String processModifyPost(@PathVariable long postId, @Valid @ModelAttribute PostEditDTO dto, Model model) {
         postService.modifyPost(dto, postId);
 
@@ -63,7 +63,7 @@ public class PostController {
     }
 
     // 게시글 삭제 요청
-    @PostMapping("/post/detail/{postId}/delete")
+    @PostMapping("/detail/{postId}/delete")
     public String processRemovePost(@PathVariable long postId, Model model) {
         postService.removePost(postId);
 

@@ -45,7 +45,7 @@
 
     <h1>게시글 추가</h1>
 
-    <form method="post" action="<c:url value="/board/post/process-add-post"/>">
+    <form method="post" action="<c:url value="/post/process-add-post"/>">
         <sec:csrfInput/>
         <div>
             <select name="category" aria-label="category select" id="category">
@@ -81,7 +81,7 @@
 
         <div>
             <button type="submit" id="addPost">저장</button>
-            <button type="button" onclick="location.href='/board'">목록</button>
+            <button type="button" onclick="location.href='/post'">목록</button>
         </div>
     </form>
 
