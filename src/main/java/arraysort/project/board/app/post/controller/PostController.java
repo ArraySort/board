@@ -1,6 +1,7 @@
 package arraysort.project.board.app.post.controller;
 
 import arraysort.project.board.app.post.domain.PostAddDTO;
+import arraysort.project.board.app.post.domain.PostEditDTO;
 import arraysort.project.board.app.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,7 @@ public class PostController {
     public String processAddPost(@Valid @ModelAttribute PostAddDTO dto, Model model) {
         postService.addPost(dto);
 
-        model.addAttribute("message", "게시글이 추가 되었습니다.");
-        model.addAttribute("request", "ADD_POST");
+        addMessageAndRequest(model, "게시글이 추가되었습니다.", "ADD_POST");
         return "common/alert";
     }
 
@@ -43,6 +43,28 @@ public class PostController {
     public String showPostDetailPage(@PathVariable long postId, Model model) {
         model.addAttribute("postDetail", postService.findPostDetailByPostId(postId));
         return "board/detailPost";
+    }
+
+    // 게시글 수정 페이지 이동
+    @GetMapping("/post/detail/{postId}/edit")
+    public String showPostEditPage(@PathVariable long postId, Model model) {
+        model.addAttribute("postDetail", postService.findPostDetailByPostId(postId));
+        return "board/editPost";
+    }
+
+    // 게시글 수정 요청
+    @PostMapping("/post/detail/{postId}/edit")
+    public String processModifyPost(@PathVariable long postId, @Valid @ModelAttribute PostEditDTO dto, Model model) {
+        postService.modifyPost(dto, postId);
+
+        addMessageAndRequest(model, "게시글이 수정되었습니다.", "MODIFY_POST");
+        model.addAttribute("postId", postId);
+        return "common/alert";
+    }
+
+    private void addMessageAndRequest(Model model, String message, String request) {
+        model.addAttribute("message", message);
+        model.addAttribute("request", request);
     }
 }
 

@@ -21,9 +21,9 @@ public class GlobalExceptionControllerAdvice {
         return getModelAndView("입력한 비밀번호와 확인 값이 일치하지 않습니다.");
     }
 
-    // 게시물 세부 내용 확인 예외
-    @ExceptionHandler(DetailNotFoundException.class)
-    public ModelAndView handleDetailNotFoundException() {
+    // 게시물 세부 내용 확인 예외, 게시물 수정 시 잘못된 접근(DB 존재여부) 예외
+    @ExceptionHandler({DetailNotFoundException.class, IdNotFoundException.class})
+    public ModelAndView handleNotFoundException() {
         return getModelAndView("해당 게시물을 찾을 수 없습니다.");
     }
 

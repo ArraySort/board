@@ -1,3 +1,5 @@
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
+<%@ page import="arraysort.project.board.app.utils.UserUtil" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -46,7 +48,17 @@
         <h3>조회수 : ${postDetail.views}</h3>
 
         <button type="button" onclick="location.href='/board'">보드 페이지로 이동</button>
-        <button type="submit">수정</button>
+
+        <%
+            // 현재 로그인 한 유저의 값
+            String currentUserId = UserUtil.getCurrentLoginUserId();
+            pageContext.setAttribute("currentUserId", currentUserId);
+        %>
+
+        <c:if test="${postDetail.userId == currentUserId}">
+            <button type="button" onclick="location.href='/board/post/detail/${postDetail.postId}/edit'">수정</button>
+        </c:if>
+
 
     </div>
 </div>

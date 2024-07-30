@@ -17,4 +17,10 @@ public interface PostMapper {
 
     // 게시글 세부내용 조회
     Optional<PostVO> selectPostDetailByPostId(long postId);
+
+    // 게시글 수정
+    void updatePost(PostVO vo, long postId);
+
+    // 게시글 고유번호 조회
+    Optional<Integer> selectExistPostId(long postId, String userId);
 }

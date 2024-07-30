@@ -14,6 +14,8 @@
             window.location.href = "/home";
         } else if (request === "ADD_POST") {
             window.location.href = "/board";
+        } else if (request === "MODIFY_POST") {
+            window.location.href = "/board/post/detail/${postId}"
         } else {
             window.history.back();
         }

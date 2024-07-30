@@ -11,6 +11,8 @@ public class PostDetailDTO {
 
     private Long postId;
 
+    private String userId;
+
     private String userName;
 
     private String title;
@@ -30,6 +32,7 @@ public class PostDetailDTO {
     public static PostDetailDTO of(PostVO vo) {
         return builder()
                 .postId(vo.getPostId())
+                .userId(vo.getUserId())
                 .userName(vo.getUserName())
                 .title(vo.getTitle())
                 .content(vo.getContent())
