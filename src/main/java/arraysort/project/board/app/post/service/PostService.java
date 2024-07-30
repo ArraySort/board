@@ -1,6 +1,8 @@
 package arraysort.project.board.app.post.service;
 
+import arraysort.project.board.app.exception.DetailNotFoundException;
 import arraysort.project.board.app.post.domain.PostAddDTO;
+import arraysort.project.board.app.post.domain.PostDetailDTO;
 import arraysort.project.board.app.post.domain.PostListDTO;
 import arraysort.project.board.app.post.domain.PostVO;
 import arraysort.project.board.app.post.mapper.PostMapper;
@@ -30,5 +32,12 @@ public class PostService {
                 .stream()
                 .map(PostListDTO::of)
                 .toList();
+    }
+
+    // 게시글 세부내용 조회
+    @Transactional(readOnly = true)
+    public PostDetailDTO findPostDetailByPostId(long postId) {
+        return PostDetailDTO.of(postMapper.selectPostDetailByPostId(postId)
+                .orElseThrow(DetailNotFoundException::new));
     }
 }

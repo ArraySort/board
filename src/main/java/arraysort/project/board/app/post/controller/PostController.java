@@ -6,10 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/board")
@@ -39,6 +36,13 @@ public class PostController {
         model.addAttribute("message", "게시글이 추가 되었습니다.");
         model.addAttribute("request", "ADD_POST");
         return "common/alert";
+    }
+
+    // 게시글 세부 페이지 이동
+    @GetMapping("/post/detail/{postId}")
+    public String showPostDetailPage(@PathVariable long postId, Model model) {
+        model.addAttribute("postDetail", postService.findPostDetailByPostId(postId));
+        return "board/detailPost";
     }
 }
 

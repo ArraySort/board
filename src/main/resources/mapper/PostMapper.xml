@@ -35,4 +35,21 @@
         inner join user u on p.user_id = u.user_id
     </select>
 
+    <!-- 게시글 세부내용 조회 -->
+    <select id="selectPostDetailByPostId" parameterType="long" resultType="arraysort.project.board.app.post.domain.PostVO">
+        select p.post_id,
+               p.user_id,
+               u.user_name,
+               p.title,
+               p.content,
+               p.created_at,
+               p.updated_at,
+               p.category,
+               p.type,
+               p.views
+        from post p
+        inner join user u on p.user_id = u.user_id
+        where post_id = #{postId}
+    </select>
+
 </mapper>
