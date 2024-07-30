@@ -15,6 +15,12 @@ public class GlobalExceptionControllerAdvice {
         return getModelAndView(e.getMessage());
     }
 
+    // 회원가입 시 비밀번호 확인 예외
+    @ExceptionHandler(PasswordCheckException.class)
+    public ModelAndView handlePasswordCheckException() {
+        return getModelAndView("입력한 비밀번호와 확인 값이 일치하지 않습니다.");
+    }
+
     // 인가된 사용자 검증 예외 : Spring Security
     @ExceptionHandler(InvalidPrincipalException.class)
     public ModelAndView handleInvalidPrincipalException() {

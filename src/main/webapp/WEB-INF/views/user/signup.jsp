@@ -19,8 +19,9 @@
                 const userId = $('#userId').val();
                 const userPassword = $('#userPassword').val();
                 const userName = $('#userName').val();
+                const userPasswordCheck = $('#userPasswordCheck').val();
 
-                if (!(userId && userPassword && userName)) {
+                if (!(userId && userPassword && userName && userPasswordCheck)) {
                     alertMessage(e, "아이디와 비밀번호, 이름 입력은 필수입니다.");
                 } else if (userId.length < 4 || userId.length > 20) {
                     alertMessage(e, "아이디는 최소 4글자 이상, 최대 20글자 이하입니다.");
@@ -28,6 +29,10 @@
                     alertMessage(e, "패스워드는 최소 4글자 이상, 최대 20글자 이하입니다.");
                 } else if (userName.length < 2 || userName.length > 10) {
                     alertMessage(e, "이름은 최소 2글자 이상, 최대 10글자 이하입니다.");
+                }
+
+                if (userPassword !== userPasswordCheck) {
+                    alertMessage(e, "입력하신 비밀번호와 확인 값이 일치하지 않습니다.");
                 }
             });
         });
@@ -52,6 +57,13 @@
             <div>
                 <label for="userPassword">비밀번호 : </label>
                 <input placeholder="비밀번호" type="password" name="userPassword" id="userPassword"/>
+            </div>
+
+            <br/>
+
+            <div>
+                <label for="userPasswordCheck">비밀번호 확인: </label>
+                <input placeholder="비밀번호" type="password" name="userPasswordCheck" id="userPasswordCheck"/>
             </div>
 
             <br/>

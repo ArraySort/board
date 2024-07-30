@@ -1,6 +1,7 @@
 package arraysort.project.board.app.user.service;
 
 import arraysort.project.board.app.exception.DuplicatedUserException;
+import arraysort.project.board.app.exception.PasswordCheckException;
 import arraysort.project.board.app.user.domain.UserSignupDTO;
 import arraysort.project.board.app.user.domain.UserVO;
 import arraysort.project.board.app.user.mapper.UserMapper;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +59,10 @@ public class UserService implements UserDetailsService {
 
         if (userMapper.selectUserCountByUserName(dto.getUserName()) != 0) {
             throw new DuplicatedUserException("중복된 이름입니다.");
+        }
+
+        if (!Objects.equals(dto.getUserPassword(), dto.getUserPasswordCheck())) {
+            throw new PasswordCheckException();
         }
     }
 
