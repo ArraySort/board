@@ -7,6 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
 </head>
 <body>
 
@@ -26,9 +27,9 @@
     </c:if>
 
     <c:if test="${isAuthenticatedUser}">
-        <button type="button" onclick="location.href='/board'">게시판으로 이동</button>
         <form action="${pageContext.request.contextPath}/process-logout" method="post">
             <sec:csrfInput/>
+            <button type="button" onclick="location.href='/board'">게시판으로 이동</button>
             <button type="submit">로그아웃</button>
         </form>
     </c:if>

@@ -6,6 +6,7 @@
 <html lang="en">
 <head>
     <title>Post Add</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
 
     <style>
         div {

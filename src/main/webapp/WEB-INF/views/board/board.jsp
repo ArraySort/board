@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
     <title>Board</title>
-    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
 </head>
 <body>
 
@@ -19,7 +19,7 @@
     </div>
 
     <!-- 게시판 시작 -->
-    <div class="container" style="max-width: 850px; max-height: 400px; overflow-y: auto">
+    <div class="container" style="max-width: 850px; overflow-y: auto">
         <table class="table">
             <thead>
             <tr class="text-center">
@@ -37,7 +37,7 @@
             <c:forEach var="post" items="${postLists}">
                 <tr>
                     <td>${post.postId}</td>
-                    <td>${post.title}</td>
+                    <td><a href="board/post/detail/${post.postId}">${post.title}</a></td>
                     <td>${post.userName}</td>
                     <td><fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/></td>
                     <td><fmt:formatDate value="${post.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></td>
