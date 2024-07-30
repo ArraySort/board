@@ -46,7 +46,7 @@
     </div>
 
     <button type="submit" id="loginButton" form="loginForm">로그인</button>
-    <button type="button" onclick="location.href='../../..'">뒤로가기</button>
+    <button type="button" onclick="location.href='/home'">홈 페이지로 이동</button>
 
 </div>
 

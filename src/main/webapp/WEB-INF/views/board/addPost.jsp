@@ -1,3 +1,4 @@
+<%@ page import="arraysort.project.board.app.post.domain.BoardType" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -63,11 +64,18 @@
             <textarea type="text" name="content" placeholder="내용" id="content"></textarea>
         </div>
 
+        <%
+            // 게시판 타입
+            BoardType[] boardTypes = BoardType.values();
+            pageContext.setAttribute("boardTypes", boardTypes);
+        %>
+
         <div>
-            <input type="radio" id="typeGeneral" name="type" value="general" checked>
-            <label for="typeGeneral">일반 게시판</label>
-            <input type="radio" id="typeGallery" name="type" value="gallery">
-            <label for="typeGallery">갤러리 게시판</label>
+            <c:forEach var="boardType" items="${boardTypes}">
+                <label for="type${boardType}">${boardType}</label>
+                <input type="radio" id="type${boardType}" name="type"
+                       value="${boardType}" ${boardType == 'GENERAL' ? 'checked' : ''}/>
+            </c:forEach>
         </div>
 
         <div>

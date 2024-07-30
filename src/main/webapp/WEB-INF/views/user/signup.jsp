@@ -67,7 +67,7 @@
 
     <div>
         <button type="submit" id="signupButton" form="signupForm">회원가입</button>
-        <button type="button" onclick="location.href='../../..'">뒤로가기</button>
+        <button type="button" onclick="location.href='/home'">홈 페이지로 이동</button>
     </div>
 
 </div>

@@ -17,9 +17,12 @@ public class UserUtil {
      * @return 로그인 한 유저의 userId
      */
     public static String getCurrentLoginUserId() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (principal == null) throw new InvalidPrincipalException();
+        if (!isValidAuthentication(authentication)) {
+            throw new InvalidPrincipalException();
+        }
+        Object principal = authentication.getPrincipal();
 
         return ((UserDetails) principal).getUsername();
     }
@@ -31,6 +34,13 @@ public class UserUtil {
      */
     public static boolean isAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return !authentication.getPrincipal().equals("anonymousUser");
+        return isValidAuthentication(authentication) && !authentication.getPrincipal().equals("anonymousUser");
+    }
+
+    /**
+     * authentication null 체크 및 검증
+     */
+    private static boolean isValidAuthentication(Authentication authentication) {
+        return authentication != null && authentication.isAuthenticated();
     }
 }

@@ -15,7 +15,7 @@ import java.io.IOException;
 public class LoginFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.info("[폼 로그인 에러 : {}]", exception.toString());
+        log.error("[폼 로그인 에러 : ]", exception);
 
         request.setAttribute("message", "아이디와 비밀번호를 다시 확인해주세요.");
 

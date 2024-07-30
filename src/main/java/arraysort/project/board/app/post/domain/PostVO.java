@@ -24,7 +24,7 @@ public class PostVO {
 
     private String category;    // 카테고리
 
-    private String type;        // 게시판 타입(일반 게시판, 이미지 개시판)
+    private BoardType type;        // 게시판 타입(일반 게시판, 이미지 개시판)
 
     private long views;         // 조회수
 

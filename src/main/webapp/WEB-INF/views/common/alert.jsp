@@ -4,11 +4,18 @@
 <script type="text/javascript">
     $(() => {
         const message = "${message}";
+        const request = "${request}"
 
         if (message) {
             alert(message);
         }
 
-        window.history.back();
+        if (request === "SIGNUP") {
+            window.location.href = "/home";
+        } else if (request === "ADD_POST") {
+            window.location.href = "/board";
+        } else {
+            window.history.back();
+        }
     });
 </script>

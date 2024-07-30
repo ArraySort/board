@@ -20,7 +20,6 @@ public class PostAddDTO {
     @NotBlank
     private String category;
 
-    @NotBlank
-    private String type;
+    private BoardType type;
 
 }

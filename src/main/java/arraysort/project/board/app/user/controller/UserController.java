@@ -5,6 +5,7 @@ import arraysort.project.board.app.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,8 +32,11 @@ public class UserController {
 
     // 회원가입 요청
     @PostMapping("/process-signup")
-    public String processSignup(@Valid @ModelAttribute UserSignupDTO dto) {
+    public String processSignup(@Valid @ModelAttribute UserSignupDTO dto, Model model) {
         userService.addUser(dto);
-        return "redirect:/home";
+
+        model.addAttribute("message", "회원가입이 완료되었습니다.");
+        model.addAttribute("request", "SIGNUP");
+        return "common/alert";
     }
 }
