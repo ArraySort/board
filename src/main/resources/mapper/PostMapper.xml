@@ -85,4 +85,11 @@
         where post_id = #{postId}
     </delete>
 
+    <!-- 조회수 증가 -->
+    <update id="updateViews">
+        update post
+        set views = views + 1
+        where post_id = #{postId}
+    </update>
+
 </mapper>

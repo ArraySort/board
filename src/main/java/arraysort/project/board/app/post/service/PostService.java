@@ -46,6 +46,7 @@ public class PostService {
     // 게시글 세부내용 조회
     @Transactional(readOnly = true)
     public PostDetailDTO findPostDetailByPostId(long postId) {
+        increaseViews(postId);
         return PostDetailDTO.of(postMapper.selectPostDetailByPostId(postId)
                 .orElseThrow(DetailNotFoundException::new));
     }
@@ -62,6 +63,11 @@ public class PostService {
     public void removePost(long postId) {
         validatePostId(postId);
         postMapper.deletePost(postId);
+    }
+
+    // 게시글 조회수 증가
+    private void increaseViews(long postId) {
+        postMapper.updateViews(postId);
     }
 
     /**

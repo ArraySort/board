@@ -29,4 +29,7 @@ public interface PostMapper {
 
     // 게시글 삭제
     void deletePost(long postId);
+
+    // 조회수 증가
+    void updateViews(long postId);
 }
