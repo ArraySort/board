@@ -12,6 +12,7 @@
 </head>
 <body>
 
+
 <div style="text-align: center">
     <h1>게시글 세부 내용</h1>
 
@@ -20,7 +21,6 @@
         <h3>작성자 : ${postDetail.userName}</h3>
         <h3>게시판 종류 : ${postDetail.type}</h3>
         <h3>카테고리 : ${postDetail.category}</h3>
-
 
         <div>
             <label for="title">제목 : </label>
@@ -49,8 +49,12 @@
         <h3>조회수 : ${postDetail.views}</h3>
 
         <div class="d-flex justify-content-center">
-            <button type="button" onclick="location.href='/post'">목록</button>
-
+            <form method="get" action="/post">
+                <input type="hidden" name="search" value="${page.search}">
+                <input type="hidden" name="searchType" value="${page.searchType}">
+                <input type="hidden" name="page" value="${page.page}">
+                <button type="submit">목록</button>
+            </form>
             <%
                 // 현재 로그인 한 유저의 값
                 String currentUserId = UserUtil.getCurrentLoginUserId();
@@ -66,7 +70,6 @@
                 </form>
             </c:if>
         </div>
-
 
     </div>
 </div>

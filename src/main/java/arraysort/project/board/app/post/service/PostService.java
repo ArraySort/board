@@ -25,16 +25,17 @@ public class PostService {
         postMapper.insertPost(PostVO.of(dto));
     }
 
-    // 게시글 리스트 조회(페이징 적용)
-    @Transactional(readOnly = true)
+    // 게시글 리스트 조회(페이징 적용), 게시글 조회수 증가
+    @Transactional
     public PaginationDTO findPostListWithPaging(PageDTO dto) {
 
-        int totalPostCount = postMapper.selectTotalPostCount();
+        int totalPostCount = postMapper.selectTotalPostCount(dto);
         int offset = (dto.getPage() - 1) * Constants.PAGE_ROW_COUNT;
 
         List<PostListDTO> postList = postMapper.selectPostListWithPaging(
                         Constants.PAGE_ROW_COUNT,
-                        offset
+                        offset,
+                        dto
                 )
                 .stream()
                 .map(PostListDTO::of)
@@ -54,19 +55,22 @@ public class PostService {
     // 게시글 수정
     @Transactional
     public void modifyPost(PostEditDTO dto, long postId) {
-        validatePostId(postId);
+        validatePostIdByUserId(postId);
         postMapper.updatePost(PostVO.of(dto), postId);
     }
 
     // 게시글 삭제
     @Transactional
     public void removePost(long postId) {
-        validatePostId(postId);
+        validatePostIdByUserId(postId);
         postMapper.deletePost(postId);
     }
 
     // 게시글 조회수 증가
     private void increaseViews(long postId) {
+        if (postMapper.selectExistPostId(postId).isEmpty()) {
+            throw new IdNotFoundException();
+        }
         postMapper.updateViews(postId);
     }
 
@@ -75,8 +79,8 @@ public class PostService {
      *
      * @param postId 수정 요청한 게시물 고유 번호
      */
-    private void validatePostId(long postId) {
-        Optional<Integer> validPostId = postMapper.selectExistPostId(postId, UserUtil.getCurrentLoginUserId());
+    private void validatePostIdByUserId(long postId) {
+        Optional<Integer> validPostId = postMapper.selectExistPostIdByUserId(postId, UserUtil.getCurrentLoginUserId());
         if (validPostId.isEmpty()) {
             throw new IdNotFoundException();
         }

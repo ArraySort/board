@@ -19,7 +19,7 @@ public class PostController {
 
     // 보드 페이지 이동, 게시글 리스트 조회
     @GetMapping
-    public String showBoardPage(@ModelAttribute PageDTO dto, Model model) {
+    public String showBoardPage(@ModelAttribute("page") PageDTO dto, Model model) {
         model.addAttribute("pagination", postService.findPostListWithPaging(dto));
         return "post/post";
     }
@@ -41,7 +41,7 @@ public class PostController {
 
     // 게시글 세부 페이지 이동
     @GetMapping("/detail/{postId}")
-    public String showPostDetailPage(@PathVariable long postId, Model model) {
+    public String showPostDetailPage(@PathVariable long postId, @ModelAttribute("page") PageDTO dto, Model model) {
         model.addAttribute("postDetail", postService.findPostDetailByPostId(postId));
         return "post/detailPost";
     }
