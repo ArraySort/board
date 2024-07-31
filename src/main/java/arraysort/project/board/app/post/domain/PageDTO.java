@@ -13,8 +13,11 @@ public class PageDTO {
 
     private SearchType searchType;
 
+    private SortType sortType;
+
     public PageDTO() {
         this.page = 1;
         this.searchType = SearchType.ALL;
+        this.sortType = SortType.ID;
     }
 }

@@ -48,7 +48,29 @@
                 </choose>
             </if>
         </where>
-        order by post_id desc
+
+        <choose>
+            <when test="dto.sortType.toString() == 'ID'">
+                order by p.post_id desc
+            </when>
+
+            <when test="dto.sortType.toString() == 'LATEST'">
+                order by p.updated_at desc
+            </when>
+
+            <when test="dto.sortType.toString() == 'OLDEST'">
+                order by p.updated_at asc
+            </when>
+
+            <when test="dto.sortType.toString() == 'VIEWS'">
+                order by p.views desc
+            </when>
+
+            <otherwise>
+                order by p.post_id desc
+            </otherwise>
+        </choose>
+
         limit #{pageRowCount} offset #{offset}
 
     </select>
@@ -125,7 +147,8 @@
     <!-- 조회수 증가 -->
     <update id="updateViews">
         update post
-        set views = views + 1
+        set views = views + 1,
+            updated_at = updated_at
         where post_id = #{postId}
     </update>
 

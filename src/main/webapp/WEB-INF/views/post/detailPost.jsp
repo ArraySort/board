@@ -52,6 +52,7 @@
             <form method="get" action="/post">
                 <input type="hidden" name="search" value="${page.search}">
                 <input type="hidden" name="searchType" value="${page.searchType}">
+                <input type="hidden" name="sortType" value="${page.sortType}">
                 <input type="hidden" name="page" value="${page.page}">
                 <button type="submit">목록</button>
             </form>
