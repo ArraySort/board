@@ -1,5 +1,6 @@
 package arraysort.project.board.app.post.service;
 
+import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.exception.DetailNotFoundException;
 import arraysort.project.board.app.exception.IdNotFoundException;
 import arraysort.project.board.app.post.domain.*;
@@ -24,13 +25,22 @@ public class PostService {
         postMapper.insertPost(PostVO.of(dto));
     }
 
-    // 게시글 리스트 조회
+    // 게시글 리스트 조회(페이징 적용)
     @Transactional(readOnly = true)
-    public List<PostListDTO> findPostList() {
-        return postMapper.selectPostList()
+    public PaginationDTO findPostListWithPaging(PageDTO dto) {
+
+        int totalPostCount = postMapper.selectTotalPostCount();
+        int offset = (dto.getPage() - 1) * Constants.PAGE_ROW_COUNT;
+
+        List<PostListDTO> postList = postMapper.selectPostListWithPaging(
+                        Constants.PAGE_ROW_COUNT,
+                        offset
+                )
                 .stream()
                 .map(PostListDTO::of)
                 .toList();
+
+        return new PaginationDTO(totalPostCount, dto.getPage(), postList);
     }
 
     // 게시글 세부내용 조회

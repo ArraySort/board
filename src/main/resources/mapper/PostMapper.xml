@@ -19,7 +19,7 @@
     </insert>
 
     <!-- 게시글 리스트 조회 -->
-    <select id="selectPostList" parameterType="arraysort.project.board.app.post.domain.PostListDTO"
+    <select id="selectPostListWithPaging" parameterType="arraysort.project.board.app.post.domain.PostListDTO"
             resultType="arraysort.project.board.app.post.domain.PostVO">
         select p.post_id,
                p.user_id,
@@ -34,6 +34,13 @@
         from post p
         inner join user u on p.user_id = u.user_id
         order by post_id desc
+        limit #{pageRowCount} offset #{offset}
+    </select>
+
+    <!-- 총 게시물 개수 조회 -->
+    <select id="selectTotalPostCount" resultType="int">
+        select count(*)
+        from post
     </select>
 
     <!-- 게시글 세부내용 조회 -->

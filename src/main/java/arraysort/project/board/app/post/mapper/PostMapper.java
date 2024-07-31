@@ -13,7 +13,10 @@ public interface PostMapper {
     void insertPost(PostVO vo);
 
     // 게시글 리스트 조회
-    List<PostVO> selectPostList();
+    List<PostVO> selectPostListWithPaging(int pageRowCount, int offset);
+
+    // 총 게시물 개수 조회
+    int selectTotalPostCount();
 
     // 게시글 세부내용 조회
     Optional<PostVO> selectPostDetailByPostId(long postId);

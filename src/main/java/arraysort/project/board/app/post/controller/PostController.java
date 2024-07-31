@@ -1,5 +1,6 @@
 package arraysort.project.board.app.post.controller;
 
+import arraysort.project.board.app.post.domain.PageDTO;
 import arraysort.project.board.app.post.domain.PostAddDTO;
 import arraysort.project.board.app.post.domain.PostEditDTO;
 import arraysort.project.board.app.post.service.PostService;
@@ -18,8 +19,8 @@ public class PostController {
 
     // 보드 페이지 이동, 게시글 리스트 조회
     @GetMapping
-    public String showBoardPage(Model model) {
-        model.addAttribute("postLists", postService.findPostList());
+    public String showBoardPage(@ModelAttribute PageDTO dto, Model model) {
+        model.addAttribute("pagination", postService.findPostListWithPaging(dto));
         return "post/post";
     }
 
