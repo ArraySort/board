@@ -21,40 +21,40 @@ public class PostService {
 
     // 게시글 추가
     @Transactional
-    public void addPost(PostAddDTO dto) {
+    public void addPost(PostAddReqDTO dto) {
         postMapper.insertPost(PostVO.of(dto));
     }
 
-    // 게시글 리스트 조회(페이징 적용), 게시글 조회수 증가
-    @Transactional
-    public PaginationDTO findPostListWithPaging(PageDTO dto) {
+    // 게시글 리스트 조회(페이징 적용)
+    @Transactional(readOnly = true)
+    public PageResDTO findPostListWithPaging(PageReqDTO dto) {
 
         int totalPostCount = postMapper.selectTotalPostCount(dto);
         int offset = (dto.getPage() - 1) * Constants.PAGE_ROW_COUNT;
 
-        List<PostListDTO> postList = postMapper.selectPostListWithPaging(
+        List<PostListResDTO> postList = postMapper.selectPostListWithPaging(
                         Constants.PAGE_ROW_COUNT,
                         offset,
                         dto
                 )
                 .stream()
-                .map(PostListDTO::of)
+                .map(PostListResDTO::of)
                 .toList();
 
-        return new PaginationDTO(totalPostCount, dto.getPage(), postList);
+        return new PageResDTO(totalPostCount, dto.getPage(), postList);
     }
 
-    // 게시글 세부내용 조회
-    @Transactional(readOnly = true)
-    public PostDetailDTO findPostDetailByPostId(long postId) {
+    // 게시글 세부내용 조회, 게시글 조회수 증가
+    @Transactional
+    public PostDetailResDTO findPostDetailByPostId(long postId) {
         increaseViews(postId);
-        return PostDetailDTO.of(postMapper.selectPostDetailByPostId(postId)
+        return PostDetailResDTO.of(postMapper.selectPostDetailByPostId(postId)
                 .orElseThrow(DetailNotFoundException::new));
     }
 
     // 게시글 수정
     @Transactional
-    public void modifyPost(PostEditDTO dto, long postId) {
+    public void modifyPost(PostEditReqDTO dto, long postId) {
         validatePostIdByUserId(postId);
         postMapper.updatePost(PostVO.of(dto), postId);
     }

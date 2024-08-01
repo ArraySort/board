@@ -1,6 +1,6 @@
 package arraysort.project.board.app.post.mapper;
 
-import arraysort.project.board.app.post.domain.PageDTO;
+import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PostVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -14,10 +14,10 @@ public interface PostMapper {
     void insertPost(PostVO vo);
 
     // 게시글 리스트 조회
-    List<PostVO> selectPostListWithPaging(int pageRowCount, int offset, PageDTO dto);
+    List<PostVO> selectPostListWithPaging(int pageRowCount, int offset, PageReqDTO dto);
 
     // 총 게시물 개수 조회
-    int selectTotalPostCount(PageDTO dto);
+    int selectTotalPostCount(PageReqDTO dto);
 
     // 게시글 세부내용 조회
     Optional<PostVO> selectPostDetailByPostId(long postId);

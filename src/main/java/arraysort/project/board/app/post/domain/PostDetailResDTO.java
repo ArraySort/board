@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Getter
 @Builder
-public class PostDetailDTO {
+public class PostDetailResDTO {
 
     private Long postId;
 
@@ -29,7 +29,7 @@ public class PostDetailDTO {
 
     private long views;
 
-    public static PostDetailDTO of(PostVO vo) {
+    public static PostDetailResDTO of(PostVO vo) {
         return builder()
                 .postId(vo.getPostId())
                 .userId(vo.getUserId())

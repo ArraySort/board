@@ -31,7 +31,7 @@ public class PostVO {
     private long views;         // 조회수
 
     // 게시물 추가
-    public static PostVO of(PostAddDTO dto) {
+    public static PostVO of(PostAddReqDTO dto) {
         return PostVO.builder()
                 .userId(UserUtil.getCurrentLoginUserId())
                 .title(dto.getTitle())
@@ -42,7 +42,7 @@ public class PostVO {
     }
 
     // 게시물 수정
-    public static PostVO of(PostEditDTO dto) {
+    public static PostVO of(PostEditReqDTO dto) {
         return PostVO.builder()
                 .title(dto.getTitle())
                 .content(dto.getContent())

@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class UserSignupDTO {
+public class UserSignupReqDTO {
 
     @NotBlank(message = "아이디는 필수로 입력되어야 합니다.")
     @Size(min = 4, max = 20, message = "아이디는 최소 4글자 최대 20글자여야 합니다.")

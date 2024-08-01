@@ -1,8 +1,8 @@
 package arraysort.project.board.app.post.controller;
 
-import arraysort.project.board.app.post.domain.PageDTO;
-import arraysort.project.board.app.post.domain.PostAddDTO;
-import arraysort.project.board.app.post.domain.PostEditDTO;
+import arraysort.project.board.app.post.domain.PageReqDTO;
+import arraysort.project.board.app.post.domain.PostAddReqDTO;
+import arraysort.project.board.app.post.domain.PostEditReqDTO;
 import arraysort.project.board.app.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class PostController {
 
     // 보드 페이지 이동, 게시글 리스트 조회
     @GetMapping
-    public String showBoardPage(@ModelAttribute("page") PageDTO dto, Model model) {
+    public String showBoardPage(@ModelAttribute("page") PageReqDTO dto, Model model) {
         model.addAttribute("pagination", postService.findPostListWithPaging(dto));
         return "post/post";
     }
@@ -32,7 +32,7 @@ public class PostController {
 
     // 게시글 추가 요청
     @PostMapping("/process-add-post")
-    public String processAddPost(@Valid @ModelAttribute PostAddDTO dto, Model model) {
+    public String processAddPost(@Valid @ModelAttribute PostAddReqDTO dto, Model model) {
         postService.addPost(dto);
 
         addMessageAndRequest(model, "게시글이 추가되었습니다.", "ADD_POST");
@@ -41,7 +41,7 @@ public class PostController {
 
     // 게시글 세부 페이지 이동
     @GetMapping("/detail/{postId}")
-    public String showPostDetailPage(@PathVariable long postId, @ModelAttribute("page") PageDTO dto, Model model) {
+    public String showPostDetailPage(@PathVariable long postId, @ModelAttribute("page") PageReqDTO dto, Model model) {
         model.addAttribute("postDetail", postService.findPostDetailByPostId(postId));
         return "post/detailPost";
     }
@@ -55,7 +55,7 @@ public class PostController {
 
     // 게시글 수정 요청
     @PostMapping("/detail/{postId}/edit")
-    public String processModifyPost(@PathVariable long postId, @Valid @ModelAttribute PostEditDTO dto, Model model) {
+    public String processModifyPost(@PathVariable long postId, @Valid @ModelAttribute PostEditReqDTO dto, Model model) {
         postService.modifyPost(dto, postId);
 
         addMessageAndRequest(model, "게시글이 수정되었습니다.", "MODIFY_POST");

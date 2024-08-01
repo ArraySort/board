@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PageDTO {
+public class PageReqDTO {
 
     private int page;
 
@@ -15,7 +15,7 @@ public class PageDTO {
 
     private SortType sortType;
 
-    public PageDTO() {
+    public PageReqDTO() {
         this.page = 1;
         this.searchType = SearchType.ALL;
         this.sortType = SortType.ID;

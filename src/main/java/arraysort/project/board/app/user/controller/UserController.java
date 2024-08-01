@@ -1,6 +1,6 @@
 package arraysort.project.board.app.user.controller;
 
-import arraysort.project.board.app.user.domain.UserSignupDTO;
+import arraysort.project.board.app.user.domain.UserSignupReqDTO;
 import arraysort.project.board.app.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class UserController {
 
     // 회원가입 요청
     @PostMapping("/process-signup")
-    public String processSignup(@Valid @ModelAttribute UserSignupDTO dto, Model model) {
+    public String processSignup(@Valid @ModelAttribute UserSignupReqDTO dto, Model model) {
         userService.addUser(dto);
 
         model.addAttribute("message", "회원가입이 완료되었습니다.");

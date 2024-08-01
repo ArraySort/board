@@ -19,7 +19,7 @@
     </insert>
 
     <!-- 게시글 리스트 조회 -->
-    <select id="selectPostListWithPaging" parameterType="arraysort.project.board.app.post.domain.PostListDTO"
+    <select id="selectPostListWithPaging" parameterType="arraysort.project.board.app.post.domain.PostListResDTO"
             resultType="arraysort.project.board.app.post.domain.PostVO">
         select p.post_id,
                p.user_id,
