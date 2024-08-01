@@ -2,6 +2,7 @@ package arraysort.project.board.app.user.controller;
 
 import arraysort.project.board.app.user.domain.UserSignupReqDTO;
 import arraysort.project.board.app.user.service.UserService;
+import arraysort.project.board.app.utils.ControllerUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -35,8 +36,7 @@ public class UserController {
     public String processSignup(@Valid @ModelAttribute UserSignupReqDTO dto, Model model) {
         userService.addUser(dto);
 
-        model.addAttribute("message", "회원가입이 완료되었습니다.");
-        model.addAttribute("request", "SIGNUP");
+        ControllerUtil.addMessageAndRequest(model, "회원가입이 완료되었습니다.", "SIGNUP");
         return "common/alert";
     }
 }

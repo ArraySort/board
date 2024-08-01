@@ -4,6 +4,7 @@ import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PostAddReqDTO;
 import arraysort.project.board.app.post.domain.PostEditReqDTO;
 import arraysort.project.board.app.post.service.PostService;
+import arraysort.project.board.app.utils.ControllerUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -35,7 +36,7 @@ public class PostController {
     public String processAddPost(@Valid @ModelAttribute PostAddReqDTO dto, Model model) {
         postService.addPost(dto);
 
-        addMessageAndRequest(model, "게시글이 추가되었습니다.", "ADD_POST");
+        ControllerUtil.addMessageAndRequest(model, "게시글이 추가되었습니다.", "ADD_POST");
         return "common/alert";
     }
 
@@ -58,7 +59,7 @@ public class PostController {
     public String processModifyPost(@PathVariable long postId, @Valid @ModelAttribute PostEditReqDTO dto, Model model) {
         postService.modifyPost(dto, postId);
 
-        addMessageAndRequest(model, "게시글이 수정되었습니다.", "MODIFY_POST");
+        ControllerUtil.addMessageAndRequest(model, "게시글이 수정되었습니다.", "MODIFY_POST");
         model.addAttribute("postId", postId);
         return "common/alert";
     }
@@ -68,13 +69,8 @@ public class PostController {
     public String processRemovePost(@PathVariable long postId, Model model) {
         postService.removePost(postId);
 
-        addMessageAndRequest(model, "게시글이 삭제되었습니다.", "DELETE_POST");
+        ControllerUtil.addMessageAndRequest(model, "게시글이 삭제되었습니다.", "DELETE_POST");
         return "common/alert";
-    }
-
-    private void addMessageAndRequest(Model model, String message, String request) {
-        model.addAttribute("message", message);
-        model.addAttribute("request", request);
     }
 }
 
