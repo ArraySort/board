@@ -42,6 +42,11 @@
         <form method="post" action="/post/detail/${postDetail.postId}/edit">
             <sec:csrfInput/>
 
+            <input type="hidden" name="search" value="${page.search}">
+            <input type="hidden" name="searchType" value="${page.searchType}">
+            <input type="hidden" name="sortType" value="${page.sortType}">
+            <input type="hidden" name="page" value="${page.page}">
+
             <h3>작성자 : ${postDetail.userName}</h3>
 
             <%
@@ -87,7 +92,9 @@
             </div>
 
             <button type="submit">저장</button>
-            <button type="button" onclick="location.href='/post/detail/${postDetail.postId}'">취소</button>
+            <a href="/post/detail/${postDetail.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
+                <button type="button">취소</button>
+            </a>
         </form>
     </div>
 
