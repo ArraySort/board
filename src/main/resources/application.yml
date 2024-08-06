@@ -21,3 +21,12 @@ spring:
 # mybatis mapper 경로 설정
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+# 이미지 업로드 설정
+file:
+  upload-path: /Users/an-yeongjun/Desktop/project/image
+  stored-path: file:///Users/an-yeongjun/Desktop/project/image/
+  default-image: /images/userProfile.png
+  allowed-extensions: jpg,jpeg,png
