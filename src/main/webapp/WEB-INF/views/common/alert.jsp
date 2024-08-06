@@ -13,7 +13,7 @@
         if (request === "SIGNUP") {
             window.location.href = "/home";
         } else if (request === "ADD_POST") {
-            window.location.href = "/post";
+            window.location.href = "/${boardId}/post";
         } else if (request === "MODIFY_POST") {
             window.location.href = "/post/detail/${postId}"
         } else if (request === "DELETE_POST") {

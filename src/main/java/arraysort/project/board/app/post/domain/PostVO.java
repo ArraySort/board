@@ -10,44 +10,61 @@ import java.util.Date;
 @Builder
 public class PostVO {
 
-    private Long postId;        // 게시글 고유 번호
+	private Long postId;    // 게시글 고유 번호
 
-    private String userId;      // 사용자 ID
+	private String userId;    // 사용자 ID
 
-    private String userName;    // 사용자 이름
+	private String adminId;    // 관리자 ID
 
-    private String title;       // 제목
+	private Long boardId;    // 게시판 ID
 
-    private String content;     // 내용
+	private Long categoryId;    // 카테고리 ID
 
-    private Date createdAt;     // 생성 날짜
+	private Long imageId;    // 썸네일 이미지 ID
 
-    private Date updatedAt;     // 수정 날짜
+	private String userName;    // 사용자 이름
 
-    private String category;    // 카테고리
+	private String title;    // 제목
 
-    private BoardType type;     // 게시판 타입(GENERAL : 일반, GALLERY : 사진)
+	private String content;    // 내용
 
-    private long views;         // 조회수
+	private long views;    // 조회수
 
-    // 게시물 추가
-    public static PostVO of(PostAddReqDTO dto) {
-        return PostVO.builder()
-                .userId(UserUtil.getCurrentLoginUserId())
-                .title(dto.getTitle())
-                .content(dto.getContent())
-                .category(dto.getCategory())
-                .type(dto.getType())
-                .build();
-    }
+	private String privateFlag;    // 비공개 여부
 
-    // 게시물 수정
-    public static PostVO of(PostEditReqDTO dto) {
-        return PostVO.builder()
-                .title(dto.getTitle())
-                .content(dto.getContent())
-                .category(dto.getCategory())
-                .type(dto.getType())
-                .build();
-    }
+	private String noticeFlag;    // 공지사항 여부
+
+	private String activateFlag;    // 활성화 여부
+
+	private String adoptedCommentFlag;    // 채택 댓글 여부
+
+	private String createdBy;    // 최초 생성자
+
+	private String updatedBy;    // 최종 수정자
+
+	private Date createdAt;    // 생성 날짜
+
+	private Date updatedAt;    // 수정 날짜
+
+	// 유저 게시물 추가
+	public static PostVO of(PostAddReqDTO dto, long boardId) {
+		return PostVO.builder()
+				.userId(UserUtil.getCurrentLoginUserId())
+				.boardId(boardId)
+				.categoryId(dto.getCategoryId())
+				.title(dto.getTitle())
+				.content(dto.getContent())
+				.privateFlag(dto.getPrivateFlag())
+				.createdBy(UserUtil.getCurrentLoginUserId())
+				.updatedBy(UserUtil.getCurrentLoginUserId())
+				.build();
+	}
+
+	// 게시물 수정
+	public static PostVO of(PostEditReqDTO dto) {
+		return PostVO.builder()
+				.title(dto.getTitle())
+				.content(dto.getContent())
+				.build();
+	}
 }

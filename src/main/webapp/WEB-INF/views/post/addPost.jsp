@@ -45,14 +45,15 @@
 
     <h1>게시글 추가</h1>
 
-    <form method="post" action="<c:url value="/post/process-add-post"/>">
+    <form method="post" action="<c:url value="/${boardId}/post/process-add-post"/>">
         <sec:csrfInput/>
         <div>
-            <select name="category" aria-label="category select" id="category">
+            <select name="categoryId" aria-label="category select" id="category">
                 <option value="">카테고리 선택</option>
-                <option value="category1">카테고리 1번</option>
-                <option value="category2">카테고리 2번</option>
-                <option value="category3">카테고리 3번</option>
+                <option value="1">CATEGORY1</option>
+                <option value="2">CATEGORY2</option>
+                <option value="3">CATEGORY3</option>
+                <option value="4">INVALID</option>
             </select>
         </div>
 
@@ -65,23 +66,17 @@
             <textarea type="text" name="content" placeholder="내용" id="content"></textarea>
         </div>
 
-        <%
-            // 게시판 타입
-            BoardType[] boardTypes = BoardType.values();
-            pageContext.setAttribute("boardTypes", boardTypes);
-        %>
-
         <div>
-            <c:forEach var="boardType" items="${boardTypes}">
-                <label for="type${boardType}">${boardType}</label>
-                <input type="radio" id="type${boardType}" name="type"
-                       value="${boardType}" ${boardType == 'GENERAL' ? 'checked' : ''}/>
-            </c:forEach>
+            <label for="privateFlag-Y">공개</label>
+            <input type="radio" id="privateFlag-Y" name="privateFlag" value="Y" checked/>
+
+            <label for="privateFlag-N">비공개</label>
+            <input type="radio" id="privateFlag-N" name="privateFlag" value="N"/>
         </div>
 
         <div>
             <button type="submit" id="addPost">저장</button>
-            <button type="button" onclick="location.href='/post'">목록</button>
+            <button type="button" onclick="location.href='/${boardId}/post'">목록</button>
         </div>
     </form>
 

@@ -7,15 +7,24 @@
     <!-- 게시글 추가 -->
     <insert id="insertPost" parameterType="arraysort.project.board.app.post.domain.PostVO">
         insert into post(user_id,
+                         admin_id,
+                         board_id,
+                         category_id,
                          title,
                          content,
-                         category,
-                         type)
+                         private_flag,
+                         created_by,
+                         updated_by)
         values (#{userId},
+                #{adminId},
+                #{boardId},
+                #{categoryId},
                 #{title},
                 #{content},
-                #{category},
-                #{type});
+                #{privateFlag},
+                #{createdBy},
+                #{updatedBy}
+               );
     </insert>
 
     <!-- 게시글 리스트 조회 -->
@@ -31,8 +40,8 @@
                p.category,
                p.type,
                p.views
-        from post p
-        inner join user u on p.user_id = u.user_id
+        from post_test p
+        inner join user_test u on p.user_id = u.user_id
         <where>
             <if test="dto.search != null and dto.search != ''">
                 <choose>
@@ -78,7 +87,7 @@
     <!-- 총 게시물 개수 조회 -->
     <select id="selectTotalPostCount" resultType="int">
         select count(*)
-        from post
+        from post_test
         <where>
             <if test="search != null and search != ''">
                 <choose>
@@ -108,14 +117,14 @@
                p.category,
                p.type,
                p.views
-        from post p
-        inner join user u on p.user_id = u.user_id
+        from post_test p
+        inner join user_test u on p.user_id = u.user_id
         where post_id = #{postId}
     </select>
 
     <!-- 게시글 수정 -->
     <update id="updatePost">
-        update post
+        update post_test
         set title    = #{vo.title},
             content  = #{vo.content},
             category = #{vo.category},
@@ -126,27 +135,27 @@
     <!-- 게시글 고유번호 조회(유저아이디) -->
     <select id="selectExistPostIdByUserId" resultType="long">
         select post_id
-        from post
+        from post_test
         where post_id = #{postId}
           and user_id = #{userId}
     </select>
 
     <select id="selectExistPostId" resultType="long">
         select post_id
-        from post
+        from post_test
         where post_id = #{postId}
     </select>
 
     <!-- 게시글 삭제 -->
     <delete id="deletePost">
         delete
-        from post
+        from post_test
         where post_id = #{postId}
     </delete>
 
     <!-- 조회수 증가 -->
     <update id="updateViews">
-        update post
+        update post_test
         set views = views + 1,
             updated_at = updated_at
         where post_id = #{postId}

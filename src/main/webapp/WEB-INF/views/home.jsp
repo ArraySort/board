@@ -21,7 +21,7 @@
 
     <h1>${message}</h1>
 
-    <button type="button" onclick="location.href='/post'">게시판으로 이동</button>
+    <button type="button" onclick="location.href='/1/post'">일반 게시판으로 이동</button>
 
     <c:if test="${!isAuthenticatedUser}">
         <button type="button" onclick="location.href='/user/login'">로그인 페이지로 이동</button>

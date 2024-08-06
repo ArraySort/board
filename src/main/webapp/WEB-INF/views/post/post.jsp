@@ -11,11 +11,11 @@
 
 <div style="text-align: center">
 
-    <h1>게시판 페이지</h1>
+    <h1>일반 게시판 페이지</h1>
 
     <div class="m-3">
         <button type="button" onclick="location.href='/home'">홈 페이지로 이동</button>
-        <button type="button" onclick="location.href='/post/add'">게시글 추가</button>
+        <button type="button" onclick="location.href='/${boardId}/post/add'">게시글 추가</button>
     </div>
 
     <div>
