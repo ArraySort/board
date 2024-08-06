@@ -25,4 +25,25 @@
         where board_id = #{boardId}
     </select>
 
+    <!-- 게시판 전체 조회 -->
+    <select id="selectAllBoards" resultType="arraysort.project.board.app.board.domain.BoardVO">
+        select board_id,
+               board_name,
+               board_type,
+               board_order,
+               image_flag,
+               image_limit,
+               notice_count,
+               comment_flag,
+               access_level,
+               activate_flag,
+               created_by,
+               updated_by,
+               created_at,
+               updated_at,
+               delete_flag
+        from board
+        order by board_order
+    </select>
+
 </mapper>
