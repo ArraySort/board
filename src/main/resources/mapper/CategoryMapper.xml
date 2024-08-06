@@ -18,4 +18,18 @@
         where category_id = #{categoryId}
     </select>
 
+    <!-- 카테고리 목록 조회 -->
+    <select id="selectCategoryListByBoardId" parameterType="long" resultType="arraysort.project.board.app.category.domain.CategoryVO">
+        select category_id,
+               board_id,
+               category_name,
+               created_by,
+               updated_by,
+               created_at,
+               updated_at,
+               delete_flag
+        from category
+        where board_id = #{boardId}
+    </select>
+
 </mapper>

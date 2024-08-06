@@ -50,10 +50,9 @@
         <div>
             <select name="categoryId" aria-label="category select" id="category">
                 <option value="">카테고리 선택</option>
-                <option value="1">CATEGORY1</option>
-                <option value="2">CATEGORY2</option>
-                <option value="3">CATEGORY3</option>
-                <option value="4">INVALID</option>
+                <c:forEach var="category" items="${categories}">
+                    <option value="${category.categoryId}">${category.categoryName}</option>
+                </c:forEach>
             </select>
         </div>
 

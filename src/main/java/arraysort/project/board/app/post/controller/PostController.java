@@ -1,5 +1,6 @@
 package arraysort.project.board.app.post.controller;
 
+import arraysort.project.board.app.category.service.CategoryService;
 import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PostAddReqDTO;
 import arraysort.project.board.app.post.domain.PostEditReqDTO;
@@ -18,6 +19,8 @@ public class PostController {
 
 	private final PostService postService;
 
+	private final CategoryService categoryService;
+
 	// 보드 페이지 이동, 게시글 리스트 조회
 	@GetMapping
 	public String showBoardPage(@PathVariable long boardId, @ModelAttribute("page") PageReqDTO dto, Model model) {
@@ -28,7 +31,8 @@ public class PostController {
 
 	// 게시글 추가 페이지 이동
 	@GetMapping("/add")
-	public String showAddPostPage(@PathVariable long boardId) {
+	public String showAddPostPage(@PathVariable long boardId, Model model) {
+		model.addAttribute("categories", categoryService.findCategoryList(boardId));
 		return "post/addPost";
 	}
 
