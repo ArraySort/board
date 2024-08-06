@@ -8,23 +8,27 @@
     <insert id="insertUser" parameterType="arraysort.project.board.app.user.domain.UserVO">
         insert into user(user_id,
                          user_password,
-                         user_name)
+                         user_name,
+                         access_level,
+                         created_by)
         values (#{userId},
                 #{userPassword},
-                #{userName})
+                #{userName},
+                #{accessLevel},
+                #{createdBy})
     </insert>
 
     <!-- 아이디 중복 확인을 위한 카운트 -->
     <select id="selectUserCountByUserId" parameterType="String" resultType="int">
         select count(*)
-        from user
+        from user_test
         where user_id = #{userId}
     </select>
 
     <!-- 이름 중복 확인을 위한 카운트 -->
     <select id="selectUserCountByUserName" parameterType="String" resultType="int">
         select count(*)
-        from user
+        from user_test
         where user_name = #{userName}
     </select>
 
@@ -32,7 +36,14 @@
     <select id="selectUserByUserId" parameterType="String" resultType="arraysort.project.board.app.user.domain.UserVO">
         select user_id,
                user_password,
-               user_name
+               user_name,
+               access_level,
+               access_time,
+               activate_flag,
+               created_by,
+               created_at,
+               updated_at,
+               delete_flag
         from user
         where user_id = #{userId}
     </select>
