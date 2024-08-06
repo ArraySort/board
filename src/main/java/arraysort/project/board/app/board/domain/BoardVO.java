@@ -15,17 +15,17 @@ public class BoardVO {
 
 	private String boardType;    // 게시판 타입 [GENERAL, GALLERY]
 
-	private Integer boardOrder;    // 게시판 순서
+	private int boardOrder;    // 게시판 순서
 
 	private String imageFlag;    // 첨부이미지 사용 여부
 
 	private Integer imageLimit;    // 첨부이미지 최대 개수
 
-	private Integer noticeCount;    // 공지글 개수
+	private int noticeCount;    // 공지글 개수
 
 	private String commentFlag;    // 댓글 사용 여부
 
-	private Integer accessLevel;    // 게시판 접근 등급
+	private int accessLevel;    // 게시판 접근 등급
 
 	private String activateFlag;    // 활성화 여부
 
