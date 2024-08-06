@@ -34,14 +34,15 @@
                p.user_id,
                u.user_name,
                p.title,
-               p.content,
+               c.category_name,
+               p.views,
+               p.category_id,
                p.created_at,
-               p.updated_at,
-               p.category,
-               p.type,
-               p.views
-        from post_test p
-        inner join user_test u on p.user_id = u.user_id
+               p.updated_at
+        from post p
+        inner join user u on p.user_id = u.user_id
+        inner join category c on p.category_id = c.category_id
+        where p.board_id = #{boardId}
         <where>
             <if test="dto.search != null and dto.search != ''">
                 <choose>
@@ -87,7 +88,7 @@
     <!-- 총 게시물 개수 조회 -->
     <select id="selectTotalPostCount" resultType="int">
         select count(*)
-        from post_test
+        from post
         <where>
             <if test="search != null and search != ''">
                 <choose>

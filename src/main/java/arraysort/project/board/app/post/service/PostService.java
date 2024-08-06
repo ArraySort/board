@@ -35,8 +35,8 @@ public class PostService {
 	// 게시글 추가
 	@Transactional
 	public void addPost(PostAddReqDTO dto, long boardId) {
-		PostVO vo = PostVO.of(dto, boardId);
-		
+		PostVO vo = PostVO.insertOf(dto, boardId);
+
 		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
 				.orElseThrow(BoardNotFoundException::new);
 		UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
@@ -44,7 +44,8 @@ public class PostService {
 		CategoryVO categoryDetail = categoryMapper.selectCategoryDetailById(dto.getCategoryId())
 				.orElseThrow(CategoryNotFoundException::new);
 
-		// 게시판 ID가 유효하지 않을 때
+		// TODO : 갤러리 게시판인지, 일반 게시판인지 검증 필요
+
 		if (boardDetail.getActivateFlag().equals("N")) {
 			throw new BoardNotFoundException();
 		}
@@ -52,6 +53,11 @@ public class PostService {
 		// 게시글에서 고른 카테고리가 게시판에서 설정한 값과 일치하지 않을 때
 		if (!Objects.equals(categoryDetail.getBoardId(), boardDetail.getBoardId())) {
 			throw new InvalidPrincipalException("올바르지 않은 카테고리입니다.");
+		}
+
+		// 게시글 작성자 상태 확인 -> 비활성화 사용자, 삭제된 사용자
+		if (Objects.equals(userDetail.getActivateFlag(), "N") || Objects.equals(userDetail.getDeleteFlag(), "Y")) {
+			throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
 		}
 
 		// 게시판 설정 접근 등급 보다 사용자 접근 등급이 낮을 경우, 사용자 접근 등급이 2미만 인 경우
@@ -64,7 +70,7 @@ public class PostService {
 
 	// 게시글 리스트 조회(페이징 적용)
 	@Transactional(readOnly = true)
-	public PageResDTO findPostListWithPaging(PageReqDTO dto) {
+	public PageResDTO findPostListWithPaging(PageReqDTO dto, long boardId) {
 
 		int totalPostCount = postMapper.selectTotalPostCount(dto);
 		int offset = (dto.getPage() - 1) * Constants.PAGE_ROW_COUNT;
@@ -72,7 +78,8 @@ public class PostService {
 		List<PostListResDTO> postList = postMapper.selectPostListWithPaging(
 						Constants.PAGE_ROW_COUNT,
 						offset,
-						dto
+						dto,
+						boardId
 				)
 				.stream()
 				.map(PostListResDTO::of)
@@ -93,7 +100,7 @@ public class PostService {
 	@Transactional
 	public void modifyPost(PostEditReqDTO dto, long postId) {
 		validatePostIdByUserId(postId);
-		postMapper.updatePost(PostVO.of(dto), postId);
+		postMapper.updatePost(PostVO.updateOf(dto), postId);
 	}
 
 	// 게시글 삭제

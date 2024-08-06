@@ -60,12 +60,12 @@
                 <tr>
                     <td>${post.postId}</td>
                     <td>
-                        <a href="/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">${post.title}</a>
+                        <a href="${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">${post.title}</a>
                     </td>
                     <td>${post.userName}</td>
                     <td><fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/></td>
                     <td><fmt:formatDate value="${post.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></td>
-                    <td>${post.category}</td>
+                    <td>${post.categoryName}</td>
                     <td>${post.views}</td>
                 </tr>
             </c:forEach>
@@ -80,13 +80,13 @@
             <!-- 처음 페이지로 이동하는 버튼 -->
             <li class="page-item">
                 <a class="page-link"
-                   href="/post?page=1&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">&laquo</a>
+                   href="/${boardId}/post?page=1&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">&laquo</a>
             </li>
             <!-- 이전 블록으로 이동하는 버튼 -->
             <c:if test="${pagination.prev}">
                 <li class="page-item">
                     <a class="page-link"
-                       href="/post?page=${pagination.startBlockPage - 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                       href="/${boardId}/post?page=${pagination.startBlockPage - 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
                         &lt;
                     </a>
                 </li>
@@ -95,7 +95,7 @@
             <c:forEach var="pageNum" begin="${pagination.startBlockPage}" end="${pagination.endBlockPage}">
                 <li class="page-item ${pageNum == pagination.currentPage ? 'active' : ''}">
                     <a class="page-link"
-                       href="/post?page=${pageNum}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                       href="/${boardId}/post?page=${pageNum}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
                             ${pageNum}
                     </a>
                 </li>
@@ -104,7 +104,7 @@
             <c:if test="${pagination.next}">
                 <li class="page-item">
                     <a class="page-link"
-                       href="/post?page=${pagination.endBlockPage + 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                       href="/${boardId}/post?page=${pagination.endBlockPage + 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
                         &gt;
                     </a>
                 </li>
@@ -112,7 +112,7 @@
             <!-- 끝 페이지로 이동하는 버튼 -->
             <li class="page-item">
                 <a class="page-link"
-                   href="/post?page=${pagination.totalPageCount}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                   href="/${boardId}/post?page=${pagination.totalPageCount}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
                     &raquo;
                 </a>
             </li>

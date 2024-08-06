@@ -19,7 +19,7 @@ public class PostListResDTO {
 
 	private Date updatedAt;
 
-	private String category;
+	private String categoryName;
 
 	private long views;
 
@@ -30,6 +30,7 @@ public class PostListResDTO {
 				.title(vo.getTitle())
 				.createdAt(vo.getCreatedAt())
 				.updatedAt(vo.getUpdatedAt())
+				.categoryName(vo.getCategoryName())
 				.views(vo.getViews())
 				.build();
 	}

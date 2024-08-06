@@ -1,13 +1,17 @@
 package arraysort.project.board.app.post.domain;
 
 import arraysort.project.board.app.utils.UserUtil;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PostVO {
 
 	private Long postId;    // 게시글 고유 번호
@@ -28,6 +32,8 @@ public class PostVO {
 
 	private String content;    // 내용
 
+	private String categoryName;    // 카테고리 이름
+
 	private long views;    // 조회수
 
 	private String privateFlag;    // 비공개 여부
@@ -46,8 +52,7 @@ public class PostVO {
 
 	private Date updatedAt;    // 수정 날짜
 
-	// 유저 게시물 추가
-	public static PostVO of(PostAddReqDTO dto, long boardId) {
+	public static PostVO insertOf(PostAddReqDTO dto, long boardId) {
 		return PostVO.builder()
 				.userId(UserUtil.getCurrentLoginUserId())
 				.boardId(boardId)
@@ -61,7 +66,7 @@ public class PostVO {
 	}
 
 	// 게시물 수정
-	public static PostVO of(PostEditReqDTO dto) {
+	public static PostVO updateOf(PostEditReqDTO dto) {
 		return PostVO.builder()
 				.title(dto.getTitle())
 				.content(dto.getContent())

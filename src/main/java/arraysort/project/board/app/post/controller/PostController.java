@@ -24,7 +24,7 @@ public class PostController {
 	// 보드 페이지 이동, 게시글 리스트 조회
 	@GetMapping
 	public String showBoardPage(@PathVariable long boardId, @ModelAttribute("page") PageReqDTO dto, Model model) {
-		// TODO : 게시판 조회 model.addAttribute("pagination", postService.findPostListWithPaging(dto));
+		model.addAttribute("pagination", postService.findPostListWithPaging(dto, boardId));
 		model.addAttribute("boardId", boardId);
 		return "post/post";
 	}
