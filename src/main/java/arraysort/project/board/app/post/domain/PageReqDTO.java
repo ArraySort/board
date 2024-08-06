@@ -7,17 +7,17 @@ import lombok.Setter;
 @Setter
 public class PageReqDTO {
 
-    private int page;
+	private int page;
 
-    private String search;
+	private String search;
 
-    private SearchType searchType;
+	private SearchType searchType;
 
-    private SortType sortType;
+	private SortType sortType;
 
-    public PageReqDTO() {
-        this.page = 1;
-        this.searchType = SearchType.ALL;
-        this.sortType = SortType.ID;
-    }
+	public PageReqDTO() {
+		this.page = 1;
+		this.searchType = SearchType.ALL;
+		this.sortType = SortType.ID;
+	}
 }

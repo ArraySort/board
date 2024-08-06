@@ -9,29 +9,28 @@ import java.util.Date;
 @Builder
 public class PostListResDTO {
 
-    private long postId;
+	private long postId;
 
-    private String userName;
+	private String userName;
 
-    private String title;
+	private String title;
 
-    private Date createdAt;
+	private Date createdAt;
 
-    private Date updatedAt;
+	private Date updatedAt;
 
-    private String category;
+	private String category;
 
-    private long views;
+	private long views;
 
-    public static PostListResDTO of(PostVO vo) {
-        return PostListResDTO.builder()
-                .postId(vo.getPostId())
-                .userName(vo.getUserName())
-                .title(vo.getTitle())
-                .createdAt(vo.getCreatedAt())
-                .updatedAt(vo.getUpdatedAt())
-                .category(vo.getCategory())
-                .views(vo.getViews())
-                .build();
-    }
+	public static PostListResDTO of(PostVO vo) {
+		return PostListResDTO.builder()
+				.postId(vo.getPostId())
+				.userName(vo.getUserName())
+				.title(vo.getTitle())
+				.createdAt(vo.getCreatedAt())
+				.updatedAt(vo.getUpdatedAt())
+				.views(vo.getViews())
+				.build();
+	}
 }

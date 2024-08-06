@@ -4,6 +4,7 @@
 
 <mapper namespace="arraysort.project.board.app.category.mapper.CategoryMapper">
 
+    <!-- 카테고리 세부 내용 조회 -->
     <select id="selectCategoryDetailById" parameterType="long" resultType="arraysort.project.board.app.category.domain.CategoryVO">
         select category_id,
                board_id,
