@@ -13,7 +13,13 @@ public class PostDetailResDTO {
 
 	private String userId;
 
+	private Long boardId;
+
 	private String userName;
+
+	private String boardName;
+
+	private String categoryName;
 
 	private String title;
 
@@ -23,17 +29,16 @@ public class PostDetailResDTO {
 
 	private Date updatedAt;
 
-	private String category;
-
-	private BoardType type;
-
 	private long views;
 
 	public static PostDetailResDTO of(PostVO vo) {
 		return builder()
 				.postId(vo.getPostId())
 				.userId(vo.getUserId())
+				.boardId(vo.getBoardId())
 				.userName(vo.getUserName())
+				.boardName(vo.getBoardName())
+				.categoryName(vo.getCategoryName())
 				.title(vo.getTitle())
 				.content(vo.getContent())
 				.createdAt(vo.getCreatedAt())
