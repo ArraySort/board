@@ -37,30 +37,38 @@ public class PostService {
 	public void addPost(PostAddReqDTO dto, long boardId) {
 		PostVO vo = PostVO.insertOf(dto, boardId);
 
-		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
-				.orElseThrow(BoardNotFoundException::new);
-		UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
-				.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
-		CategoryVO categoryDetail = categoryMapper.selectCategoryDetailById(dto.getCategoryId())
-				.orElseThrow(CategoryNotFoundException::new);
-
 		// TODO : 갤러리 게시판인지, 일반 게시판인지 검증 필요
 
-		if (boardDetail.getActivateFlag().equals("N")) {
+		// [게시판 검증]
+		// 1. 게시글을 추가하려는 게시판 존재하는지 검증
+		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
+				.orElseThrow(BoardNotFoundException::new);
+
+		// 2. 게시글을 추가하려는 게시판이 비활성화 상태인지, 삭제된 상태인지 검증
+		if (boardDetail.getActivateFlag().equals("N") || boardDetail.getDeleteFlag().equals("Y")) {
 			throw new BoardNotFoundException();
 		}
 
-		// 게시글에서 고른 카테고리가 게시판에서 설정한 값과 일치하지 않을 때
+		// 3. 게시글 추가 시 선택한 카테고리가 존재하는지 검증
+		CategoryVO categoryDetail = categoryMapper.selectCategoryDetailById(dto.getCategoryId())
+				.orElseThrow(CategoryNotFoundException::new);
+
+		// 4. 게시글에서 고른 카테고리가 게시판에서 설정한 값과 일치하지 않을 때
 		if (!Objects.equals(categoryDetail.getBoardId(), boardDetail.getBoardId())) {
 			throw new InvalidPrincipalException("올바르지 않은 카테고리입니다.");
 		}
 
-		// 게시글 작성자 상태 확인 -> 비활성화 사용자, 삭제된 사용자
+		// [사용자 검증] TODO : 로그인 하지 않은 사용자가 접속했을 경우 조회 가능한 게시판 존재
+		// 1. 게시글을 추가할 때 작성자가 현재 로그인 한 사용자인지 검증
+		UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
+				.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
+
+		// 2. 게시글을 추가할 때 작성자가 비활성화 상태, 삭제된 상태인지 검증
 		if (Objects.equals(userDetail.getActivateFlag(), "N") || Objects.equals(userDetail.getDeleteFlag(), "Y")) {
 			throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
 		}
 
-		// 게시판 설정 접근 등급 보다 사용자 접근 등급이 낮을 경우, 사용자 접근 등급이 2미만 인 경우
+		// 3. 게시글을 추가하려는 게시판의 접근 가능한 사용자 등급이 현재 작성자의 등급보다 높은 경우, 작성자의 등급이 작성 가능 등급보다 낮은 경우 검증
 		if ((boardDetail.getAccessLevel() > userDetail.getAccessLevel()) || userDetail.getAccessLevel() < 2) {
 			throw new InvalidPrincipalException("올바르지 않은 사용자 접근 등급입니다.");
 		}
@@ -71,6 +79,30 @@ public class PostService {
 	// 게시글 리스트 조회(페이징 적용)
 	@Transactional(readOnly = true)
 	public PageResDTO findPostListWithPaging(PageReqDTO dto, long boardId) {
+		// [게시판 검증]
+		// 1. 현재 조회하는 게시판이 존재하는지 검증
+		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
+				.orElseThrow(BoardNotFoundException::new);
+
+		// 2.현재 조회하는 게시판이 비활성화 상태인지, 삭제된 상태인지 검증
+		if (boardDetail.getActivateFlag().equals("N") || boardDetail.getDeleteFlag().equals("Y")) {
+			throw new BoardNotFoundException();
+		}
+
+		// [사용자 검증] TODO : 로그인 하지 않은 사용자가 접속했을 경우 조회 가능한 게시판 존재
+		// 1. 현재 조회하는 사용자가 존재하는지 검증
+		UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
+				.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
+
+		// 2. 현재 조회하는 사용자가 비활성화 상태, 삭제된 상태인지 검증
+		if (Objects.equals(userDetail.getActivateFlag(), "N") || Objects.equals(userDetail.getDeleteFlag(), "Y")) {
+			throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
+		}
+
+		// 3. 현재 조회하는 게시판의 접근 가능한 사용자 등급이 현재 사용자 등급보다 높은 경우
+		if ((boardDetail.getAccessLevel() > userDetail.getAccessLevel())) {
+			throw new InvalidPrincipalException("현재 등급으로는 게시판에 접속할 수 없습니다.");
+		}
 
 		int totalPostCount = postMapper.selectTotalPostCount(dto);
 		int offset = (dto.getPage() - 1) * Constants.PAGE_ROW_COUNT;
