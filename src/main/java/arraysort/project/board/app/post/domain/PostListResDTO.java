@@ -23,6 +23,8 @@ public class PostListResDTO {
 
 	private long views;
 
+	private String privateFlag;
+
 	public static PostListResDTO of(PostVO vo) {
 		return PostListResDTO.builder()
 				.postId(vo.getPostId())
@@ -32,6 +34,7 @@ public class PostListResDTO {
 				.updatedAt(vo.getUpdatedAt())
 				.categoryName(vo.getCategoryName())
 				.views(vo.getViews())
+				.privateFlag(vo.getPrivateFlag())
 				.build();
 	}
 }

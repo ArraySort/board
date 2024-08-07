@@ -52,6 +52,7 @@
                 <th>수정시간</th>
                 <th>카테고리</th>
                 <th>조회수</th>
+                <th>비공개</th>
             </tr>
             </thead>
 
@@ -67,6 +68,7 @@
                     <td><fmt:formatDate value="${post.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></td>
                     <td>${post.categoryName}</td>
                     <td>${post.views}</td>
+                    <td>${post.privateFlag}</td>
                 </tr>
             </c:forEach>
             </tbody>
