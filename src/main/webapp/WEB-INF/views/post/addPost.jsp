@@ -67,10 +67,10 @@
 
         <div>
             <label for="privateFlag-Y">공개</label>
-            <input type="radio" id="privateFlag-Y" name="privateFlag" value="Y" checked/>
+            <input type="radio" id="privateFlag-Y" name="privateFlag" value="N" checked/>
 
             <label for="privateFlag-N">비공개</label>
-            <input type="radio" id="privateFlag-N" name="privateFlag" value="N"/>
+            <input type="radio" id="privateFlag-N" name="privateFlag" value="Y"/>
         </div>
 
         <div>

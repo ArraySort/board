@@ -34,7 +34,7 @@ public class UserVO {
 				.userId(dto.getUserId())
 				.userPassword(dto.getUserPassword())
 				.userName(dto.getUserName())
-				.accessLevel(2)
+				.accessLevel(2) // TODO : access_level 수정
 				.createdBy(dto.getUserId())
 				.build();
 	}
