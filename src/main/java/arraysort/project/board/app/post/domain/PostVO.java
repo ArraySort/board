@@ -74,6 +74,8 @@ public class PostVO {
 		return PostVO.builder()
 				.title(dto.getTitle())
 				.content(dto.getContent())
+				.categoryId(dto.getCategoryId())
+				.privateFlag(dto.getPrivateFlag())
 				.build();
 	}
 }
