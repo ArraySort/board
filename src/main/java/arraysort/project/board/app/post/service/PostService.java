@@ -58,7 +58,7 @@ public class PostService {
 			throw new InvalidPrincipalException("올바르지 않은 카테고리입니다.");
 		}
 
-		// [사용자 검증] TODO : 로그인 하지 않은 사용자가 접속했을 경우 조회 가능한 게시판 존재
+		// [사용자 검증]
 		// 1. 게시글을 추가할 때 작성자가 현재 로그인 한 사용자인지 검증
 		UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
 				.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
@@ -89,19 +89,25 @@ public class PostService {
 			throw new BoardNotFoundException();
 		}
 
-		// [사용자 검증] TODO : 로그인 하지 않은 사용자가 접속했을 경우 조회 가능한 게시판 존재
-		// 1. 현재 조회하는 사용자가 존재하는지 검증
-		UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
-				.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
+		// [사용자 검증]
+		if (UserUtil.isAuthenticatedUser()) {
+			// 1. 현재 조회하는 사용자가 존재하는지 검증
+			UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
+					.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
 
-		// 2. 현재 조회하는 사용자가 비활성화 상태, 삭제된 상태인지 검증
-		if (Objects.equals(userDetail.getActivateFlag(), "N") || Objects.equals(userDetail.getDeleteFlag(), "Y")) {
-			throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
-		}
+			// 2. 현재 조회하는 사용자가 비활성화 상태, 삭제된 상태인지 검증
+			if (Objects.equals(userDetail.getActivateFlag(), "N") || Objects.equals(userDetail.getDeleteFlag(), "Y")) {
+				throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
+			}
 
-		// 3. 현재 조회하는 게시판의 접근 가능한 사용자 등급이 현재 사용자 등급보다 높은 경우
-		if ((boardDetail.getAccessLevel() > userDetail.getAccessLevel())) {
-			throw new InvalidPrincipalException("현재 등급으로는 게시판에 접속할 수 없습니다.");
+			// 3. 현재 조회하는 게시판의 접근 가능한 사용자 등급이 현재 사용자 등급보다 높은 경우
+			if ((boardDetail.getAccessLevel() > userDetail.getAccessLevel())) {
+				throw new InvalidPrincipalException("현재 등급으로는 게시판에 접속할 수 없습니다. 필요 등급 : " + boardDetail.getAccessLevel());
+			}
+		} else {    // 4. 비로그인 사용자 검증
+			if (boardDetail.getAccessLevel() != 0) {
+				throw new InvalidPrincipalException("현재 등급으로는 게시판에 접속할 수 없습니다. 로그인이 필요합니다.");
+			}
 		}
 
 		int totalPostCount = postMapper.selectTotalPostCount(dto);
@@ -137,17 +143,23 @@ public class PostService {
 		}
 
 		// [사용자 검증]
-		// 1. 현재 조회 한 사용자가 존재하는지 검증 TODO : 로그인 하지 않은 사용자가 접속했을 경우 조회 가능한 게시판 존재
-		UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
-				.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
+		if (UserUtil.isAuthenticatedUser()) {
+			// 1. 현재 조회 한 사용자가 존재하는지 검증
+			UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
+					.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
 
-		// 2. 현재 조회하는 사용자가 비활성화 상태, 삭제된 상태인지 검증
-		if (Objects.equals(userDetail.getActivateFlag(), "N") || Objects.equals(userDetail.getDeleteFlag(), "Y")) {
-			throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
-		}
-		// 3. 현재 조회하는 게시판의 접근 가능한 사용자 등급이 현재 사용자 등급보다 높은 경우
-		if ((boardDetail.getAccessLevel() > userDetail.getAccessLevel())) {
-			throw new InvalidPrincipalException("현재 등급으로는 게시판에 접속할 수 없습니다.");
+			// 2. 현재 조회하는 사용자가 비활성화 상태, 삭제된 상태인지 검증
+			if (Objects.equals(userDetail.getActivateFlag(), "N") || Objects.equals(userDetail.getDeleteFlag(), "Y")) {
+				throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
+			}
+			// 3. 현재 조회하는 게시판의 접근 가능한 사용자 등급이 현재 사용자 등급보다 높은 경우
+			if ((boardDetail.getAccessLevel() > userDetail.getAccessLevel())) {
+				throw new InvalidPrincipalException("현재 등급으로는 게시판에 접속할 수 없습니다.");
+			}
+		} else {    // 4. 비로그인 사용자 검증
+			if (boardDetail.getAccessLevel() != 0) {
+				throw new InvalidPrincipalException("현재 등급으로는 게시판에 접속할 수 없습니다. 로그인이 필요합니다.");
+			}
 		}
 
 		// [게시글 검증]
@@ -200,6 +212,24 @@ public class PostService {
 		Optional<Integer> validPostId = postMapper.selectExistPostIdByUserId(postId, UserUtil.getCurrentLoginUserId());
 		if (validPostId.isEmpty()) {
 			throw new IdNotFoundException();
+		}
+	}
+
+	/**
+	 * 게시글 작성 페이지 이동에 대한 검증
+	 * 로그인 사용자 : Level 2 이상 가능
+	 * 비로그인 사용자 : 불가능
+	 */
+	public void validateAddByUserLevel() {
+		if (UserUtil.isAuthenticatedUser()) {
+			UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
+					.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
+
+			if (userDetail.getAccessLevel() < 2) {
+				throw new InvalidPrincipalException("게시글을 작성하려면 등급 2 이상이어야 합니다.");
+			}
+		} else {
+			throw new InvalidPrincipalException("게시글을 작성하려면 로그인이 필요합니다.");
 		}
 	}
 }

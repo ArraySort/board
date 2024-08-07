@@ -15,43 +15,44 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] permittedUrls = {"/", "/home", "/user/login", "/user/process-login", "/user/signup", "/user/process-signup", "/post", "/post/detail/**", "/WEB-INF/views/**", "/resources/**"};
+	private final String[] permittedUrls = {"/", "/home", "/user/login", "/user/process-login", "/user/signup", "/user/process-signup", "/WEB-INF/views/**", "/resources/**"};
 
-    private final LoginFailureHandler loginFailureHandler;
+	private final LoginFailureHandler loginFailureHandler;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(permittedUrls).permitAll()
-                        .anyRequest()
-                        .authenticated()
-                )
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(permittedUrls).permitAll()
+						.requestMatchers("/{boardId}/post/**").permitAll()
+						.anyRequest()
+						.authenticated()
+				)
 
-                .formLogin(form -> form
-                        .loginPage("/user/login")
-                        .loginProcessingUrl("/user/process-login")
-                        .usernameParameter("userId")
-                        .passwordParameter("userPassword")
-                        .failureHandler(loginFailureHandler)
-                        .defaultSuccessUrl("/home")
-                        .permitAll()
-                )
+				.formLogin(form -> form
+						.loginPage("/user/login")
+						.loginProcessingUrl("/user/process-login")
+						.usernameParameter("userId")
+						.passwordParameter("userPassword")
+						.failureHandler(loginFailureHandler)
+						.defaultSuccessUrl("/home")
+						.permitAll()
+				)
 
-                .logout(logout -> logout
-                        .logoutUrl("/process-logout")
-                        .logoutSuccessUrl("/home")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .permitAll()
-                );
+				.logout(logout -> logout
+						.logoutUrl("/process-logout")
+						.logoutSuccessUrl("/home")
+						.invalidateHttpSession(true)
+						.deleteCookies("JSESSIONID")
+						.permitAll()
+				);
 
-        return http.build();
-    }
+		return http.build();
+	}
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }
 

@@ -32,6 +32,8 @@ public class PostController {
 	// 게시글 추가 페이지 이동
 	@GetMapping("/add")
 	public String showAddPostPage(@PathVariable long boardId, Model model) {
+		postService.validateAddByUserLevel();
+
 		model.addAttribute("categories", categoryService.findCategoryList(boardId));
 		return "post/addPost";
 	}
