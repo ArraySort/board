@@ -20,7 +20,7 @@
 
     <div>
         <!-- 검색기능 : 제목 입력 -->
-        <form class="ms-auto d-inline-block m-2" method="get" action="/post">
+        <form class="ms-auto d-inline-block m-2" method="get" action="/${boardId}/post">
             <div class="input-group">
                 <select name="sortType" aria-label="sortType select">
                     <option value="ID" ${page.sortType == 'ID' ? 'selected' : ''}>번호순</option>
@@ -60,7 +60,7 @@
                 <tr>
                     <td>${post.postId}</td>
                     <td>
-                        <a href="${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">${post.title}</a>
+                        <a href="/${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">${post.title}</a>
                     </td>
                     <td>${post.userName}</td>
                     <td><fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/></td>

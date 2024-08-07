@@ -39,7 +39,7 @@
 <div style="text-align: center">
     <h1>게시글 수정</h1>
     <div class="container" style="max-width: 850px;">
-        <form method="post" action="/post/detail/${postDetail.postId}/edit">
+        <form method="post" action="/${boardId}/post/detail/${postDetail.postId}/edit">
             <sec:csrfInput/>
 
             <input type="hidden" name="search" value="${page.search}">
@@ -92,7 +92,7 @@
             </div>
 
             <button type="submit">저장</button>
-            <a href="/post/detail/${postDetail.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
+            <a href="/${boardId}}/post/detail/${postDetail.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
                 <button type="button">취소</button>
             </a>
         </form>

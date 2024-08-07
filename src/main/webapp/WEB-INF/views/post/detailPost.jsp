@@ -49,7 +49,7 @@
         <h3>조회수 : ${postDetail.views}</h3>
 
         <div class="d-flex justify-content-center">
-            <form method="get" action="/post">
+            <form method="get" action="/${boardId}}/post">
                 <input type="hidden" name="search" value="${page.search}">
                 <input type="hidden" name="searchType" value="${page.searchType}">
                 <input type="hidden" name="sortType" value="${page.sortType}">
@@ -63,9 +63,9 @@
             %>
 
             <c:if test="${postDetail.userId == currentUserId}">
-                <button type="button" onclick="location.href='/post/detail/${postDetail.postId}/edit'">수정
+                <button type="button" onclick="location.href='/${boardId}}/post/detail/${postDetail.postId}/edit'">수정
                 </button>
-                <form method="post" action="/post/detail/${postDetail.postId}/delete">
+                <form method="post" action="/${boardId}/post/detail/${postDetail.postId}/delete">
                     <sec:csrfInput/>
                     <button type="submit">삭제</button>
                 </form>
