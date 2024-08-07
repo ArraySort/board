@@ -122,9 +122,9 @@ public class PostService {
 
 	// 게시글 세부내용 조회, 게시글 조회수 증가
 	@Transactional
-	public PostDetailResDTO findPostDetailByPostId(long postId) {
+	public PostDetailResDTO findPostDetailByPostId(long postId, long boardId) {
 		increaseViews(postId);
-		return PostDetailResDTO.of(postMapper.selectPostDetailByPostId(postId)
+		return PostDetailResDTO.of(postMapper.selectPostDetailByPostId(postId, boardId)
 				.orElseThrow(DetailNotFoundException::new));
 	}
 

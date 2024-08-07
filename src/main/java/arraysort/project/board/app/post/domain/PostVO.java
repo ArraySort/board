@@ -28,11 +28,13 @@ public class PostVO {
 
 	private String userName;    // 사용자 이름
 
+	private String boardName;    // 게시판 이름
+
+	private String categoryName;    // 카테고리 이름
+
 	private String title;    // 제목
 
 	private String content;    // 내용
-
-	private String categoryName;    // 카테고리 이름
 
 	private long views;    // 조회수
 

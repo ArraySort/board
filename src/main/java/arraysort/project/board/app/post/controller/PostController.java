@@ -48,14 +48,14 @@ public class PostController {
 	// 게시글 세부 페이지 이동
 	@GetMapping("/detail/{postId}")
 	public String showPostDetailPage(@PathVariable long boardId, @PathVariable long postId, @ModelAttribute("page") PageReqDTO dto, Model model) {
-		model.addAttribute("postDetail", postService.findPostDetailByPostId(postId));
+		model.addAttribute("postDetail", postService.findPostDetailByPostId(postId, boardId));
 		return "post/detailPost";
 	}
 
 	// 게시글 수정 페이지 이동
 	@GetMapping("/detail/{postId}/edit")
-	public String showPostEditPage(@PathVariable long boardId, @PathVariable long postId, Model model) {
-		model.addAttribute("postDetail", postService.findPostDetailByPostId(postId));
+	public String showPostEditPage(@PathVariable long boardId, @PathVariable long postId, @ModelAttribute("page") PageReqDTO dto, Model model) {
+		model.addAttribute("postDetail", postService.findPostDetailByPostId(postId, boardId));
 		return "post/editPost";
 	}
 
