@@ -123,9 +123,50 @@ public class PostService {
 	// 게시글 세부내용 조회, 게시글 조회수 증가
 	@Transactional
 	public PostDetailResDTO findPostDetailByPostId(long postId, long boardId) {
+		// 조회수 증가
 		increaseViews(postId);
-		return PostDetailResDTO.of(postMapper.selectPostDetailByPostId(postId, boardId)
+
+		// [게시판 검증]
+		// 1. 게시글 세부내용 조회 한 게시글의 게시판이 존재하는지 검증
+		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
+				.orElseThrow(BoardNotFoundException::new);
+
+		// 2. 게시글 세부내용 조회 한 게시글의 게시판이 비활성화 상태인지, 삭제된 상태인지 검증
+		if (boardDetail.getActivateFlag().equals("N") || boardDetail.getDeleteFlag().equals("Y")) {
+			throw new BoardNotFoundException();
+		}
+
+		// [사용자 검증]
+		// 1. 현재 조회 한 사용자가 존재하는지 검증 TODO : 로그인 하지 않은 사용자가 접속했을 경우 조회 가능한 게시판 존재
+		UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
+				.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
+
+		// 2. 현재 조회하는 사용자가 비활성화 상태, 삭제된 상태인지 검증
+		if (Objects.equals(userDetail.getActivateFlag(), "N") || Objects.equals(userDetail.getDeleteFlag(), "Y")) {
+			throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
+		}
+		// 3. 현재 조회하는 게시판의 접근 가능한 사용자 등급이 현재 사용자 등급보다 높은 경우
+		if ((boardDetail.getAccessLevel() > userDetail.getAccessLevel())) {
+			throw new InvalidPrincipalException("현재 등급으로는 게시판에 접속할 수 없습니다.");
+		}
+
+		// [게시글 검증]
+		// 1. 조회 한 게시글이 존재하는지 검증
+		PostDetailResDTO postDetail = PostDetailResDTO.of(postMapper.selectPostDetailByPostId(postId, boardId)
 				.orElseThrow(DetailNotFoundException::new));
+
+		// 2. 조회 한 게시글의 삭제, 비활성화 여부 검증
+		if (postDetail.getActivateFlag().equals("N") || postDetail.getDeleteFlag().equals("Y")) {
+			throw new DetailNotFoundException();
+		}
+
+		// 3. 조회 한 게시글의 비공개 여부 검증 : 비공개 게시글은 작성자만 접근 가능
+		if (postDetail.getPrivateFlag().equals("Y") &&
+				!Objects.equals(postDetail.getUserId(), UserUtil.getCurrentLoginUserId())) {
+			throw new InvalidPrincipalException("비공개 게시글은 작성자만 볼 수 있습니다.");
+		}
+
+		return postDetail;
 	}
 
 	// 게시글 수정

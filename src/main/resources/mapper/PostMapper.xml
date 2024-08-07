@@ -32,11 +32,12 @@
             resultType="arraysort.project.board.app.post.domain.PostVO">
         select p.post_id,
                p.user_id,
-               u.user_name,
-               p.title,
-               c.category_name,
-               p.views,
                p.category_id,
+               u.user_name,
+               c.category_name,
+               p.title,
+               p.views,
+               p.private_flag,
                p.created_at,
                p.updated_at
         from post p
@@ -116,6 +117,9 @@
                c.category_name,
                p.title,
                p.content,
+               p.private_flag,
+               p.activate_flag,
+               p.delete_flag,
                p.created_at,
                p.updated_at,
                p.views

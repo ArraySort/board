@@ -40,15 +40,16 @@ public class GlobalExceptionControllerAdvice {
 		return getModelAndView("해당 게시물을 찾을 수 없습니다.");
 	}
 
+	// 이미지 업로드 시 발생 예외
 	@ExceptionHandler(ImageUploadException.class)
-	public ModelAndView handleImageUploadException(String message) {
-		return getModelAndView(message);
+	public ModelAndView handleImageUploadException(ImageUploadException e) {
+		return getModelAndView(e.getMessage());
 	}
 
-	// 인가된 사용자 검증 예외 : Spring Security
+	// 관리자가 설정한 정책에 위반하는 예외
 	@ExceptionHandler(InvalidPrincipalException.class)
-	public ModelAndView handleInvalidPrincipalException() {
-		return getModelAndView("올바르지 않은 접근입니다.");
+	public ModelAndView handleInvalidPrincipalException(InvalidPrincipalException e) {
+		return getModelAndView(e.getMessage());
 	}
 
 	// ModelAttribute 바인딩 시 Validation 예외

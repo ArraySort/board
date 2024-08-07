@@ -44,6 +44,16 @@
             </textarea>
         </div>
 
+        <div>
+            <label for="privateFlag-Y">공개</label>
+            <input type="radio" id="privateFlag-Y" name="privateFlag" value="N"
+            ${postDetail.privateFlag == 'N' ? 'checked' : ''} disabled/>
+
+            <label for="privateFlag-N">비공개</label>
+            <input type="radio" id="privateFlag-N" name="privateFlag" value="Y"
+            ${postDetail.privateFlag == 'Y' ? 'checked' : ''} disabled/>
+        </div>
+
         <h3>작성 시간 : <fmt:formatDate value="${postDetail.createdAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
         <h3>수정 시간 : <fmt:formatDate value="${postDetail.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
         <h3>조회수 : ${postDetail.views}</h3>

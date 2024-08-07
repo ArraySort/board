@@ -25,6 +25,12 @@ public class PostDetailResDTO {
 
 	private String content;
 
+	private String privateFlag;
+
+	private String activateFlag;
+
+	private String deleteFlag;
+
 	private Date createdAt;
 
 	private Date updatedAt;
@@ -41,6 +47,9 @@ public class PostDetailResDTO {
 				.categoryName(vo.getCategoryName())
 				.title(vo.getTitle())
 				.content(vo.getContent())
+				.privateFlag(vo.getPrivateFlag())
+				.activateFlag(vo.getActivateFlag())
+				.deleteFlag(vo.getDeleteFlag())
 				.createdAt(vo.getCreatedAt())
 				.updatedAt(vo.getUpdatedAt())
 				.views(vo.getViews())

@@ -46,6 +46,8 @@ public class PostVO {
 
 	private String adoptedCommentFlag;    // 채택 댓글 여부
 
+	private String deleteFlag;    // 삭제 여부
+
 	private String createdBy;    // 최초 생성자
 
 	private String updatedBy;    // 최종 수정자
