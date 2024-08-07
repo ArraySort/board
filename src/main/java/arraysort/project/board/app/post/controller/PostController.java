@@ -58,13 +58,14 @@ public class PostController {
 	@GetMapping("/detail/{postId}/edit")
 	public String showPostEditPage(@PathVariable long boardId, @PathVariable long postId, @ModelAttribute("page") PageReqDTO dto, Model model) {
 		model.addAttribute("postDetail", postService.findPostDetailByPostId(postId, boardId));
+		model.addAttribute("categories", categoryService.findCategoryList(boardId));
 		return "post/editPost";
 	}
 
 	// 게시글 수정 요청
 	@PostMapping("/detail/{postId}/edit")
 	public String processModifyPost(@PathVariable long boardId, @PathVariable long postId, @Valid @ModelAttribute PostEditReqDTO dto, Model model) {
-		postService.modifyPost(dto, postId);
+		postService.modifyPost(dto, postId, boardId);
 
 		ControllerUtil.addMessageAndRequest(model, "게시글이 수정되었습니다.", "MODIFY_POST");
 		model.addAttribute("postId", postId);

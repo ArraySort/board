@@ -183,8 +183,56 @@ public class PostService {
 
 	// 게시글 수정
 	@Transactional
-	public void modifyPost(PostEditReqDTO dto, long postId) {
-		validatePostIdByUserId(postId);
+	public void modifyPost(PostEditReqDTO dto, long postId, long boardId) {
+		// [게시판 검증]
+		// 1. 게시글을 수정하려는 게시판 존재하는지 검증
+		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
+				.orElseThrow(BoardNotFoundException::new);
+
+		// 2. 게시글을 수정하려는 게시판이 비활성화 상태인지, 삭제된 상태인지 검증
+		if (boardDetail.getActivateFlag().equals("N") || boardDetail.getDeleteFlag().equals("Y")) {
+			throw new BoardNotFoundException();
+		}
+
+		// 3. 게시글 수정 시 선택한 카테고리가 존재하는지 검증
+		CategoryVO categoryDetail = categoryMapper.selectCategoryDetailById(dto.getCategoryId())
+				.orElseThrow(CategoryNotFoundException::new);
+
+		// 4. 게시글에서 고른 카테고리가 게시판에서 설정한 값과 일치하지 않을 때
+		if (!Objects.equals(categoryDetail.getBoardId(), boardDetail.getBoardId())) {
+			throw new InvalidPrincipalException("올바르지 않은 카테고리입니다.");
+		}
+
+		// [사용자 검증]
+		// 1. 게시글을 수정할 때 수정자가 현재 로그인 한 사용자인지 검증
+		UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
+				.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
+
+		// 2. 게시글을 수정할 때 수정자가 비활성화 상태, 삭제된 상태인지 검증
+		if (Objects.equals(userDetail.getActivateFlag(), "N") || Objects.equals(userDetail.getDeleteFlag(), "Y")) {
+			throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
+		}
+
+		// 3. 게시글을 수정하려는 게시판의 접근 가능한 사용자 등급이 현재 수정자의 등급보다 높은 경우, 수정자의 등급이 수정 가능 등급보다 낮은 경우 검증
+		if ((boardDetail.getAccessLevel() > userDetail.getAccessLevel()) || userDetail.getAccessLevel() < 2) {
+			throw new InvalidPrincipalException("올바르지 않은 사용자 접근 등급입니다.");
+		}
+
+		// [게시글 검증]
+		// 1. 수정하려는 게시글이 존재하는지 검증
+		PostDetailResDTO postDetail = PostDetailResDTO.of(postMapper.selectPostDetailByPostId(postId, boardId)
+				.orElseThrow(DetailNotFoundException::new));
+
+		// 2. 수정하려는 게시글이 현재 수정자의 것인지 검증
+		if (!Objects.equals(postDetail.getUserId(), UserUtil.getCurrentLoginUserId())) {
+			throw new IdNotFoundException();
+		}
+
+		// 3. 조회 한 게시글의 삭제, 비활성화 여부 검증
+		if (postDetail.getActivateFlag().equals("N") || postDetail.getDeleteFlag().equals("Y")) {
+			throw new DetailNotFoundException();
+		}
+
 		postMapper.updatePost(PostVO.updateOf(dto), postId);
 	}
 

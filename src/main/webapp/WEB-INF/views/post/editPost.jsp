@@ -48,27 +48,15 @@
             <input type="hidden" name="page" value="${page.page}">
 
             <h3>작성자 : ${postDetail.userName}</h3>
-
-            <%
-                // 게시판 타입
-                BoardType[] boardTypes = BoardType.values();
-                pageContext.setAttribute("boardTypes", boardTypes);
-            %>
+            <h3>카테고리 : ${postDetail.categoryName}</h3>
+            <h3>현재 게시판 : ${postDetail.boardName}</h3>
 
             <div>
-                <c:forEach var="boardType" items="${boardTypes}">
-                    <label for="type${boardType}">${boardType}</label>
-                    <input type="radio" id="type${boardType}" name="type"
-                           value="${boardType}" ${boardType == 'GENERAL' ? 'checked' : ''}/>
-                </c:forEach>
-            </div>
-
-            <div>
-                <select name="category" aria-label="category select" id="category">
+                <select name="categoryId" aria-label="category select" id="category">
                     <option value="">카테고리 선택</option>
-                    <option value="category1">카테고리 1번</option>
-                    <option value="category2">카테고리 2번</option>
-                    <option value="category3">카테고리 3번</option>
+                    <c:forEach var="category" items="${categories}">
+                        <option value="${category.categoryId}">${category.categoryName}</option>
+                    </c:forEach>
                 </select>
             </div>
 
@@ -90,6 +78,17 @@
                           placeholder="내용"
                           id="content">${postDetail.content}</textarea>
             </div>
+
+            <div>
+                <label for="privateFlag-Y">공개</label>
+                <input type="radio" id="privateFlag-Y" name="privateFlag" value="N" checked/>
+
+                <label for="privateFlag-N">비공개</label>
+                <input type="radio" id="privateFlag-N" name="privateFlag" value="Y"/>
+            </div>
+
+            <h3>작성 시간 : <fmt:formatDate value="${postDetail.createdAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
+            <h3>수정 시간 : <fmt:formatDate value="${postDetail.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
 
             <button type="submit">저장</button>
             <a href="/${boardId}/post/detail/${postDetail.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">

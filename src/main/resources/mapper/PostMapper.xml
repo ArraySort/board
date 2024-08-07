@@ -132,18 +132,18 @@
 
     <!-- 게시글 수정 -->
     <update id="updatePost">
-        update post_test
-        set title    = #{vo.title},
-            content  = #{vo.content},
-            category = #{vo.category},
-            type     = #{vo.type}
+        update post
+        set title = #{vo.title},
+            content = #{vo.content},
+            private_flag = #{vo.privateFlag},
+            category_id = #{vo.categoryId}
         where post_id = #{postId}
     </update>
 
     <!-- 게시글 고유번호 조회(유저아이디) -->
     <select id="selectExistPostIdByUserId" resultType="long">
         select post_id
-        from post_test
+        from post
         where post_id = #{postId}
           and user_id = #{userId}
     </select>
