@@ -56,6 +56,7 @@ public class PostVO {
 
 	private Date updatedAt;    // 수정 날짜
 
+	// 게시물 추가
 	public static PostVO insertOf(PostAddReqDTO dto, long boardId) {
 		return PostVO.builder()
 				.userId(UserUtil.getCurrentLoginUserId())

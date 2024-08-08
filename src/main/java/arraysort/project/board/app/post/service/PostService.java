@@ -251,23 +251,8 @@ public class PostService {
 		postMapper.updateViews(postId);
 	}
 
-	/**
-	 * 게시물 수정 시 로그인 한 유저의 post 인지, DB에 존재하는 지 검증
-	 *
-	 * @param postId 수정 요청한 게시물 고유 번호
-	 */
-	private void validatePostIdByUserId(long postId) {
-		Optional<Integer> validPostId = postMapper.selectExistPostIdByUserId(postId, UserUtil.getCurrentLoginUserId());
-		if (validPostId.isEmpty()) {
-			throw new IdNotFoundException();
-		}
-	}
-
-	/**
-	 * 게시글 작성 페이지 이동에 대한 검증
-	 * 로그인 사용자 : Level 2 이상 가능
-	 * 비로그인 사용자 : 불가능
-	 */
+	// 게시물 작성 페이지 요청에 대한 사용자 검증
+	@Transactional(readOnly = true)
 	public void validateAddByUserLevel() {
 		if (UserUtil.isAuthenticatedUser()) {
 			UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
@@ -278,6 +263,18 @@ public class PostService {
 			}
 		} else {
 			throw new InvalidPrincipalException("게시글을 작성하려면 로그인이 필요합니다.");
+		}
+	}
+
+	/**
+	 * 게시물 수정 시 로그인 한 유저의 post 인지, DB에 존재하는 지 검증
+	 *
+	 * @param postId 수정 요청한 게시물 고유 번호
+	 */
+	private void validatePostIdByUserId(long postId) {
+		Optional<Integer> validPostId = postMapper.selectExistPostIdByUserId(postId, UserUtil.getCurrentLoginUserId());
+		if (validPostId.isEmpty()) {
+			throw new IdNotFoundException();
 		}
 	}
 }
