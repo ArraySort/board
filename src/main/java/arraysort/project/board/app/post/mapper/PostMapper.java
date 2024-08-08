@@ -25,9 +25,6 @@ public interface PostMapper {
 	// 게시글 수정
 	void updatePost(PostVO vo, long postId);
 
-	// 게시글 고유번호 조회(유저아이디)
-	Optional<Integer> selectExistPostIdByUserId(long postId, String userId);
-
 	// 게시글 고유번호 조회
 	Optional<Integer> selectExistPostId(long postId);
 

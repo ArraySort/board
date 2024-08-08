@@ -81,10 +81,12 @@
 
             <div>
                 <label for="privateFlag-Y">공개</label>
-                <input type="radio" id="privateFlag-Y" name="privateFlag" value="N" checked/>
+                <input type="radio" id="privateFlag-Y" name="privateFlag" value="N"
+                ${postDetail.privateFlag == 'N' ? 'checked' : ''} />
 
                 <label for="privateFlag-N">비공개</label>
-                <input type="radio" id="privateFlag-N" name="privateFlag" value="Y"/>
+                <input type="radio" id="privateFlag-N" name="privateFlag" value="Y"
+                ${postDetail.privateFlag == 'Y' ? 'checked' : ''} />
             </div>
 
             <h3>작성 시간 : <fmt:formatDate value="${postDetail.createdAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
