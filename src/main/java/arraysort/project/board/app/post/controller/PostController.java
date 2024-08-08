@@ -75,7 +75,7 @@ public class PostController {
 	// 게시글 삭제 요청
 	@PostMapping("/detail/{postId}/delete")
 	public String processRemovePost(@PathVariable long boardId, @PathVariable long postId, Model model) {
-		postService.removePost(postId);
+		postService.removePost(postId, boardId);
 
 		ControllerUtil.addMessageAndRequest(model, "게시글이 삭제되었습니다.", "DELETE_POST");
 		return "common/alert";

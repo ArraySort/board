@@ -17,7 +17,7 @@
         } else if (request === "MODIFY_POST") {
             window.location.href = "/${boardId}/post/detail/${postId}"
         } else if (request === "DELETE_POST") {
-            window.location.href = "/post";
+            window.location.href = "/${boardId}/post";
         } else {
             window.history.back();
         }

@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -238,17 +237,48 @@ public class PostService {
 
 	// 게시글 삭제
 	@Transactional
-	public void removePost(long postId) {
-		validatePostIdByUserId(postId);
-		postMapper.deletePost(postId);
-	}
+	public void removePost(long postId, long boardId) {
+		// [게시판 검증]
+		// 1. 삭제하려는 게시글의 게시판이 존재하는지 검증
+		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
+				.orElseThrow(BoardNotFoundException::new);
 
-	// 게시글 조회수 증가
-	private void increaseViews(long postId) {
-		if (postMapper.selectExistPostId(postId).isEmpty()) {
+		// 2. 삭제하려는 게시글의 게시판이 비활성화 상태인지, 삭제된 상태인지 검증
+		if (boardDetail.getActivateFlag().equals("N") || boardDetail.getDeleteFlag().equals("Y")) {
+			throw new BoardNotFoundException();
+		}
+
+		// [사용자 검증]
+		// 1. 게시글을 삭제할 때 삭제자가 현재 로그인 한 사용자인지 검증
+		UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
+				.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
+
+		// 2. 게시글을 삭제할 때 삭제자가 비활성화 상태, 삭제된 상태인지 검증
+		if (Objects.equals(userDetail.getActivateFlag(), "N") || Objects.equals(userDetail.getDeleteFlag(), "Y")) {
+			throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
+		}
+
+		// 3. 게시글을 삭제하려는 게시판의 접근 가능한 사용자 등급이 현재 삭제자의 등급보다 높은 경우, 삭제자의 등급이 삭제 가능 등급보다 낮은 경우 검증
+		if ((boardDetail.getAccessLevel() > userDetail.getAccessLevel()) || userDetail.getAccessLevel() < 2) {
+			throw new InvalidPrincipalException("올바르지 않은 사용자 접근 등급입니다.");
+		}
+
+		// [게시글 검증]
+		// 1. 삭제하려는 게시글이 존재하는지 검증
+		PostDetailResDTO postDetail = PostDetailResDTO.of(postMapper.selectPostDetailByPostId(postId, boardId)
+				.orElseThrow(DetailNotFoundException::new));
+
+		// 2. 삭제하려는 게시글이 현재 수정자의 것인지 검증
+		if (!Objects.equals(postDetail.getUserId(), UserUtil.getCurrentLoginUserId())) {
 			throw new IdNotFoundException();
 		}
-		postMapper.updateViews(postId);
+
+		// 3. 삭제하려는 게시글의 삭제, 비활성화 여부 검증
+		if (postDetail.getActivateFlag().equals("N") || postDetail.getDeleteFlag().equals("Y")) {
+			throw new DetailNotFoundException();
+		}
+
+		postMapper.deletePost(postId);
 	}
 
 	// 게시물 작성 페이지 요청에 대한 사용자 검증
@@ -267,14 +297,14 @@ public class PostService {
 	}
 
 	/**
-	 * 게시물 수정 시 로그인 한 유저의 post 인지, DB에 존재하는 지 검증
+	 * 게시글 리스트에서 게시글 세부내용 조회 시 조회수 증가
 	 *
-	 * @param postId 수정 요청한 게시물 고유 번호
+	 * @param postId 세부내용 조회 한 게시글 ID
 	 */
-	private void validatePostIdByUserId(long postId) {
-		Optional<Integer> validPostId = postMapper.selectExistPostIdByUserId(postId, UserUtil.getCurrentLoginUserId());
-		if (validPostId.isEmpty()) {
+	private void increaseViews(long postId) {
+		if (postMapper.selectExistPostId(postId).isEmpty()) {
 			throw new IdNotFoundException();
 		}
+		postMapper.updateViews(postId);
 	}
 }
