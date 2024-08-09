@@ -6,6 +6,7 @@ import arraysort.project.board.app.category.domain.CategoryVO;
 import arraysort.project.board.app.category.mapper.CategoryMapper;
 import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.exception.*;
+import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.*;
 import arraysort.project.board.app.post.mapper.PostMapper;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -297,7 +299,7 @@ public class PostService {
 		PostDetailResDTO postDetail = PostDetailResDTO.of(postMapper.selectPostDetailByPostId(postId, boardId)
 				.orElseThrow(DetailNotFoundException::new));
 
-		// 2. 삭제하려는 게시글이 현재 수정자의 것인지 검증
+		// 2. 삭제하려는 게시글이 현재 삭제자 것인지 검증
 		if (!Objects.equals(postDetail.getUserId(), UserUtil.getCurrentLoginUserId())) {
 			throw new IdNotFoundException();
 		}
@@ -305,6 +307,18 @@ public class PostService {
 		// 3. 삭제하려는 게시글의 삭제, 비활성화 여부 검증
 		if (postDetail.getActivateFlag().equals("N") || postDetail.getDeleteFlag().equals("Y")) {
 			throw new DetailNotFoundException();
+		}
+
+		// 이미지 삭제, 게시글에서 이미지 업로드 허용한 경우
+		if (Objects.equals(boardDetail.getImageFlag(), "Y")) {
+			List<ImageVO> postImages = imageService.findImagesByPostId(postId);
+			List<Long> deletePostImageIds = new ArrayList<>();
+			
+			for (ImageVO postImage : postImages) {
+				deletePostImageIds.add(postImage.getImageId());
+			}
+
+			imageService.removeImages(deletePostImageIds);
 		}
 
 		postMapper.deletePost(postId);
