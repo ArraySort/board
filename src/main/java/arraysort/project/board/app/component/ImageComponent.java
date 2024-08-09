@@ -23,11 +23,18 @@ import java.util.UUID;
 public class ImageComponent {
 
 	@Value("${file.upload-path}")
-	private String uploadPath;
+	private String uploadPath;        // 이미지 업로드(저장) 경로
 
 	@Value("${file.allowed-extensions}")
-	private String allowedExtensions;
+	private String allowedExtensions;        // 허용된 확장자
 
+	/**
+	 * 이미지 다중 업로드
+	 * 이미지가 선택되지 않으면 빈 리스트 반환
+	 *
+	 * @param multipartFiles 업로드 하려는 이미지 파일들
+	 * @return ImageMetaData : originalName(원본이름), savedName(저장된 이름), imagePath(저장경로), size(크기)
+	 */
 	public List<ImageMetaData> uploadImages(List<MultipartFile> multipartFiles) {
 
 		List<ImageMetaData> images = new ArrayList<>();
@@ -41,6 +48,12 @@ public class ImageComponent {
 		return images;
 	}
 
+	/**
+	 * 이미지 기본 정보 저장
+	 *
+	 * @param multipartFile 업로드 하려는 이미지
+	 * @return 이미지 기본 정보
+	 */
 	private ImageMetaData uploadFile(MultipartFile multipartFile) {
 		String savedName = generateSavedFileName(multipartFile.getOriginalFilename());
 		String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
@@ -61,6 +74,12 @@ public class ImageComponent {
 				.build();
 	}
 
+	/**
+	 * 저장된 이미지 이름 생성(UUID 로 변경)
+	 *
+	 * @param originalName 업로드한 이미지 원본이름
+	 * @return UUID 로 변경된 이미지 이름
+	 */
 	private String generateSavedFileName(final String originalName) {
 		String uuid = UUID.randomUUID().toString().replace("-", "");
 		String extensions = StringUtils.getFilenameExtension(originalName);
@@ -73,6 +92,12 @@ public class ImageComponent {
 		return uuid + "." + extensions;
 	}
 
+	/**
+	 * 저장 경로에 새로운 디렉터리 생성
+	 *
+	 * @param path 업로드 경로
+	 * @return 업로드 경로
+	 */
 	private Path makeDirectories(final Path path) {
 		try {
 			if (!Files.exists(path)) {
