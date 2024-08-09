@@ -9,6 +9,62 @@
 <head>
     <title>Post Detail</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
+
+    <style>
+        #popupOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #popup {
+            position: relative;
+            width: 80%;
+            max-width: 800px;
+            height: 80%;
+            max-height: 600px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #popup img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+
+    <script>
+        // 이미지 팝업
+        function showImage(imageId) {
+            const imageUrl = "/image/" + imageId;
+
+            const popupOverlay = document.getElementById('popupOverlay');
+            const popupImage = document.getElementById('popupImage');
+            popupImage.src = imageUrl;
+
+            popupOverlay.style.display = 'flex';
+        }
+
+        function closePopup() {
+            const popupOverlay = document.getElementById('popupOverlay');
+            popupOverlay.style.display = 'none';
+        }
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closePopup();
+            }
+        });
+    </script>
 </head>
 <body>
 
@@ -42,6 +98,24 @@
                       id="content"
                       readonly>${postDetail.content}
             </textarea>
+        </div>
+
+        <h3>이미지 목록</h3>
+
+        <ul>
+            <c:forEach var="image" items="${images}">
+                <li class="list-group d-block">
+                    <a href="javascript:showImage(${image.imageId})">
+                            ${image.originalName}
+                    </a>
+                </li>
+            </c:forEach>
+        </ul>
+
+        <div id="popupOverlay" onclick="closePopup()">
+            <div id="popup" onclick="stopPropagation()">
+                <img id="popupImage" src="" alt="이미지"/>
+            </div>
         </div>
 
         <div>

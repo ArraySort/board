@@ -25,6 +25,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(permittedUrls).permitAll()
 						.requestMatchers("/{boardId}/post/**").permitAll()
+						.requestMatchers("/image/{imageId}").permitAll()
 						.anyRequest()
 						.authenticated()
 				)

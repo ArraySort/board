@@ -1,6 +1,7 @@
 package arraysort.project.board.app.post.controller;
 
 import arraysort.project.board.app.category.service.CategoryService;
+import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PostAddReqDTO;
 import arraysort.project.board.app.post.domain.PostEditReqDTO;
@@ -20,6 +21,8 @@ public class PostController {
 	private final PostService postService;
 
 	private final CategoryService categoryService;
+
+	private final ImageService imageService;
 
 	// 보드 페이지 이동, 게시글 리스트 조회
 	@GetMapping
@@ -51,6 +54,7 @@ public class PostController {
 	@GetMapping("/detail/{postId}")
 	public String showPostDetailPage(@PathVariable long boardId, @PathVariable long postId, @ModelAttribute("page") PageReqDTO dto, Model model) {
 		model.addAttribute("postDetail", postService.findPostDetailByPostId(postId, boardId));
+		model.addAttribute("images", imageService.findImagesByPostId(postId));
 		return "post/detailPost";
 	}
 
@@ -59,6 +63,7 @@ public class PostController {
 	public String showPostEditPage(@PathVariable long boardId, @PathVariable long postId, @ModelAttribute("page") PageReqDTO dto, Model model) {
 		model.addAttribute("postDetail", postService.findPostDetailByPostId(postId, boardId));
 		model.addAttribute("categories", categoryService.findCategoryList(boardId));
+		model.addAttribute("images", imageService.findImagesByPostId(postId));
 		return "post/editPost";
 	}
 

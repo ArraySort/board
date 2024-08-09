@@ -5,7 +5,7 @@
 <mapper namespace="arraysort.project.board.app.post.mapper.PostMapper">
 
     <!-- 게시글 추가 -->
-    <insert id="insertPost" parameterType="arraysort.project.board.app.post.domain.PostVO">
+    <insert id="insertPost" parameterType="arraysort.project.board.app.post.domain.PostVO" useGeneratedKeys="true" keyProperty="postId">
         insert into post(user_id,
                          admin_id,
                          board_id,

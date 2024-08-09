@@ -1,0 +1,8 @@
+package arraysort.project.board.app.exception;
+
+public class ImageUploadException extends RuntimeException {
+
+    public ImageUploadException(String message) {
+        super(message);
+    }
+}

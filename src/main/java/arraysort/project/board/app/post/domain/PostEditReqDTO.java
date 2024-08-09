@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -23,5 +26,9 @@ public class PostEditReqDTO {
 
 	@NotNull(message = "카테고리는 필수 입력사항입니다.")
 	private Long categoryId;
+
+	private List<MultipartFile> addedImages;
+
+	private List<Long> removedImageIds;
 
 }

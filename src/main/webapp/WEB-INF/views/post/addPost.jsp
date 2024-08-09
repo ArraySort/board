@@ -45,7 +45,7 @@
 
     <h1>게시글 추가</h1>
 
-    <form method="post" action="<c:url value="/${boardId}/post/process-add-post"/>">
+    <form enctype="multipart/form-data" method="post" action="<c:url value="/${boardId}/post/process-add-post"/>">
         <sec:csrfInput/>
         <div>
             <select name="categoryId" aria-label="category select" id="category">
@@ -64,6 +64,8 @@
             <label for="content">내용 : </label>
             <textarea type="text" name="content" placeholder="내용" id="content"></textarea>
         </div>
+        
+        <input type="file" name="images" multiple>
 
         <div>
             <label for="privateFlag-Y">공개</label>

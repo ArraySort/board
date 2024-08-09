@@ -6,12 +6,14 @@ import arraysort.project.board.app.category.domain.CategoryVO;
 import arraysort.project.board.app.category.mapper.CategoryMapper;
 import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.exception.*;
+import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.*;
 import arraysort.project.board.app.post.mapper.PostMapper;
 import arraysort.project.board.app.user.domain.UserVO;
 import arraysort.project.board.app.user.mapper.UserMapper;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PostService {
 
@@ -31,12 +34,14 @@ public class PostService {
 
 	private final UserMapper userMapper;
 
+	private final ImageService imageService;
+
+	// TODO : 갤러리 게시판인지, 일반 게시판인지 검증 필요, 이미지 업로드에 대한 검증 추가 필요
+
 	// 게시글 추가
 	@Transactional
 	public void addPost(PostAddReqDTO dto, long boardId) {
 		PostVO vo = PostVO.insertOf(dto, boardId);
-
-		// TODO : 갤러리 게시판인지, 일반 게시판인지 검증 필요
 
 		// [게시판 검증]
 		// 1. 게시글을 추가하려는 게시판 존재하는지 검증
@@ -73,6 +78,7 @@ public class PostService {
 		}
 
 		postMapper.insertPost(vo);
+		imageService.addImages(dto.getImages(), vo.getPostId());
 	}
 
 	// 게시글 리스트 조회(페이징 적용)
@@ -232,6 +238,15 @@ public class PostService {
 			throw new DetailNotFoundException();
 		}
 
+		// 게시글 수정 시 추가 된 이미지
+		imageService.addImages(dto.getAddedImages(), postId);
+
+		// 게시굴 수정 때 삭제된 기존 이미지
+		if (!dto.getRemovedImageIds().isEmpty()) {
+			imageService.removeImages(dto.getRemovedImageIds());
+		}
+
+		// 이미지를 제외한 나머지 입력 필드 업데이트
 		postMapper.updatePost(PostVO.updateOf(dto), postId);
 	}
 
