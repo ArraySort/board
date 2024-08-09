@@ -102,10 +102,12 @@
 
         <h3>이미지 목록</h3>
 
-        <ul>
+        <ul class="d-flex flex-column align-items-center">
             <c:forEach var="image" items="${images}">
-                <li class="list-group d-block">
-                    <a href="javascript:showImage(${image.imageId})">
+                <li class="list-group-item d-flex justify-content-center align-items-center"
+                    style="width: 50%">
+                    <a href="javascript:showImage(${image.imageId})"
+                       class="text-center mx-auto">
                             ${image.originalName}
                     </a>
                 </li>

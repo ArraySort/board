@@ -1,5 +1,6 @@
 package arraysort.project.board.app.post.controller;
 
+import arraysort.project.board.app.board.service.BoardService;
 import arraysort.project.board.app.category.service.CategoryService;
 import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.PageReqDTO;
@@ -20,6 +21,8 @@ public class PostController {
 
 	private final PostService postService;
 
+	private final BoardService boardService;
+
 	private final CategoryService categoryService;
 
 	private final ImageService imageService;
@@ -37,6 +40,7 @@ public class PostController {
 	public String showAddPostPage(@PathVariable long boardId, Model model) {
 		postService.validateAddByUserLevel();
 
+		model.addAttribute("boardDetail", boardService.findBoardDetailById(boardId));
 		model.addAttribute("categories", categoryService.findCategoryList(boardId));
 		return "post/addPost";
 	}
@@ -61,6 +65,7 @@ public class PostController {
 	// 게시글 수정 페이지 이동
 	@GetMapping("/detail/{postId}/edit")
 	public String showPostEditPage(@PathVariable long boardId, @PathVariable long postId, @ModelAttribute("page") PageReqDTO dto, Model model) {
+		model.addAttribute("boardDetail", boardService.findBoardDetailById(boardId));
 		model.addAttribute("postDetail", postService.findPostDetailByPostId(postId, boardId));
 		model.addAttribute("categories", categoryService.findCategoryList(boardId));
 		model.addAttribute("images", imageService.findImagesByPostId(postId));

@@ -214,35 +214,44 @@
 
             <h3>이미지 목록</h3>
 
-            <!-- 기존 이미지 리스트 -->
-            <ul id="existingImagesList">
-                <c:forEach var="image" items="${images}">
-                    <li class="list-group-item d-block">
-                        <a href="javascript:showImage(`/image/ + ${image.imageId}`)">
-                                ${image.originalName}
-                        </a>
-                        <button type="button" class="btn btn-danger btn-sm remove-image-btn"
-                                data-image-id="${image.imageId}">X
-                        </button>
-                    </li>
-                </c:forEach>
-            </ul>
+            <c:choose>
+                <c:when test="${boardDetail.imageFlag == 'Y'}">
+                    <!-- 기존 이미지 리스트 -->
+                    <ul id="existingImagesList" class="d-flex flex-column align-items-center">
+                        <c:forEach var="image" items="${images}">
+                            <li class="list-group-item d-flex justify-content-center align-items-center"
+                                style="width: 50%">
+                                <a href="javascript:showImage(`/image/ + ${image.imageId}`)"
+                                   class="text-center mx-auto">
+                                        ${image.originalName}
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm remove-image-btn ml-auto"
+                                        data-image-id="${image.imageId}">X
+                                </button>
+                            </li>
+                        </c:forEach>
+                    </ul>
 
-            <!-- 추가된 이미지 리스트 -->
-            <ul id="addedImagesList"></ul>
+                    <!-- 추가된 이미지 리스트 -->
+                    <ul id="addedImagesList"></ul>
 
-            <!-- 파일 입력 필드 -->
-            <input type="file" id="imageInput" name="addedImages" multiple style="display:none;">
+                    <!-- 파일 입력 필드 -->
+                    <input type="file" id="imageInput" name="addedImages" multiple style="display:none;">
 
-            <!-- 파일 입력 버튼 -->
-            <button type="button" id="addImageBtn" class="btn btn-primary">이미지 추가</button>
+                    <!-- 파일 입력 버튼 -->
+                    <button type="button" id="addImageBtn" class="btn btn-primary">이미지 추가</button>
 
-            <!-- 팝업 오버레이 및 팝업 내용 -->
-            <div id="popupOverlay" onclick="closePopup()">
-                <div id="popup" onclick="stopPropagation()">
-                    <img id="popupImage" src="" alt="이미지"/>
-                </div>
-            </div>
+                    <!-- 팝업 오버레이 및 팝업 내용 -->
+                    <div id="popupOverlay" onclick="closePopup()">
+                        <div id="popup" onclick="stopPropagation()">
+                            <img id="popupImage" src="" alt="이미지"/>
+                        </div>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <p>이미지 업로드가 허용되지 않는 게시판입니다.</p>
+                </c:otherwise>
+            </c:choose>
 
             <div>
                 <label for="privateFlag-Y">공개</label>

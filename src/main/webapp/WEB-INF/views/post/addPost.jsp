@@ -64,8 +64,15 @@
             <label for="content">내용 : </label>
             <textarea type="text" name="content" placeholder="내용" id="content"></textarea>
         </div>
-        
-        <input type="file" name="images" multiple>
+
+        <c:choose>
+            <c:when test="${boardDetail.imageFlag == 'Y'}">
+                <input type="file" name="images" multiple>
+            </c:when>
+            <c:otherwise>
+                <p>이미지 업로드가 허용되지 않는 게시판입니다.</p>
+            </c:otherwise>
+        </c:choose>
 
         <div>
             <label for="privateFlag-Y">공개</label>
