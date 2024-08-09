@@ -24,4 +24,10 @@ public interface ImageMapper {
 
 	// 게시글 수정 -> 이미지 삭제
 	void deleteImages(List<Long> imageIds);
+
+	// 게시글 이미지 관계 삭제
+	void deletePostImageByPostId(List<Long> imageIds);
+
+	// 게시글에 존재하는 이미지 개수 조회
+	int selectImageCountByPostId(long postId);
 }

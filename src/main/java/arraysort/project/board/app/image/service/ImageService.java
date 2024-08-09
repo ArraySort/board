@@ -5,7 +5,6 @@ import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.domain.PostImageVO;
 import arraysort.project.board.app.image.mapper.ImageMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class ImageService {
 
@@ -64,5 +62,12 @@ public class ImageService {
 	@Transactional
 	public void removeImages(List<Long> imageIds) {
 		imageMapper.deleteImages(imageIds);
+		imageMapper.deletePostImageByPostId(imageIds);
+	}
+
+	// 게시글에 존재하는 이미지 개수 조회
+	@Transactional(readOnly = true)
+	public int findImageCountByPostId(long postId) {
+		return imageMapper.selectImageCountByPostId(postId);
 	}
 }

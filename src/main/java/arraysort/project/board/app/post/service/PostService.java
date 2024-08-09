@@ -13,7 +13,6 @@ import arraysort.project.board.app.user.domain.UserVO;
 import arraysort.project.board.app.user.mapper.UserMapper;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class PostService {
 
@@ -36,7 +34,7 @@ public class PostService {
 
 	private final ImageService imageService;
 
-	// TODO : 갤러리 게시판인지, 일반 게시판인지 검증 필요, 이미지 업로드에 대한 검증 추가 필요
+	// TODO : 갤러리 게시판인지, 일반 게시판인지 검증 필요
 
 	// 게시글 추가
 	@Transactional
@@ -78,7 +76,15 @@ public class PostService {
 		}
 
 		postMapper.insertPost(vo);
-		imageService.addImages(dto.getImages(), vo.getPostId());
+
+		// [게시판 이미지 검증]
+		// 1. 게시판이 첨부파일 업로드를 허용하는지 / 허용한다면 최대 개수 검증
+		if (boardDetail.getImageFlag().equals("Y")) {
+			if (dto.getImages().size() > boardDetail.getImageLimit()) {
+				throw new BoardImageOutOfRangeException("해당 게시판은 최대 " + boardDetail.getImageLimit() + " 개 까지 업로드 가능합니다.");
+			}
+			imageService.addImages(dto.getImages(), vo.getPostId());
+		}
 	}
 
 	// 게시글 리스트 조회(페이징 적용)
@@ -238,12 +244,20 @@ public class PostService {
 			throw new DetailNotFoundException();
 		}
 
-		// 게시글 수정 시 추가 된 이미지
-		imageService.addImages(dto.getAddedImages(), postId);
+		// [게시판 이미지 검증]
+		// 1. 게시판이 첨부파일 업로드를 허용하는지 / 허용한다면 최대 개수 검증
+		if (boardDetail.getImageFlag().equals("Y")) {
+			int imageCount = imageService.findImageCountByPostId(postId) + dto.getAddedImages().size() - dto.getRemovedImageIds().size();
 
-		// 게시굴 수정 때 삭제된 기존 이미지
-		if (!dto.getRemovedImageIds().isEmpty()) {
-			imageService.removeImages(dto.getRemovedImageIds());
+			if (imageCount > boardDetail.getImageLimit()) {
+				throw new BoardImageOutOfRangeException("해당 게시판은 최대 " + boardDetail.getImageLimit() + " 개 까지 업로드 가능합니다.");
+			}
+
+			if (!dto.getRemovedImageIds().isEmpty()) {
+				imageService.removeImages(dto.getRemovedImageIds());
+			}
+
+			imageService.addImages(dto.getAddedImages(), postId);
 		}
 
 		// 이미지를 제외한 나머지 입력 필드 업데이트

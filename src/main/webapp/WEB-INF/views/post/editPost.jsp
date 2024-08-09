@@ -184,8 +184,12 @@
                 <select name="categoryId" aria-label="category select" id="category">
                     <option value="">카테고리 선택</option>
                     <c:forEach var="category" items="${categories}">
-                        <option value="${category.categoryId}">${category.categoryName}</option>
-                    </c:forEach>
+                    <option value="${category.categoryId}"
+                    <c:if test="${category.categoryName == postDetail.categoryName}">
+                            selected
+                    </c:if>>
+                            ${category.categoryName}
+                        </c:forEach>
                 </select>
             </div>
 

@@ -68,4 +68,24 @@
             </foreach>
         </if>
     </update>
+
+    <!-- 게시글 이미지 관계 삭제 -->
+    <delete id="deletePostImageByPostId">
+        delete
+        from post_image
+        <if test="imageIds != null and imageIds.size() > 0">
+            where image_id in
+            <foreach collection="imageIds" item="imageId" open="(" separator="," close=")">
+                #{imageId}
+            </foreach>
+        </if>
+    </delete>
+
+    <!-- 게시글에 존해하는 이미지 개수 조회 -->
+    <select id="selectImageCountByPostId" resultType="int">
+        select count(*)
+        from post_image
+        where post_id = #{postId}
+    </select>
+
 </mapper>

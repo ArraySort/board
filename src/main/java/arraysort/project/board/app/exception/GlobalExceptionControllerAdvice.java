@@ -33,6 +33,12 @@ public class GlobalExceptionControllerAdvice {
 		return getModelAndView("해당 카테고리를 찾을 수 없습니다.");
 	}
 
+	// 게시글 이미지 첨부 시 게시판이 허용한 이미지 개수보다 많을 때
+	@ExceptionHandler(BoardImageOutOfRangeException.class)
+	public ModelAndView handleBoardImageOutOfRangeException(BoardImageOutOfRangeException e) {
+		return getModelAndView(e.getMessage());
+	}
+
 
 	// 게시물 세부 내용 확인 예외, 게시물 수정 시 잘못된 접근(DB 존재여부) 예외
 	@ExceptionHandler({DetailNotFoundException.class, IdNotFoundException.class})
