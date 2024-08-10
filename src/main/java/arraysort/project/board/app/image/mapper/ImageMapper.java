@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface ImageMapper {
 
 	// 이미지 추가
-	void insertImages(ImageVO vo);
+	void insertImage(ImageVO vo);
 
 	// 게시글 이미지 관계 추가
 	void insertPostImage(List<PostImageVO> postImages);

@@ -48,6 +48,14 @@
     <form enctype="multipart/form-data" method="post"
           action="<c:url value="/${boardId}/${boardType.toLowerCase()}/post/process-add-post"/>">
         <sec:csrfInput/>
+
+        <c:if test="${boardType == 'gallery'}">
+            <div>
+                <span class="d-block">썸네일 이미지 업로드</span>
+                <input type="file" name="thumbnailImage">
+            </div>
+        </c:if>
+
         <div>
             <select name="categoryId" aria-label="category select" id="category">
                 <option value="">카테고리 선택</option>

@@ -39,11 +39,16 @@ public class GlobalExceptionControllerAdvice {
 		return getModelAndView(e.getMessage());
 	}
 
-
 	// 게시물 세부 내용 확인 예외, 게시물 수정 시 잘못된 접근(DB 존재여부) 예외
 	@ExceptionHandler({DetailNotFoundException.class, IdNotFoundException.class})
 	public ModelAndView handleNotFoundException() {
 		return getModelAndView("해당 게시물을 찾을 수 없습니다.");
+	}
+
+	// 갤러리 게시판에 게시글 추가 시 썸네일 없을 때 발생되는 예외
+	@ExceptionHandler(ThumbnailImageNotFoundException.class)
+	public ModelAndView handleThumbnailImageNotFoundException() {
+		return getModelAndView("갤러리 게시판에서 썸네일 이미지는 필수로 업로드 되어야 합니다.");
 	}
 
 	// 이미지 업로드 시 발생 예외

@@ -1,6 +1,7 @@
 package arraysort.project.board.app.image.service;
 
 import arraysort.project.board.app.component.ImageComponent;
+import arraysort.project.board.app.exception.ThumbnailImageNotFoundException;
 import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.domain.PostImageVO;
 import arraysort.project.board.app.image.mapper.ImageMapper;
@@ -33,7 +34,7 @@ public class ImageService {
 
 		// 이미지가 추가 되었을 때만 처리
 		for (ImageVO image : imageVOList) {
-			imageMapper.insertImages(image);
+			imageMapper.insertImage(image);
 		}
 
 		List<PostImageVO> postImageVOList = imageVOList
@@ -45,6 +46,19 @@ public class ImageService {
 				.toList();
 
 		imageMapper.insertPostImage(postImageVOList);
+	}
+
+	// 썸네일 이미지 추가
+	@Transactional
+	public long addThumbnailImage(MultipartFile multipartFile) {
+		if (multipartFile == null || multipartFile.isEmpty()) {
+			throw new ThumbnailImageNotFoundException();
+		}
+		
+		ImageVO thumbnailImage = ImageVO.insertOf(imageComponent.uploadImage(multipartFile));
+		imageMapper.insertImage(thumbnailImage);
+
+		return thumbnailImage.getImageId();
 	}
 
 	// 게시글 아이디로 이미지 조회

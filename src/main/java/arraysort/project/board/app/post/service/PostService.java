@@ -76,6 +76,13 @@ public class PostService {
 			throw new InvalidPrincipalException("올바르지 않은 사용자 접근 등급입니다.");
 		}
 
+		// [갤러리 게시판 검증]
+		// 1. 업로드 하려는 게시글이 갤러리 게시판의 게시글인지 확인
+		if (boardDetail.getBoardType().equals("GALLERY")) {
+			// 썸네일 이미지 추가
+			vo.updateThumbnailImageId(imageService.addThumbnailImage(dto.getThumbnailImage()));
+		}
+
 		postMapper.insertPost(vo);
 
 		// [게시판 이미지 검증]
@@ -317,7 +324,7 @@ public class PostService {
 
 			imageService.removeImages(deletePostImageIds);
 		}
-		
+
 		postMapper.deletePost(postId);
 	}
 
