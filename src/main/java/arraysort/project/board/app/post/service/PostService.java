@@ -273,10 +273,9 @@ public class PostService {
 		// 수정하지 않았을 때 기존이미지 유지
 		vo.updateThumbnailImageId(postDetail.getImageId());
 
-		// [갤러리 게시판 검증]
-		// 1. 업로드 하려는 게시글이 갤러리 게시판의 게시글인지 확인
+		// 업로드 하려는 게시글이 갤러리 게시판의 게시글인지 확인
 		if (boardDetail.getBoardType().equals("GALLERY") && !dto.getThumbnailImage().isEmpty()) {
-			vo.updateThumbnailImageId(imageService.updateThumbnailImage(dto.getThumbnailImage(), postId));
+			vo.updateThumbnailImageId(imageService.modifyThumbnailImage(dto.getThumbnailImage(), postId));
 		}
 
 		postMapper.updatePost(vo, postId);
@@ -331,8 +330,14 @@ public class PostService {
 					.stream()
 					.map(ImageVO::getImageId)
 					.toList();
+			if (!deletePostImageIds.isEmpty()) {
+				imageService.removeImages(deletePostImageIds);
+			}
+		}
 
-			imageService.removeImages(deletePostImageIds);
+		// 갤러리 게시판에서 게시글을 삭제했을 때 썸네일 이미지 삭제
+		if (Objects.equals(boardDetail.getBoardType(), "GALLERY")) {
+			imageService.removeThumbnailImage(postId);
 		}
 
 		postMapper.deletePost(postId);

@@ -63,7 +63,7 @@ public class ImageService {
 
 	// 썸네일 이미지 수정
 	@Transactional
-	public Long updateThumbnailImage(MultipartFile multipartFile, long postId) {
+	public Long modifyThumbnailImage(MultipartFile multipartFile, long postId) {
 		// 기존 이미지 삭제
 		imageMapper.deleteThumbnailImageByPostId(postId);
 
@@ -75,6 +75,12 @@ public class ImageService {
 		imageMapper.insertImage(thumbnailImage);
 
 		return thumbnailImage.getImageId();
+	}
+
+	// 게시글 삭제 시 썸네일 이미지 삭제
+	@Transactional
+	public void removeThumbnailImage(long postId) {
+		imageMapper.deleteThumbnailImageByPostId(postId);
 	}
 
 	// 게시글 아이디로 이미지 조회
