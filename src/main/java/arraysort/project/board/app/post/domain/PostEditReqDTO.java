@@ -27,6 +27,8 @@ public class PostEditReqDTO {
 	@NotNull(message = "카테고리는 필수 입력사항입니다.")
 	private Long categoryId;
 
+	private MultipartFile thumbnailImage;
+
 	private List<MultipartFile> addedImages;
 
 	private List<Long> removedImageIds;

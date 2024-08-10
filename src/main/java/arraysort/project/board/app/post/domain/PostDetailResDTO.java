@@ -15,6 +15,8 @@ public class PostDetailResDTO {
 
 	private Long boardId;
 
+	private Long imageId;
+
 	private String userName;
 
 	private String boardName;
@@ -42,6 +44,7 @@ public class PostDetailResDTO {
 				.postId(vo.getPostId())
 				.userId(vo.getUserId())
 				.boardId(vo.getBoardId())
+				.imageId(vo.getImageId())
 				.userName(vo.getUserName())
 				.boardName(vo.getBoardName())
 				.categoryName(vo.getCategoryName())

@@ -52,11 +52,7 @@ public class ImageComponent {
 		return images;
 	}
 
-	public ImageMetaData uploadImage(MultipartFile multipartFile) {
-		if (multipartFile == null || multipartFile.isEmpty()) {
-			throw new ImageUploadException("이미지가 업로드 되지 않았습니다.");
-		}
-
+	public ImageMetaData uploadThumbnailImage(MultipartFile multipartFile) {
 		return uploadFile(multipartFile);
 	}
 

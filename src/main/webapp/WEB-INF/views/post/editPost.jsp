@@ -47,6 +47,20 @@
             let removedImageIds = [];       // 기존 이미지에서 삭제된 이미지 ID : String
             let addedImages = [];       // 새로 추가된 이미지 : MultipartFile
 
+            // 업로드 이미지 미리보기
+            $('#thumbnailImage').on('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#imagePreview').attr('src', e.target.result).show();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    $('#imagePreview').attr('src', '/image/${postDetail.imageId}').show();
+                }
+            });
+
             // 기존 이미지 삭제
             $(document).on('click', '.remove-image-btn', function () {
                 const imageId = $(this).data('image-id');
@@ -177,9 +191,19 @@
             <!-- 삭제된 이미지 ID -->
             <input type="hidden" id="removedImagesInput" name="removedImageIds" value="">
 
-            <h3>작성자 : ${postDetail.userName}</h3>
-            <h3>카테고리 : ${postDetail.categoryName}</h3>
-            <h3>현재 게시판 : ${postDetail.boardName}</h3>
+            <div>작성자 : ${postDetail.userName}</div>
+            <div>카테고리 : ${postDetail.categoryName}</div>
+            <div>현재 게시판 : ${postDetail.boardName}</div>
+
+            <c:if test="${boardType == 'gallery'}">
+                <div>현재 썸네일 이미지</div>
+                <img src="/image/${postDetail.imageId}" id="imagePreview" style="height: 200px; width: 30%"
+                     alt="${postDetail.title}">
+                <div>
+                    <div>썸네일 이미지 수정</div>
+                    <input type="file" name="thumbnailImage" id="thumbnailImage">
+                </div>
+            </c:if>
 
             <div>
                 <select name="categoryId" aria-label="category select" id="category">

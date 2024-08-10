@@ -28,6 +28,12 @@ public interface ImageMapper {
 	// 게시글 이미지 관계 삭제
 	void deletePostImageByPostId(List<Long> imageIds);
 
+	// 게시글 썸네일 이미지 삭제
+	void deleteThumbnailImageByPostId(long postId);
+
+	// 게시글 썸네일 이미지 ID 업데이트 -> 이미지 수정 시 null 값으로 변경
+	void updateThumbnailImageIdByPostId(long postId);
+
 	// 게시글에 존재하는 이미지 개수 조회
 	int selectImageCountByPostId(long postId);
 }

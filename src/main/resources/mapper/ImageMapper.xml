@@ -77,6 +77,20 @@
             </foreach>
     </delete>
 
+    <!-- 게시글 썸네일 이미지 삭제 -->
+    <update id="deleteThumbnailImageByPostId">
+        update image
+        set delete_flag = 'Y'
+        where image_id = (select image_id from post where post_id = #{postId})
+    </update>
+
+    <!-- 게시글 썸네일 이미지 ID 업데이트 -> 이미지 수정 시 null 값으로 변경 -->
+    <update id="updateThumbnailImageIdByPostId">
+        update post
+        set image_id = null
+        where image_id = (select image_id from post where post_id = #{postId})
+    </update>
+
     <!-- 게시글에 존해하는 이미지 개수 조회 -->
     <select id="selectImageCountByPostId" resultType="int">
         select count(*)

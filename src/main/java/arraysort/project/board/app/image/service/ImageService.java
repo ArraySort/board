@@ -54,8 +54,24 @@ public class ImageService {
 		if (multipartFile == null || multipartFile.isEmpty()) {
 			throw new ThumbnailImageNotFoundException();
 		}
-		
-		ImageVO thumbnailImage = ImageVO.insertOf(imageComponent.uploadImage(multipartFile));
+
+		ImageVO thumbnailImage = ImageVO.insertOf(imageComponent.uploadThumbnailImage(multipartFile));
+		imageMapper.insertImage(thumbnailImage);
+
+		return thumbnailImage.getImageId();
+	}
+
+	// 썸네일 이미지 수정
+	@Transactional
+	public Long updateThumbnailImage(MultipartFile multipartFile, long postId) {
+		// 기존 이미지 삭제
+		imageMapper.deleteThumbnailImageByPostId(postId);
+
+		// 게시글 썸네일 이미지 ID 업데이트 -> 이미지 수정 시 null 값으로 변경
+		imageMapper.updateThumbnailImageIdByPostId(postId);
+
+		// 새로운 이미지 추가
+		ImageVO thumbnailImage = ImageVO.insertOf(imageComponent.uploadThumbnailImage(multipartFile));
 		imageMapper.insertImage(thumbnailImage);
 
 		return thumbnailImage.getImageId();

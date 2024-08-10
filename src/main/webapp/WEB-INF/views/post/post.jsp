@@ -27,7 +27,7 @@
 </head>
 <body>
 
-<div style="text-align: center">
+<div style="text-align: center; overflow-y: auto">
 
     <h1>일반 게시판 페이지</h1>
 
@@ -98,7 +98,7 @@
 
     <!-- 갤러리 게시판 시작 -->
     <c:if test="${boardType == 'gallery'}">
-        <div class="container" style="max-width: 1000px; height: 500px; overflow-y: auto">
+        <div class="container" style="max-width: 1000px">
             <c:forEach var="post" items="${pagination.postList}" varStatus="status">
                 <c:if test="${status.index % 3 == 0}">
                     <div class="gallery-row">

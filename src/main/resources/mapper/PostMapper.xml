@@ -35,7 +35,7 @@
         select p.post_id,
                p.user_id,
                p.category_id,
-               i.image_id,
+               p.image_id,
                u.user_name,
                c.category_name,
                p.title,
@@ -46,7 +46,6 @@
         from post p
         inner join user u on p.user_id = u.user_id
         inner join category c on p.category_id = c.category_id
-        left join image i on p.image_id = i.image_id
         <where>
             p.board_id = #{boardId} and p.delete_flag = 'N'
             <if test="dto.search != null and dto.search != ''">
@@ -116,6 +115,7 @@
         select p.post_id,
                p.user_id,
                p.board_id,
+               p.image_id,
                u.user_name,
                b.board_name,
                c.category_name,
@@ -137,7 +137,8 @@
     <!-- 게시글 수정 -->
     <update id="updatePost">
         update post
-        set title = #{vo.title},
+        set image_id = #{vo.imageId},
+            title = #{vo.title},
             content = #{vo.content},
             private_flag = #{vo.privateFlag},
             category_id = #{vo.categoryId}

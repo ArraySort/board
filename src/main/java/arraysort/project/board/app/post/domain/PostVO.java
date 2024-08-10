@@ -81,7 +81,7 @@ public class PostVO {
 	}
 
 	// 갤러리 게시판 썸네일 이미지 업로드 시 ID 업데이트
-	public void updateThumbnailImageId(long thumbnailImageId) {
+	public void updateThumbnailImageId(Long thumbnailImageId) {
 		this.imageId = thumbnailImageId;
 	}
 }

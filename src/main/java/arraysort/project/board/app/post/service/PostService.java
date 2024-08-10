@@ -268,8 +268,18 @@ public class PostService {
 			imageService.addImages(dto.getAddedImages(), postId);
 		}
 
-		// 이미지를 제외한 나머지 입력 필드 업데이트
-		postMapper.updatePost(PostVO.updateOf(dto), postId);
+		PostVO vo = PostVO.updateOf(dto);
+
+		// 수정하지 않았을 때 기존이미지 유지
+		vo.updateThumbnailImageId(postDetail.getImageId());
+
+		// [갤러리 게시판 검증]
+		// 1. 업로드 하려는 게시글이 갤러리 게시판의 게시글인지 확인
+		if (boardDetail.getBoardType().equals("GALLERY") && !dto.getThumbnailImage().isEmpty()) {
+			vo.updateThumbnailImageId(imageService.updateThumbnailImage(dto.getThumbnailImage(), postId));
+		}
+
+		postMapper.updatePost(vo, postId);
 	}
 
 	// 게시글 삭제
