@@ -129,7 +129,7 @@ public class PostService {
 			}
 		}
 
-		int totalPostCount = postMapper.selectTotalPostCount(dto);
+		int totalPostCount = postMapper.selectTotalPostCount(dto, boardId);
 		int offset = (dto.getPage() - 1) * Constants.PAGE_ROW_COUNT;
 
 		List<PostListResDTO> postList = postMapper.selectPostListWithPaging(

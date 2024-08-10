@@ -17,7 +17,7 @@ public interface PostMapper {
 	List<PostVO> selectPostListWithPaging(int pageRowCount, int offset, PageReqDTO dto, long boardId);
 
 	// 총 게시물 개수 조회
-	int selectTotalPostCount(PageReqDTO dto);
+	int selectTotalPostCount(PageReqDTO dto, long boardId);
 
 	// 게시글 세부내용 조회
 	Optional<PostVO> selectPostDetailByPostId(long postId, long boardId);

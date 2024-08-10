@@ -93,15 +93,16 @@
         select count(*)
         from post
         <where>
-            <if test="search != null and search != ''">
+            board_id = #{boardId} and delete_flag = 'N'
+            <if test="dto.search != null and dto.search != ''">
                 <choose>
-                    <when test="searchType != null and searchType.toString() == 'ALL'">
+                    <when test="dto.searchType != null and dto.searchType.toString() == 'ALL'">
                          (title like concat('%', #{search}, '%') or content like concat('%', #{search}, '%'))
                     </when>
-                    <when test="searchType != null and searchType.toString() == 'TITLE'">
+                    <when test="dto.searchType != null and dto.searchType.toString() == 'TITLE'">
                          title like concat('%', #{search}, '%')
                     </when>
-                    <when test="searchType != null and searchType.toString() == 'CONTENT'">
+                    <when test="dto.searchType != null and dto.searchType.toString() == 'CONTENT'">
                          content like concat('%', #{search}, '%')
                     </when>
                 </choose>
