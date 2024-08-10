@@ -6,6 +6,24 @@
 <head>
     <title>Board</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
+
+    <style>
+        .gallery-card {
+            width: 30%;
+            margin-bottom: 20px;
+        }
+
+        .gallery-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+
 </head>
 <body>
 
@@ -15,7 +33,7 @@
 
     <div class="m-3">
         <button type="button" onclick="location.href='/home'">홈 페이지로 이동</button>
-        <button type="button" onclick="location.href='/${boardId}/post/add'">게시글 추가</button>
+        <button type="button" onclick="location.href='/${boardId}/${boardType.toLowerCase()}/post/add'">게시글 추가</button>
     </div>
 
     <div>
@@ -40,41 +58,66 @@
     </div>
 
 
-    <!-- 게시판 시작 -->
-    <div class="container" style="max-width: 850px; height: 500px; overflow-y: auto">
-        <table class="table">
-            <thead>
-            <tr class="text-center">
-                <th>번호</th>
-                <th>제목</th>
-                <th>유저아이디</th>
-                <th>생성시간</th>
-                <th>수정시간</th>
-                <th>카테고리</th>
-                <th>조회수</th>
-                <th>비공개</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <c:forEach var="post" items="${pagination.postList}">
-                <tr>
-                    <td>${post.postId}</td>
-                    <td>
-                        <a href="/${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">${post.title}</a>
-                    </td>
-                    <td>${post.userName}</td>
-                    <td><fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/></td>
-                    <td><fmt:formatDate value="${post.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></td>
-                    <td>${post.categoryName}</td>
-                    <td>${post.views}</td>
-                    <td>${post.privateFlag}</td>
+    <c:if test="${boardType == 'general'}">
+        <!-- 게시판 시작 -->
+        <div class="container" style="max-width: 850px; height: 500px; overflow-y: auto">
+            <table class="table">
+                <thead>
+                <tr class="text-center">
+                    <th>번호</th>
+                    <th>제목</th>
+                    <th>유저아이디</th>
+                    <th>생성시간</th>
+                    <th>수정시간</th>
+                    <th>카테고리</th>
+                    <th>조회수</th>
+                    <th>비공개</th>
                 </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </div>
+                </thead>
+
+                <tbody>
+                <c:forEach var="post" items="${pagination.postList}">
+                    <tr>
+                        <td>${post.postId}</td>
+                        <td>
+                            <a href="/${boardId}/${boardType.toLowerCase()}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">${post.title}</a>
+                        </td>
+                        <td>${post.userName}</td>
+                        <td><fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/></td>
+                        <td><fmt:formatDate value="${post.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></td>
+                        <td>${post.categoryName}</td>
+                        <td>${post.views}</td>
+                        <td>${post.privateFlag}</td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </c:if>
     <!-- 게시판 끝 -->
+
+    <!-- 갤러리 게시판 시작 -->
+    <c:if test="${boardType == 'gallery'}">
+        <div class="container" style="max-width: 1000px; height: 500px; overflow-y: auto">
+            <div class="gallery-row">
+                <div class="card gallery-card">
+                    <img src="/resources/images/cat.png" class="card-img-top" alt="게시글 제목">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="/boardId/post/gallery/detail/postId?search=&searchType=&sortType=&page=">게시글
+                                제목</a>
+                        </h5>
+                        <p class="card-text">카테고리 이름</p>
+                        <p class="card-text">123 views</p>
+                        <p class="card-text">
+                            <fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm"/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </c:if>
+    <!-- 갤러리 게시판 끝 -->
 
     <!-- 페이지 버튼 -->
     <nav>
@@ -82,13 +125,13 @@
             <!-- 처음 페이지로 이동하는 버튼 -->
             <li class="page-item">
                 <a class="page-link"
-                   href="/${boardId}/post?page=1&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">&laquo</a>
+                   href="/${boardId}/${boardType.toLowerCase()}/post?page=1&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">&laquo</a>
             </li>
             <!-- 이전 블록으로 이동하는 버튼 -->
             <c:if test="${pagination.prev}">
                 <li class="page-item">
                     <a class="page-link"
-                       href="/${boardId}/post?page=${pagination.startBlockPage - 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                       href="/${boardId}/${boardType.toLowerCase()}/post?page=${pagination.startBlockPage - 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
                         &lt;
                     </a>
                 </li>
@@ -97,7 +140,7 @@
             <c:forEach var="pageNum" begin="${pagination.startBlockPage}" end="${pagination.endBlockPage}">
                 <li class="page-item ${pageNum == pagination.currentPage ? 'active' : ''}">
                     <a class="page-link"
-                       href="/${boardId}/post?page=${pageNum}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                       href="/${boardId}/${boardType.toLowerCase()}/post?page=${pageNum}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
                             ${pageNum}
                     </a>
                 </li>
@@ -106,7 +149,7 @@
             <c:if test="${pagination.next}">
                 <li class="page-item">
                     <a class="page-link"
-                       href="/${boardId}/post?page=${pagination.endBlockPage + 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                       href="/${boardId}/${boardType.toLowerCase()}/post?page=${pagination.endBlockPage + 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
                         &gt;
                     </a>
                 </li>
@@ -114,7 +157,7 @@
             <!-- 끝 페이지로 이동하는 버튼 -->
             <li class="page-item">
                 <a class="page-link"
-                   href="/${boardId}/post?page=${pagination.totalPageCount}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                   href="/${boardId}/${boardType.toLowerCase()}/post?page=${pagination.totalPageCount}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
                     &raquo;
                 </a>
             </li>

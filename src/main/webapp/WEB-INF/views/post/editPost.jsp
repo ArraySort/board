@@ -165,7 +165,8 @@
 <div style="text-align: center">
     <h1>게시글 수정</h1>
     <div class="container" style="max-width: 850px;">
-        <form enctype="multipart/form-data" method="post" action="/${boardId}/post/detail/${postDetail.postId}/edit">
+        <form enctype="multipart/form-data" method="post"
+              action="/${boardId}/${boardType.toLowerCase()}/post/detail/${postDetail.postId}/edit">
             <sec:csrfInput/>
 
             <input type="hidden" name="search" value="${page.search}">
@@ -267,7 +268,7 @@
             <h3>수정 시간 : <fmt:formatDate value="${postDetail.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
 
             <button type="submit" id="saveButton">저장</button>
-            <a href="/${boardId}/post/detail/${postDetail.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
+            <a href="/${boardId}/${boardType.toLowerCase()}/post/detail/${postDetail.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
                 <button type="button">취소</button>
             </a>
         </form>

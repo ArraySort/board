@@ -13,11 +13,11 @@
         if (request === "SIGNUP") {
             window.location.href = "/home";
         } else if (request === "ADD_POST") {
-            window.location.href = "/${boardId}/post";
+            window.location.href = "/${boardId}/${boardType.toLowerCase()}/post";
         } else if (request === "MODIFY_POST") {
-            window.location.href = "/${boardId}/post/detail/${postId}"
+            window.location.href = "/${boardId}/${boardType.toLowerCase()}/post/detail/${postId}"
         } else if (request === "DELETE_POST") {
-            window.location.href = "/${boardId}/post";
+            window.location.href = "/${boardId}/${boardType.toLowerCase()}/post";
         } else {
             window.history.back();
         }

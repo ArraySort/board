@@ -45,7 +45,8 @@
 
     <h1>게시글 추가</h1>
 
-    <form enctype="multipart/form-data" method="post" action="<c:url value="/${boardId}/post/process-add-post"/>">
+    <form enctype="multipart/form-data" method="post"
+          action="<c:url value="/${boardId}/${boardType.toLowerCase()}/post/process-add-post"/>">
         <sec:csrfInput/>
         <div>
             <select name="categoryId" aria-label="category select" id="category">
@@ -84,7 +85,7 @@
 
         <div>
             <button type="submit" id="addPost">저장</button>
-            <button type="button" onclick="location.href='/${boardId}/post'">목록</button>
+            <button type="button" onclick="location.href='/${boardId}/${boardType.toLowerCase()}/post'">목록</button>
         </div>
     </form>
 
