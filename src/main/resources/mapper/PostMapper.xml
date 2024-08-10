@@ -30,8 +30,7 @@
     </insert>
 
     <!-- 게시글 리스트 조회 -->
-    <select id="selectPostListWithPaging" parameterType="arraysort.project.board.app.post.domain.PostListResDTO"
-            resultType="arraysort.project.board.app.post.domain.PostVO">
+    <select id="selectPostListWithPaging" resultType="arraysort.project.board.app.post.domain.PostVO">
         select p.post_id,
                p.user_id,
                p.category_id,
@@ -90,7 +89,7 @@
     </select>
 
     <!-- 총 게시물 개수 조회 -->
-    <select id="selectTotalPostCount" resultType="int">
+    <select id="selectTotalPostCount" parameterType="arraysort.project.board.app.post.domain.PageReqDTO" resultType="int">
         select count(*)
         from post
         <where>
@@ -146,21 +145,21 @@
     </update>
 
     <!-- 게시글 고유번호 조회 -->
-    <select id="selectExistPostId" resultType="long">
+    <select id="selectExistPostId" parameterType="long" resultType="int">
         select post_id
         from post
         where post_id = #{postId}
     </select>
 
     <!-- 게시글 삭제 -->
-    <delete id="deletePost">
+    <delete id="deletePost" parameterType="long">
         update post
         set delete_flag = 'Y'
         where post_id = #{postId}
     </delete>
 
     <!-- 조회수 증가 -->
-    <update id="updateViews">
+    <update id="updateViews" parameterType="long">
         update post
         set views = views + 1,
             updated_at = updated_at

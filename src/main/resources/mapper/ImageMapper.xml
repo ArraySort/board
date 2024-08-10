@@ -5,7 +5,8 @@
 <mapper namespace="arraysort.project.board.app.image.mapper.ImageMapper">
 
     <!-- 이미지 추가 -->
-    <insert id="insertImage" useGeneratedKeys="true" keyProperty="imageId">
+    <insert id="insertImage" useGeneratedKeys="true" keyProperty="imageId"
+            parameterType="arraysort.project.board.app.image.domain.ImageVO">
         insert into image(original_name,
                           saved_name,
                           size,
@@ -20,7 +21,7 @@
     </insert>
 
     <!-- 게시글 이미지 관계 추가 -->
-    <insert id="insertPostImage">
+    <insert id="insertPostImage" parameterType="arraysort.project.board.app.image.domain.PostImageVO">
         insert into post_image (post_id, image_id)
         values
             <foreach collection="postImages" item="postImage" separator=",">
@@ -29,7 +30,7 @@
     </insert>
 
     <!-- 게시글 세부조회 -> 이미지 리스트 조회 -->
-    <select id="selectImagesByPostId" resultType="arraysort.project.board.app.image.domain.ImageVO">
+    <select id="selectImagesByPostId" parameterType="long" resultType="arraysort.project.board.app.image.domain.ImageVO">
         select i.image_id,
                i.original_name,
                i.saved_name,
@@ -44,7 +45,7 @@
     </select>
 
     <!-- 게시글 세부조회 -> 이미지 조회 -->
-    <select id="selectImageById">
+    <select id="selectImageById" parameterType="long" resultType="arraysort.project.board.app.image.domain.ImageVO">
         select image_id,
                original_name,
                saved_name,
@@ -58,7 +59,7 @@
     </select>
 
     <!-- 게시글 수정 -> 이미지 삭제 -->
-    <update id="deleteImages">
+    <update id="deleteImages" parameterType="long">
         update image
         set delete_flag = 'Y'
             where image_id in
@@ -68,7 +69,7 @@
     </update>
 
     <!-- 게시글 이미지 관계 삭제 -->
-    <delete id="deletePostImageByPostId">
+    <delete id="deletePostImageByPostId" parameterType="long">
         delete
         from post_image
             where image_id in
@@ -78,21 +79,21 @@
     </delete>
 
     <!-- 게시글 썸네일 이미지 삭제 -->
-    <update id="deleteThumbnailImageByPostId">
+    <update id="deleteThumbnailImageByPostId" parameterType="long">
         update image
         set delete_flag = 'Y'
         where image_id = (select image_id from post where post_id = #{postId})
     </update>
 
     <!-- 게시글 썸네일 이미지 ID 업데이트 -> 이미지 수정 시 null 값으로 변경 -->
-    <update id="updateThumbnailImageIdByPostId">
+    <update id="updateThumbnailImageIdByPostId" parameterType="long">
         update post
         set image_id = null
         where image_id = (select image_id from post where post_id = #{postId})
     </update>
 
     <!-- 게시글에 존해하는 이미지 개수 조회 -->
-    <select id="selectImageCountByPostId" resultType="int">
+    <select id="selectImageCountByPostId" parameterType="long" resultType="int">
         select count(*)
         from post_image
         where post_id = #{postId}
