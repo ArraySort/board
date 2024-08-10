@@ -39,7 +39,7 @@ public class PostService {
 
 	// 게시글 추가
 	@Transactional
-	public void addPost(PostAddReqDTO dto, long boardId) {
+	public void addPost(PostAddReqDTO dto, long boardId, String boardType) {
 		PostVO vo = PostVO.insertOf(dto, boardId);
 
 		// [게시판 검증]
@@ -59,6 +59,11 @@ public class PostService {
 		// 4. 게시글에서 고른 카테고리가 게시판에서 설정한 값과 일치하지 않을 때
 		if (!Objects.equals(categoryDetail.getBoardId(), boardDetail.getBoardId())) {
 			throw new InvalidPrincipalException("올바르지 않은 카테고리입니다.");
+		}
+
+		// 5. 현재 접속한 경로의 게시판의 타입 검증
+		if (!boardDetail.getBoardType().equals(boardType.toUpperCase())) {
+			throw new BoardNotFoundException();
 		}
 
 		// [사용자 검증]
@@ -97,14 +102,19 @@ public class PostService {
 
 	// 게시글 리스트 조회(페이징 적용)
 	@Transactional(readOnly = true)
-	public PageResDTO findPostListWithPaging(PageReqDTO dto, long boardId) {
+	public PageResDTO findPostListWithPaging(PageReqDTO dto, long boardId, String boardType) {
 		// [게시판 검증]
 		// 1. 현재 조회하는 게시판이 존재하는지 검증
 		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
 				.orElseThrow(BoardNotFoundException::new);
 
-		// 2.현재 조회하는 게시판이 비활성화 상태인지, 삭제된 상태인지 검증
+		// 2. 현재 조회하는 게시판이 비활성화 상태인지, 삭제된 상태인지 검증
 		if (boardDetail.getActivateFlag().equals("N") || boardDetail.getDeleteFlag().equals("Y")) {
+			throw new BoardNotFoundException();
+		}
+
+		// 3. 현재 접속한 경로의 게시판의 타입 검증
+		if (!boardDetail.getBoardType().equals(boardType.toUpperCase())) {
 			throw new BoardNotFoundException();
 		}
 
@@ -147,7 +157,7 @@ public class PostService {
 
 	// 게시글 세부내용 조회, 게시글 조회수 증가
 	@Transactional
-	public PostDetailResDTO findPostDetailByPostId(long postId, long boardId) {
+	public PostDetailResDTO findPostDetailByPostId(long postId, long boardId, String boardType) {
 		// 조회수 증가
 		increaseViews(postId);
 
@@ -158,6 +168,11 @@ public class PostService {
 
 		// 2. 게시글 세부내용 조회 한 게시글의 게시판이 비활성화 상태인지, 삭제된 상태인지 검증
 		if (boardDetail.getActivateFlag().equals("N") || boardDetail.getDeleteFlag().equals("Y")) {
+			throw new BoardNotFoundException();
+		}
+
+		// 3. 현재 접속한 경로의 게시판의 타입 검증
+		if (!boardDetail.getBoardType().equals(boardType.toUpperCase())) {
 			throw new BoardNotFoundException();
 		}
 
@@ -202,7 +217,7 @@ public class PostService {
 
 	// 게시글 수정
 	@Transactional
-	public void modifyPost(PostEditReqDTO dto, long postId, long boardId) {
+	public void modifyPost(PostEditReqDTO dto, long postId, long boardId, String boardType) {
 		// [게시판 검증]
 		// 1. 게시글을 수정하려는 게시판 존재하는지 검증
 		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
@@ -220,6 +235,11 @@ public class PostService {
 		// 4. 게시글에서 고른 카테고리가 게시판에서 설정한 값과 일치하지 않을 때
 		if (!Objects.equals(categoryDetail.getBoardId(), boardDetail.getBoardId())) {
 			throw new InvalidPrincipalException("올바르지 않은 카테고리입니다.");
+		}
+
+		// 5. 현재 접속한 경로의 게시판의 타입 검증
+		if (!boardDetail.getBoardType().equals(boardType.toUpperCase())) {
+			throw new BoardNotFoundException();
 		}
 
 		// [사용자 검증]
@@ -252,8 +272,7 @@ public class PostService {
 			throw new DetailNotFoundException();
 		}
 
-		// [게시판 이미지 검증]
-		// 1. 게시판이 첨부파일 업로드를 허용하는지 / 허용한다면 최대 개수 검증
+		// [게시판 이미지 검증] 게시판이 첨부파일 업로드를 허용하는지 / 허용한다면 최대 개수 검증
 		if (boardDetail.getImageFlag().equals("Y")) {
 			int imageCount = imageService.findImageCountByPostId(postId) + dto.getAddedImages().size() - dto.getRemovedImageIds().size();
 
@@ -273,7 +292,7 @@ public class PostService {
 		// 수정하지 않았을 때 기존이미지 유지
 		vo.updateThumbnailImageId(postDetail.getImageId());
 
-		// 업로드 하려는 게시글이 갤러리 게시판의 게시글인지 확인
+		// [게시판 이미지 검증] 업로드 하려는 게시글이 갤러리 게시판의 게시글인지 확인
 		if (boardDetail.getBoardType().equals("GALLERY") && !dto.getThumbnailImage().isEmpty()) {
 			vo.updateThumbnailImageId(imageService.modifyThumbnailImage(dto.getThumbnailImage(), postId));
 		}
@@ -283,7 +302,7 @@ public class PostService {
 
 	// 게시글 삭제
 	@Transactional
-	public void removePost(long postId, long boardId) {
+	public void removePost(long postId, long boardId, String boardType) {
 		// [게시판 검증]
 		// 1. 삭제하려는 게시글의 게시판이 존재하는지 검증
 		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
@@ -291,6 +310,11 @@ public class PostService {
 
 		// 2. 삭제하려는 게시글의 게시판이 비활성화 상태인지, 삭제된 상태인지 검증
 		if (boardDetail.getActivateFlag().equals("N") || boardDetail.getDeleteFlag().equals("Y")) {
+			throw new BoardNotFoundException();
+		}
+
+		// 3. 현재 접속한 경로의 게시판의 타입 검증
+		if (!boardDetail.getBoardType().equals(boardType.toUpperCase())) {
 			throw new BoardNotFoundException();
 		}
 
@@ -343,7 +367,7 @@ public class PostService {
 		postMapper.deletePost(postId);
 	}
 
-	// 게시물 작성 페이지 요청에 대한 사용자 검증
+	// 게시글 작성, 수정 페이지 요청에 대한 사용자 검증
 	@Transactional(readOnly = true)
 	public void validateAddByUserLevel() {
 		if (UserUtil.isAuthenticatedUser()) {
@@ -355,6 +379,16 @@ public class PostService {
 			}
 		} else {
 			throw new InvalidPrincipalException("게시글을 작성하려면 로그인이 필요합니다.");
+		}
+	}
+
+	// 게시글 작성 페이지에 대한 게시판 타입 검증
+	@Transactional(readOnly = true)
+	public void validateAddByBoardType(long boardId, String boardType) {
+		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId).orElseThrow(BoardNotFoundException::new);
+
+		if (!Objects.equals(boardDetail.getBoardType(), boardType.toUpperCase())) {
+			throw new BoardNotFoundException();
 		}
 	}
 

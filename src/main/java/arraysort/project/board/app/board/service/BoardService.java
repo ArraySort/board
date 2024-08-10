@@ -21,6 +21,7 @@ public class BoardService {
 		return boardMapper.selectAllBoards();
 	}
 
+	// 게시판 ID 로 게시판 조회
 	@Transactional(readOnly = true)
 	public BoardVO findBoardDetailById(long boardId) {
 		return boardMapper.selectBoardDetailById(boardId)
