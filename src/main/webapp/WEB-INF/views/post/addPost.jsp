@@ -22,6 +22,18 @@
                 alert(message);
             }
 
+            // 업로드 이미지 미리보기
+            $('#thumbnailImage').on('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#imagePreview').attr('src', e.target.result).show();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
             $('#addPost').on('click', function (e) {
                 const category = $('#category').val();
                 const title = $('#title').val();
@@ -51,8 +63,12 @@
 
         <c:if test="${boardType == 'gallery'}">
             <div>
-                <span class="d-block">썸네일 이미지 업로드</span>
-                <input type="file" name="thumbnailImage">
+                <img src="" id="imagePreview" style="height: 200px; width: 20%"
+                     alt="이미지 업로드 미리보기">
+                <div>
+                    <div>썸네일 이미지 업로드</div>
+                    <input type="file" name="thumbnailImage" id="thumbnailImage">
+                </div>
             </div>
         </c:if>
 
