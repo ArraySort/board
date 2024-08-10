@@ -10,7 +10,7 @@
                          admin_id,
                          board_id,
                          category_id,
-                         thumbnail_image_id,
+                         image_id,
                          title,
                          content,
                          private_flag,
@@ -20,7 +20,7 @@
                 #{adminId},
                 #{boardId},
                 #{categoryId},
-                #{thumbnailImageId},
+                #{imageId},
                 #{title},
                 #{content},
                 #{privateFlag},
@@ -35,6 +35,7 @@
         select p.post_id,
                p.user_id,
                p.category_id,
+               i.image_id,
                u.user_name,
                c.category_name,
                p.title,
@@ -45,6 +46,7 @@
         from post p
         inner join user u on p.user_id = u.user_id
         inner join category c on p.category_id = c.category_id
+        left join image i on p.image_id = i.image_id
         <where>
             p.board_id = #{boardId} and p.delete_flag = 'N'
             <if test="dto.search != null and dto.search != ''">

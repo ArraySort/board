@@ -24,7 +24,7 @@ public class PostVO {
 
 	private Long categoryId;    // 카테고리 ID
 
-	private Long thumbnailImageId;    // 썸네일 이미지 ID
+	private Long imageId;    // 썸네일 이미지 ID
 
 	private String userName;    // 사용자 이름
 
@@ -82,6 +82,6 @@ public class PostVO {
 
 	// 갤러리 게시판 썸네일 이미지 업로드 시 ID 업데이트
 	public void updateThumbnailImageId(long thumbnailImageId) {
-		this.thumbnailImageId = thumbnailImageId;
+		this.imageId = thumbnailImageId;
 	}
 }

@@ -38,7 +38,7 @@
 
     <div>
         <!-- 검색기능 : 제목 입력 -->
-        <form class="ms-auto d-inline-block m-2" method="get" action="/${boardId}/post">
+        <form class="ms-auto d-inline-block m-2" method="get" action="/${boardId}/${boardType.toLowerCase()}/post">
             <div class="input-group">
                 <select name="sortType" aria-label="sortType select">
                     <option value="ID" ${page.sortType == 'ID' ? 'selected' : ''}>번호순</option>
@@ -99,25 +99,36 @@
     <!-- 갤러리 게시판 시작 -->
     <c:if test="${boardType == 'gallery'}">
         <div class="container" style="max-width: 1000px; height: 500px; overflow-y: auto">
-            <div class="gallery-row">
+            <c:forEach var="post" items="${pagination.postList}" varStatus="status">
+                <c:if test="${status.index % 3 == 0}">
+                    <div class="gallery-row">
+                </c:if>
                 <div class="card gallery-card">
-                    <img src="/resources/images/cat.png" class="card-img-top" alt="게시글 제목">
+                    <img src="/image/${post.imageId}" class="card-img-top" alt="${post.title}">
                     <div class="card-body">
                         <h5 class="card-title">
-                            <a href="/boardId/post/gallery/detail/postId?search=&searchType=&sortType=&page=">게시글
-                                제목</a>
+                            <a href="/${boardId}/${boardType}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
+                                    ${post.title}
+                            </a>
                         </h5>
-                        <p class="card-text">카테고리 이름</p>
-                        <p class="card-text">123 views</p>
-                        <p class="card-text">
-                            <fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm"/>
-                        </p>
+                        <p class="card-text">카테고리 : ${post.categoryName}</p>
+                        <p class="card-text">조회수 : ${post.views} views</p>
+                        <div class="card-text">생성 날짜 :
+                            <fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/>
+                        </div>
+                        <div class="card-text">수정 날짜 :
+                            <fmt:formatDate value="${post.updatedAt}" pattern="yyyy-MM-dd HH:mm"/>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <c:if test="${(status.index + 1) % 3 == 0 || status.last}">
+                    </div>
+                </c:if>
+            </c:forEach>
         </div>
     </c:if>
     <!-- 갤러리 게시판 끝 -->
+
 
     <!-- 페이지 버튼 -->
     <nav>
