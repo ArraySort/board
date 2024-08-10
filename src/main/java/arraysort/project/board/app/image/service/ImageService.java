@@ -19,8 +19,6 @@ public class ImageService {
 
 	private final ImageMapper imageMapper;
 
-	// TODO : 이미지 Service 검증
-
 	// 이미지 추가
 	@Transactional
 	public void addImages(List<MultipartFile> images, long postId) {
@@ -29,21 +27,24 @@ public class ImageService {
 				.map(ImageVO::insertOf)
 				.toList();
 
-		if (!imageVOList.isEmpty()) {
-			for (ImageVO image : imageVOList) {
-				imageMapper.insertImages(image);
-			}
-
-			List<PostImageVO> postImageVOList = imageVOList
-					.stream()
-					.map(image -> PostImageVO.builder()
-							.postId(postId)
-							.imageId(image.getImageId())
-							.build())
-					.toList();
-
-			imageMapper.insertPostImage(postImageVOList);
+		if (imageVOList.isEmpty()) {
+			return;
 		}
+
+		// 이미지가 추가 되었을 때만 처리
+		for (ImageVO image : imageVOList) {
+			imageMapper.insertImages(image);
+		}
+
+		List<PostImageVO> postImageVOList = imageVOList
+				.stream()
+				.map(image -> PostImageVO.builder()
+						.postId(postId)
+						.imageId(image.getImageId())
+						.build())
+				.toList();
+
+		imageMapper.insertPostImage(postImageVOList);
 	}
 
 	// 게시글 아이디로 이미지 조회

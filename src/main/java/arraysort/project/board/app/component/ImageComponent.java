@@ -37,6 +37,10 @@ public class ImageComponent {
 	 */
 	public List<ImageMetaData> uploadImages(List<MultipartFile> multipartFiles) {
 
+		if (multipartFiles == null) {
+			throw new ImageUploadException("이미지 업로드 에러 발생");
+		}
+
 		List<ImageMetaData> images = new ArrayList<>();
 
 		for (MultipartFile multipartFile : multipartFiles) {

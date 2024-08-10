@@ -18,7 +18,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -311,16 +310,14 @@ public class PostService {
 
 		// 이미지 삭제, 게시글에서 이미지 업로드 허용한 경우
 		if (Objects.equals(boardDetail.getImageFlag(), "Y")) {
-			List<ImageVO> postImages = imageService.findImagesByPostId(postId);
-			List<Long> deletePostImageIds = new ArrayList<>();
-			
-			for (ImageVO postImage : postImages) {
-				deletePostImageIds.add(postImage.getImageId());
-			}
+			List<Long> deletePostImageIds = imageService.findImagesByPostId(postId)
+					.stream()
+					.map(ImageVO::getImageId)
+					.toList();
 
 			imageService.removeImages(deletePostImageIds);
 		}
-
+		
 		postMapper.deletePost(postId);
 	}
 

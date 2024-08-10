@@ -73,11 +73,11 @@
                     addedImages.push(file);
 
                     $('#addedImagesList').append(`
-                        <li class="list-group-item d-block">
-                            <a href="javascript:showImage('\${imageUrl}')">
+                        <li class="list-group-item d-flex justify-content-center align-items-center">
+                            <a href="javascript:showImage('\${imageUrl}')" class="text-center mx-auto">
                                 \${file.name}
                             </a>
-                            <button type="button" class="btn btn-danger btn-sm remove-added-image-btn">X</button>
+                            <button type="button" class="btn btn-danger btn-sm remove-image-btn ml-auto">X</button>
 
                         </li>
                     `);
@@ -233,7 +233,7 @@
                     </ul>
 
                     <!-- 추가된 이미지 리스트 -->
-                    <ul id="addedImagesList"></ul>
+                    <ul id="addedImagesList" class="d-flex flex-column align-items-center"></ul>
 
                     <!-- 파일 입력 필드 -->
                     <input type="file" id="imageInput" name="addedImages" multiple style="display:none;">
