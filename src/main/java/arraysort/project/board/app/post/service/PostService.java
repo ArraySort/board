@@ -35,8 +35,6 @@ public class PostService {
 
 	private final ImageService imageService;
 
-	// TODO : 갤러리 게시판인지, 일반 게시판인지 검증 필요
-
 	// 게시글 추가
 	@Transactional
 	public void addPost(PostAddReqDTO dto, long boardId, String boardType) {
