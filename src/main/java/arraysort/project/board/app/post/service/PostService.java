@@ -1,11 +1,13 @@
 package arraysort.project.board.app.post.service;
 
 import arraysort.project.board.app.board.domain.BoardVO;
+import arraysort.project.board.app.category.domain.CategoryVO;
 import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
 import arraysort.project.board.app.exception.IdNotFoundException;
 import arraysort.project.board.app.exception.InvalidPrincipalException;
+import arraysort.project.board.app.history.service.PostHistoryService;
 import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.*;
@@ -31,6 +33,8 @@ public class PostService {
 
 	private final ImageService imageService;
 
+	private final PostHistoryService postHistoryService;
+
 	private final PostComponent postComponent;
 
 	// 게시글 추가
@@ -38,7 +42,7 @@ public class PostService {
 	public void addPost(PostAddReqDTO dto, long boardId) {
 		PostVO vo = PostVO.insertOf(dto, boardId);
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
-		postComponent.validateCategory(dto.getCategoryId(), boardDetail);
+		CategoryVO categoryDetail = postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
 
 		// 갤러리 게시판일 때 썸네일 이미지 추가
 		if (boardDetail.getBoardType().equals("GALLERY")) {
@@ -47,6 +51,7 @@ public class PostService {
 
 		postMapper.insertPost(vo);
 		handlePostImages(dto, boardDetail, vo.getPostId());
+		postHistoryService.addPostHistory(vo, categoryDetail.getCategoryName());
 	}
 
 	// 게시글 리스트 조회(페이징 적용)
@@ -83,7 +88,7 @@ public class PostService {
 	@Transactional
 	public void modifyPost(PostEditReqDTO dto, long postId, long boardId) {
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
-		postComponent.validateCategory(dto.getCategoryId(), boardDetail);
+		postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
 
 		PostDetailResDTO postDetail = postComponent.getValidatedPost(postId, boardId);
 		postComponent.validatePostOwnership(postDetail.getUserId());

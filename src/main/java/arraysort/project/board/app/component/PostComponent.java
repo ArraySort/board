@@ -60,7 +60,7 @@ public class PostComponent {
 	 * @param categoryId  카테고리 ID
 	 * @param boardDetail 게시판 세부정보
 	 */
-	public void validateCategory(Long categoryId, BoardVO boardDetail) {
+	public CategoryVO getValidatedCategory(Long categoryId, BoardVO boardDetail) {
 		// 1. 게시글 추가 시 선택한 카테고리가 존재하는지 검증
 		CategoryVO categoryDetail = categoryMapper.selectCategoryDetailById(categoryId)
 				.orElseThrow(CategoryNotFoundException::new);
@@ -69,6 +69,8 @@ public class PostComponent {
 		if (!Objects.equals(categoryDetail.getBoardId(), boardDetail.getBoardId())) {
 			throw new InvalidPrincipalException("올바르지 않은 카테고리입니다.");
 		}
+
+		return categoryDetail;
 	}
 
 	/**

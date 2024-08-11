@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="arraysort.project.board.app.history.mapper.PostHistoryMapper">
+
+    <!-- 게시글 기록 추가 -->
+    <insert id="insertPostHistory" useGeneratedKeys="true" keyProperty="postHistoryId">
+        insert into post_history(post_id,
+                                 image_id,
+                                 category_name,
+                                 title,
+                                 content,
+                                 private_flag)
+        values (#{postId},
+                #{imageId},
+                #{categoryName},
+                #{title},
+                #{content},
+                #{privateFlag})
+    </insert>
+
+    <!-- 게시글 이미지 기록 관계 추가 -->
+    <insert id="insertPostImageHistory" parameterType="arraysort.project.board.app.history.domain.PostImageHistoryVO">
+        insert into post_image_history (post_history_id, image_id)
+        values
+        <foreach collection="imageIds" item="id" separator=",">
+            (#{postHistoryId}, #{id})
+        </foreach>
+    </insert>
+
+</mapper>
