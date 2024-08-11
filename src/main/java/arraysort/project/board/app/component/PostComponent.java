@@ -83,7 +83,7 @@ public class PostComponent {
 	 * @param boardDetail 검증된 게시판 세부정보
 	 */
 
-	public void validateUserPermissionForBoard(BoardVO boardDetail) {
+	private void validateUserPermissionForBoard(BoardVO boardDetail) {
 		if (UserUtil.isAuthenticatedUser()) {
 			// 1. 게시글을 추가할 때 작성자가 현재 로그인 한 사용자인지 검증
 			UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
@@ -146,7 +146,7 @@ public class PostComponent {
 	 *
 	 * @param postDetail 검증된 게시글 세부정보
 	 */
-	public void validatePrivatePost(PostDetailResDTO postDetail) {
+	private void validatePrivatePost(PostDetailResDTO postDetail) {
 		// 1. 현재 조회하는 게시글이 비공개 게시글인지 검증
 		if (postDetail.getPrivateFlag().equals("Y") &&
 				!Objects.equals(postDetail.getUserId(), UserUtil.getCurrentLoginUserId())) {
