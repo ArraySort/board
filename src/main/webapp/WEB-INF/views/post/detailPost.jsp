@@ -78,7 +78,7 @@
         <div>카테고리 : ${postDetail.categoryName}</div>
         <div>현재 게시판 : ${postDetail.boardName}</div>
 
-        <c:if test="${ boardDetail.boardType == 'gallery'}">
+        <c:if test="${ boardDetail.boardType == 'GALLERY'}">
             <div>현재 썸네일 이미지</div>
             <img src="/image/${postDetail.imageId}" style="height: 200px; width: 30%" alt="${postDetail.title}">
         </c:if>

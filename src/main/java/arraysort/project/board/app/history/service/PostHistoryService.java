@@ -35,7 +35,8 @@ public class PostHistoryService {
 				.map(ImageVO::getImageId)
 				.toList();
 
-		// 게시글 첨부 이미지 기록 추가
-		postHistoryMapper.insertPostImageHistory(postHistoryVO.getPostHistoryId(), postImageIds);
+		if (!postImageIds.isEmpty()) {
+			postHistoryMapper.insertPostImageHistory(postHistoryVO.getPostHistoryId(), postImageIds);
+		}
 	}
 }

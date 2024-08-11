@@ -61,7 +61,7 @@
           action="<c:url value="/${boardId}/post/process-add-post"/>">
         <sec:csrfInput/>
 
-        <c:if test="${boardDetail.boardType == 'gallery'}">
+        <c:if test="${boardDetail.boardType == 'GALLERY'}">
             <div>
                 <img src="" id="imagePreview" style="height: 200px; width: 20%"
                      alt="이미지 업로드 미리보기">
