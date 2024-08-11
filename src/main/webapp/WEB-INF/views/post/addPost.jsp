@@ -58,10 +58,10 @@
     <h1>게시글 추가</h1>
 
     <form enctype="multipart/form-data" method="post"
-          action="<c:url value="/${boardId}/${boardType.toLowerCase()}/post/process-add-post"/>">
+          action="<c:url value="/${boardId}/post/process-add-post"/>">
         <sec:csrfInput/>
 
-        <c:if test="${boardType == 'gallery'}">
+        <c:if test="${boardDetail.boardType == 'gallery'}">
             <div>
                 <img src="" id="imagePreview" style="height: 200px; width: 20%"
                      alt="이미지 업로드 미리보기">
@@ -109,7 +109,7 @@
 
         <div>
             <button type="submit" id="addPost">저장</button>
-            <button type="button" onclick="location.href='/${boardId}/${boardType.toLowerCase()}/post'">목록</button>
+            <button type="button" onclick="location.href='/${boardId}/post'">목록</button>
         </div>
     </form>
 

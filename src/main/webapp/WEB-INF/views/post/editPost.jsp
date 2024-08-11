@@ -180,7 +180,7 @@
     <h1>게시글 수정</h1>
     <div class="container" style="max-width: 850px;">
         <form enctype="multipart/form-data" method="post"
-              action="/${boardId}/${boardType.toLowerCase()}/post/detail/${postDetail.postId}/edit">
+              action="/${boardId}/post/detail/${postDetail.postId}/edit">
             <sec:csrfInput/>
 
             <input type="hidden" name="search" value="${page.search}">
@@ -195,7 +195,7 @@
             <div>카테고리 : ${postDetail.categoryName}</div>
             <div>현재 게시판 : ${postDetail.boardName}</div>
 
-            <c:if test="${boardType == 'gallery'}">
+            <c:if test="${boardDetail.boardType == 'gallery'}">
                 <div>현재 썸네일 이미지</div>
                 <img src="/image/${postDetail.imageId}" id="imagePreview" style="height: 200px; width: 30%"
                      alt="${postDetail.title}">
@@ -292,7 +292,7 @@
             <h3>수정 시간 : <fmt:formatDate value="${postDetail.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
 
             <button type="submit" id="saveButton">저장</button>
-            <a href="/${boardId}/${boardType.toLowerCase()}/post/detail/${postDetail.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
+            <a href="/${boardId}/post/detail/${postDetail.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
                 <button type="button">취소</button>
             </a>
         </form>

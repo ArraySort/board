@@ -1,11 +1,9 @@
 package arraysort.project.board.app.post.service;
 
 import arraysort.project.board.app.board.domain.BoardVO;
-import arraysort.project.board.app.board.mapper.BoardMapper;
 import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
-import arraysort.project.board.app.exception.BoardNotFoundException;
 import arraysort.project.board.app.exception.IdNotFoundException;
 import arraysort.project.board.app.exception.InvalidPrincipalException;
 import arraysort.project.board.app.image.domain.ImageVO;
@@ -29,8 +27,6 @@ public class PostService {
 
 	private final PostMapper postMapper;
 
-	private final BoardMapper boardMapper;
-
 	private final UserMapper userMapper;
 
 	private final ImageService imageService;
@@ -39,9 +35,9 @@ public class PostService {
 
 	// 게시글 추가
 	@Transactional
-	public void addPost(PostAddReqDTO dto, long boardId, String boardType) {
+	public void addPost(PostAddReqDTO dto, long boardId) {
 		PostVO vo = PostVO.insertOf(dto, boardId);
-		BoardVO boardDetail = postComponent.getValidatedBoard(boardId, boardType);
+		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 		postComponent.validateCategory(dto.getCategoryId(), boardDetail);
 
 		// 갤러리 게시판일 때 썸네일 이미지 추가
@@ -55,8 +51,8 @@ public class PostService {
 
 	// 게시글 리스트 조회(페이징 적용)
 	@Transactional(readOnly = true)
-	public PageResDTO findPostListWithPaging(PageReqDTO dto, long boardId, String boardType) {
-		postComponent.getValidatedBoard(boardId, boardType);
+	public PageResDTO findPostListWithPaging(PageReqDTO dto, long boardId) {
+		postComponent.getValidatedBoard(boardId);
 
 		int totalPostCount = postMapper.selectTotalPostCount(dto, boardId);
 		int offset = (dto.getPage() - 1) * Constants.PAGE_ROW_COUNT;
@@ -76,17 +72,17 @@ public class PostService {
 
 	// 게시글 세부내용 조회, 게시글 조회수 증가
 	@Transactional
-	public PostDetailResDTO findPostDetailByPostId(long postId, long boardId, String boardType) {
+	public PostDetailResDTO findPostDetailByPostId(long postId, long boardId) {
 		increaseViews(postId);
-		postComponent.getValidatedBoard(boardId, boardType);
+		postComponent.getValidatedBoard(boardId);
 
 		return postComponent.getValidatedPost(postId, boardId);
 	}
 
 	// 게시글 수정
 	@Transactional
-	public void modifyPost(PostEditReqDTO dto, long postId, long boardId, String boardType) {
-		BoardVO boardDetail = postComponent.getValidatedBoard(boardId, boardType);
+	public void modifyPost(PostEditReqDTO dto, long postId, long boardId) {
+		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 		postComponent.validateCategory(dto.getCategoryId(), boardDetail);
 
 		PostDetailResDTO postDetail = postComponent.getValidatedPost(postId, boardId);
@@ -108,8 +104,8 @@ public class PostService {
 
 	// 게시글 삭제
 	@Transactional
-	public void removePost(long postId, long boardId, String boardType) {
-		BoardVO boardDetail = postComponent.getValidatedBoard(boardId, boardType);
+	public void removePost(long postId, long boardId) {
+		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 
 		PostDetailResDTO postDetail = postComponent.getValidatedPost(postId, boardId);
 		postComponent.validatePostOwnership(postDetail.getUserId());
@@ -137,16 +133,6 @@ public class PostService {
 			}
 		} else {
 			throw new InvalidPrincipalException("게시글을 작성하려면 로그인이 필요합니다.");
-		}
-	}
-
-	// 게시글 작성 페이지에 대한 게시판 타입 검증
-	@Transactional(readOnly = true)
-	public void validateAddByBoardType(long boardId, String boardType) {
-		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId).orElseThrow(BoardNotFoundException::new);
-
-		if (!Objects.equals(boardDetail.getBoardType(), boardType.toUpperCase())) {
-			throw new BoardNotFoundException();
 		}
 	}
 

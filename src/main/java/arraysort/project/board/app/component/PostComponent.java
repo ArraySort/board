@@ -34,22 +34,16 @@ public class PostComponent {
 	 * 2. 게시판 상태 검증(비활성화, 삭제 상태)
 	 * 3. 접속한 경로의 게시판 타입 검증
 	 *
-	 * @param boardId   현재 접속한 페이지의 게시판 ID
-	 * @param boardType 현재 접속한 페이지의 게시판 Type
+	 * @param boardId 현재 접속한 페이지의 게시판 ID
 	 * @return 1, 2, 3 번이 검증된 게시판의 세부정보
 	 */
-	public BoardVO getValidatedBoard(long boardId, String boardType) {
+	public BoardVO getValidatedBoard(long boardId) {
 		// 1. 게시글을 추가하려는 게시판 존재하는지 검증
 		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
 				.orElseThrow(BoardNotFoundException::new);
 
 		// 2. 게시글을 추가하려는 게시판이 비활성화 상태인지, 삭제된 상태인지 검증
 		if (boardDetail.getActivateFlag().equals("N") || boardDetail.getDeleteFlag().equals("Y")) {
-			throw new BoardNotFoundException();
-		}
-
-		// 3. 현재 접속한 경로의 게시판의 타입 검증
-		if (!boardDetail.getBoardType().equals(boardType.toUpperCase())) {
 			throw new BoardNotFoundException();
 		}
 

@@ -23,7 +23,7 @@
 
     <c:forEach var="board" items="${boards}">
         <button type="button"
-                onclick="location.href='/${board.boardId}/${board.boardType.toLowerCase()}/post'">${board.boardName}
+                onclick="location.href='/${board.boardId}/post'">${board.boardName}
             으로 이동
         </button>
     </c:forEach>

@@ -78,7 +78,7 @@
         <div>카테고리 : ${postDetail.categoryName}</div>
         <div>현재 게시판 : ${postDetail.boardName}</div>
 
-        <c:if test="${boardType == 'gallery'}">
+        <c:if test="${ boardDetail.boardType == 'gallery'}">
             <div>현재 썸네일 이미지</div>
             <img src="/image/${postDetail.imageId}" style="height: 200px; width: 30%" alt="${postDetail.title}">
         </c:if>
@@ -140,7 +140,7 @@
         <h3>조회수 : ${postDetail.views}</h3>
 
         <div class="d-flex justify-content-center">
-            <form method="get" action="/${boardId}/${boardType.toLowerCase()}/post">
+            <form method="get" action="/${boardId}/post">
                 <input type="hidden" name="search" value="${page.search}">
                 <input type="hidden" name="searchType" value="${page.searchType}">
                 <input type="hidden" name="sortType" value="${page.sortType}">
@@ -155,11 +155,11 @@
 
             <c:if test="${postDetail.userId == currentUserId}">
                 <button type="button"
-                        onclick="location.href='/${boardId}/${boardType.toLowerCase()}/post/detail/${postDetail.postId}/edit'">
+                        onclick="location.href='/${boardId}/post/detail/${postDetail.postId}/edit'">
                     수정
                 </button>
                 <form method="post"
-                      action="/${boardId}/${boardType.toLowerCase()}/post/detail/${postDetail.postId}/delete">
+                      action="/${boardId}/post/detail/${postDetail.postId}/delete">
                     <sec:csrfInput/>
                     <button type="submit">삭제</button>
                 </form>

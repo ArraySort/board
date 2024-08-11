@@ -33,12 +33,12 @@
 
     <div class="m-3">
         <button type="button" onclick="location.href='/home'">홈 페이지로 이동</button>
-        <button type="button" onclick="location.href='/${boardId}/${boardType.toLowerCase()}/post/add'">게시글 추가</button>
+        <button type="button" onclick="location.href='/${boardId}/post/add'">게시글 추가</button>
     </div>
 
     <div>
         <!-- 검색기능 : 제목 입력 -->
-        <form class="ms-auto d-inline-block m-2" method="get" action="/${boardId}/${boardType.toLowerCase()}/post">
+        <form class="ms-auto d-inline-block m-2" method="get" action="/${boardId}/post">
             <div class="input-group">
                 <select name="sortType" aria-label="sortType select">
                     <option value="ID" ${page.sortType == 'ID' ? 'selected' : ''}>번호순</option>
@@ -58,7 +58,7 @@
     </div>
 
 
-    <c:if test="${boardType == 'general'}">
+    <c:if test="${boardDetail.boardType == 'GENERAL'}">
         <!-- 게시판 시작 -->
         <div class="container" style="max-width: 850px; height: 500px; overflow-y: auto">
             <table class="table">
@@ -80,7 +80,7 @@
                     <tr>
                         <td>${post.postId}</td>
                         <td>
-                            <a href="/${boardId}/${boardType.toLowerCase()}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">${post.title}</a>
+                            <a href="/${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">${post.title}</a>
                         </td>
                         <td>${post.userName}</td>
                         <td><fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/></td>
@@ -97,7 +97,7 @@
     <!-- 게시판 끝 -->
 
     <!-- 갤러리 게시판 시작 -->
-    <c:if test="${boardType == 'gallery'}">
+    <c:if test="${boardDetail.boardType == 'GALLERY'}">
         <div class="container" style="max-width: 1000px">
             <c:forEach var="post" items="${pagination.postList}" varStatus="status">
                 <c:if test="${status.index % 3 == 0}">
@@ -107,7 +107,7 @@
                     <img src="/image/${post.imageId}" class="card-img-top" alt="${post.title}">
                     <div class="card-body">
                         <h5 class="card-title">
-                            <a href="/${boardId}/${boardType}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
+                            <a href="/${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
                                     ${post.title}
                             </a>
                         </h5>
@@ -136,13 +136,13 @@
             <!-- 처음 페이지로 이동하는 버튼 -->
             <li class="page-item">
                 <a class="page-link"
-                   href="/${boardId}/${boardType.toLowerCase()}/post?page=1&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">&laquo</a>
+                   href="/${boardId}/post?page=1&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">&laquo</a>
             </li>
             <!-- 이전 블록으로 이동하는 버튼 -->
             <c:if test="${pagination.prev}">
                 <li class="page-item">
                     <a class="page-link"
-                       href="/${boardId}/${boardType.toLowerCase()}/post?page=${pagination.startBlockPage - 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                       href="/${boardId}/post?page=${pagination.startBlockPage - 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
                         &lt;
                     </a>
                 </li>
@@ -151,7 +151,7 @@
             <c:forEach var="pageNum" begin="${pagination.startBlockPage}" end="${pagination.endBlockPage}">
                 <li class="page-item ${pageNum == pagination.currentPage ? 'active' : ''}">
                     <a class="page-link"
-                       href="/${boardId}/${boardType.toLowerCase()}/post?page=${pageNum}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                       href="/${boardId}/post?page=${pageNum}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
                             ${pageNum}
                     </a>
                 </li>
@@ -160,7 +160,7 @@
             <c:if test="${pagination.next}">
                 <li class="page-item">
                     <a class="page-link"
-                       href="/${boardId}/${boardType.toLowerCase()}/post?page=${pagination.endBlockPage + 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                       href="/${boardId}/post?page=${pagination.endBlockPage + 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
                         &gt;
                     </a>
                 </li>
@@ -168,7 +168,7 @@
             <!-- 끝 페이지로 이동하는 버튼 -->
             <li class="page-item">
                 <a class="page-link"
-                   href="/${boardId}/${boardType.toLowerCase()}/post?page=${pagination.totalPageCount}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                   href="/${boardId}/post?page=${pagination.totalPageCount}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
                     &raquo;
                 </a>
             </li>
