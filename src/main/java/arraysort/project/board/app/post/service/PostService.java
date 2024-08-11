@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -88,15 +89,15 @@ public class PostService {
 	@Transactional
 	public void modifyPost(PostEditReqDTO dto, long postId, long boardId) {
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
-		postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
-
+		CategoryVO categoryDetail = postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
 		PostDetailResDTO postDetail = postComponent.getValidatedPost(postId, boardId);
+
 		postComponent.validatePostOwnership(postDetail.getUserId());
 
 		// 이미지 수정 처리
 		handlePostImages(dto, boardDetail, postId);
 
-		PostVO vo = PostVO.updateOf(dto);
+		PostVO vo = PostVO.updateOf(dto, postId);
 		vo.updateThumbnailImageId(postDetail.getImageId());
 
 		// 썸네일 이미지 업로드 검증 : 갤러리 게시판인지, 썸네일 이미지가 비어있는지
@@ -105,13 +106,13 @@ public class PostService {
 		}
 
 		postMapper.updatePost(vo, postId);
+		postHistoryService.addPostHistory(vo, categoryDetail.getCategoryName());
 	}
 
 	// 게시글 삭제
 	@Transactional
 	public void removePost(long postId, long boardId) {
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
-
 		PostDetailResDTO postDetail = postComponent.getValidatedPost(postId, boardId);
 		postComponent.validatePostOwnership(postDetail.getUserId());
 
@@ -186,6 +187,18 @@ public class PostService {
 	private void handlePostImages(PostEditReqDTO dto, BoardVO boardDetail, long postId) {
 		if (boardDetail.getImageFlag().equals("N")) {
 			return;
+		}
+
+		int count = 0;
+
+		for (MultipartFile multipartFile : dto.getAddedImages()) {
+			if (!multipartFile.isEmpty()) {
+				count++;
+			}
+		}
+
+		if (count == 0) {
+			dto.getAddedImages().clear();
 		}
 
 		int imageCount = imageService.findImageCountByPostId(postId) + dto.getAddedImages().size() - dto.getRemovedImageIds().size();

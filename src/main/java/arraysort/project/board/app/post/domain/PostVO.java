@@ -71,8 +71,9 @@ public class PostVO {
 	}
 
 	// 게시물 수정
-	public static PostVO updateOf(PostEditReqDTO dto) {
+	public static PostVO updateOf(PostEditReqDTO dto, long postId) {
 		return PostVO.builder()
+				.postId(postId)
 				.title(dto.getTitle())
 				.content(dto.getContent())
 				.categoryId(dto.getCategoryId())
