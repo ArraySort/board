@@ -29,6 +29,16 @@
             </foreach>
     </insert>
 
+    <!-- 임시게시글 이미지 관계 추가 -->
+    <insert id="insertTempPostImage" parameterType="arraysort.project.board.app.image.domain.TempPostImageVO">
+        insert into temp_post_image (temp_post_id, image_id)
+        values
+        <foreach collection="tempPostImages" item="tempPostImage" separator=",">
+            (#{tempPostImage.tempPostId}, #{tempPostImage.imageId})
+        </foreach>
+    </insert>
+
+
     <!-- 게시글 세부조회 -> 이미지 리스트 조회 -->
     <select id="selectImagesByPostId" parameterType="long" resultType="arraysort.project.board.app.image.domain.ImageVO">
         select i.image_id,

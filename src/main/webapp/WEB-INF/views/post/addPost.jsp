@@ -22,7 +22,33 @@
                 alert(message);
             }
 
+            // 입력 폼 검증
+            function validateForm(e) {
+                const category = $('#category').val();
+                const title = $('#title').val();
+                const content = $('#content').val();
+
+                if (!(category && title && content)) {
+                    alertMessage(e, "카테고리, 제목, 내용은 필수 입력사항입니다.");
+                } else if (title.length < 1 || title.length > 50) {
+                    alertMessage(e, "제목은 최소 1글자, 최대 50글자이어야 합니다.");
+                } else if (content.length < 1 || content.length > 500) {
+                    alertMessage(e, "내용은 최소 1글자, 최대 500글자이어야 합니다.");
+                }
+            }
+
+            function validateTempForm(e) {
+                const title = $('#title').val();
+
+                if (!title) {
+                    alertMessage(e, "제목은 필수 입력사항입니다.")
+                } else if (title.length < 1 || title.length > 50) {
+                    alertMessage(e, "제목은 최소 1글자, 최대 50글자이어야 합니다.")
+                }
+            }
+
             // 업로드 이미지 미리보기
+
             $('#thumbnailImage').on('change', function () {
                 const file = this.files[0];
                 if (file) {
@@ -34,20 +60,19 @@
                 }
             });
 
+            // 저장 버튼
             $('#addPost').on('click', function (e) {
-                const category = $('#category').val();
-                const title = $('#title').val();
-                const content = $('#content').val();
-
-                if (!(category && title && content)) {
-                    alertMessage(e, "카테고리, 제목, 내용은 필수 입력사항입니다.")
-                } else if (title.length < 1 && title.length > 50) {
-                    alertMessage(e, "제목은 최소 1글자, 최대 50글자이어야 합니다.");
-                } else if (content.length < 1 && content.length > 500) {
-                    alertMessage(e, "내용은 최소 1글자, 최대 500글자이어야 합니다.");
-                }
+                $('#postForm').attr('action', '<c:url value="/${boardId}/post/process-add-post"/>');
+                validateForm(e);
             });
-        });
+
+            // 임시저장 버튼
+            $('#saveTempPost').on('click', function (e) {
+                $('#postForm').attr('action', '<c:url value="/${boardId}/post/process-save-temp-post"/>');
+                validateTempForm(e);
+            });
+        })
+        ;
     </script>
 
 </head>
@@ -57,8 +82,7 @@
 
     <h1>게시글 추가</h1>
 
-    <form enctype="multipart/form-data" method="post"
-          action="<c:url value="/${boardId}/post/process-add-post"/>">
+    <form id="postForm" enctype="multipart/form-data" method="post">
         <sec:csrfInput/>
 
         <c:if test="${boardDetail.boardType == 'GALLERY'}">
@@ -108,6 +132,7 @@
         </div>
 
         <div>
+            <button type="submit" id="saveTempPost">임시저장</button>
             <button type="submit" id="addPost">저장</button>
             <button type="button" onclick="location.href='/${boardId}/post'">목록</button>
         </div>

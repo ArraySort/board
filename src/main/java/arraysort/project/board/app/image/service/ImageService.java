@@ -4,12 +4,14 @@ import arraysort.project.board.app.component.ImageComponent;
 import arraysort.project.board.app.exception.ThumbnailImageNotFoundException;
 import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.domain.PostImageVO;
+import arraysort.project.board.app.image.domain.TempPostImageVO;
 import arraysort.project.board.app.image.mapper.ImageMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -23,18 +25,10 @@ public class ImageService {
 	// 이미지 추가
 	@Transactional
 	public void addImages(List<MultipartFile> images, long postId) {
-		List<ImageVO> imageVOList = imageComponent.uploadImages(images)
-				.stream()
-				.map(ImageVO::insertOf)
-				.toList();
+		List<ImageVO> imageVOList = getImageVOList(images);
 
 		if (imageVOList.isEmpty()) {
 			return;
-		}
-
-		// 이미지가 추가 되었을 때만 처리
-		for (ImageVO image : imageVOList) {
-			imageMapper.insertImage(image);
 		}
 
 		List<PostImageVO> postImageVOList = imageVOList
@@ -46,6 +40,26 @@ public class ImageService {
 				.toList();
 
 		imageMapper.insertPostImage(postImageVOList);
+	}
+
+	// 임시저장 이미지 추가
+	@Transactional
+	public void addTempImages(List<MultipartFile> images, long tempPostId) {
+		List<ImageVO> imageVOList = getImageVOList(images);
+
+		if (imageVOList.isEmpty()) {
+			return;
+		}
+
+		List<TempPostImageVO> tempPostImageVOList = imageVOList
+				.stream()
+				.map(image -> TempPostImageVO.builder()
+						.tempPostId(tempPostId)
+						.imageId(image.getImageId())
+						.build())
+				.toList();
+
+		imageMapper.insertTempPostImage(tempPostImageVOList);
 	}
 
 	// 썸네일 이미지 추가
@@ -106,5 +120,25 @@ public class ImageService {
 	@Transactional(readOnly = true)
 	public int findImageCountByPostId(long postId) {
 		return imageMapper.selectImageCountByPostId(postId);
+	}
+
+	/**
+	 * 업로드된 이미지 리스트 생성
+	 *
+	 * @param images 업로드된 이미지들
+	 * @return 업로드 된 이미지 리스트
+	 */
+	private List<ImageVO> getImageVOList(List<MultipartFile> images) {
+		List<ImageVO> imageVOList = imageComponent.uploadImages(images)
+				.stream()
+				.map(ImageVO::insertOf)
+				.toList();
+
+		if (imageVOList.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		imageVOList.forEach(imageMapper::insertImage);
+		return imageVOList;
 	}
 }

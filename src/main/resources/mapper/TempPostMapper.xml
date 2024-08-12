@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="arraysort.project.board.app.temp.mapper.TempPostMapper">
+
+    <!-- 임시저장 게시글 추가-->
+    <insert id="insertTempPost" parameterType="arraysort.project.board.app.temp.domain.TempPostVO" useGeneratedKeys="true" keyProperty="tempPostId">
+        insert into temp_post(user_id,
+                              board_id,
+                              category_id,
+                              image_id,
+                              title,
+                              content,
+                              private_flag,
+                              created_by,
+                              updated_by)
+        values (#{userId},
+                #{boardId},
+                #{categoryId},
+                #{imageId},
+                #{title},
+                #{content},
+                #{privateFlag},
+                #{createdBy},
+                #{updatedBy}
+               );
+    </insert>
+
+</mapper>
