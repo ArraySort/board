@@ -124,4 +124,27 @@
         where post_id = #{postId}
     </select>
 
+    <!-- 임시저장 게시글 이미지 관계 삭제 -->
+    <delete id="deleteTempPostImageByPostId" parameterType="long">
+        delete
+        from temp_post_image
+        where temp_post_id = #{tempPostId}
+    </delete>
+
+    <delete id="deleteTempImages" parameterType="long">
+        delete
+        from image
+        where image_id in
+        <foreach collection="imageIds" item="imageId" open="(" separator="," close=")">
+            #{imageId}
+        </foreach>
+    </delete>
+
+    <!-- 게시글 썸네일 이미지 삭제 -->
+    <delete id="deleteThumbnailImageByTempPostId" parameterType="long">
+        delete
+        from image
+        where image_id = #{imageId}
+    </delete>
+
 </mapper>

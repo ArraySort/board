@@ -43,4 +43,13 @@ public interface ImageMapper {
 
 	// 게시글에 존재하는 이미지 개수 조회
 	int selectImageCountByPostId(long postId);
+
+	// 임시저장 게시글 게시 -> 이미지 삭제
+	void deleteTempImages(List<Long> imageIds);
+
+	// 임시저장 게시글 이미지 관계 삭제
+	void deleteTempPostImageByPostId(long tempPostId);
+
+	// 임시저장 게시글 게시 -> 썸네일 이미지 변경
+	void deleteThumbnailImageByTempPostId(long imageId);
 }

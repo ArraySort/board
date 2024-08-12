@@ -128,4 +128,11 @@
         where temp_post_id = #{tempPostId} and c.board_id = #{boardId}
     </select>
 
+    <!-- 임시저장 게시글 게시 후 임시저장 게시글 삭제 -->
+    <delete id="deleteTempPost" parameterType="long">
+        delete
+        from temp_post
+        where temp_post_id = #{tempPostId}
+    </delete>
+
 </mapper>

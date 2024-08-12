@@ -79,6 +79,13 @@ public class ImageService {
 		// 삭제된 이미지 제거
 		postImages.removeIf(image -> dto.getRemovedImageIds().contains(image.getImageId()));
 
+		// 임시저장 게시글 이미지 관계 삭제, 임시저장 게시글 이미지 삭제(테이블)
+		imageMapper.deleteTempPostImageByPostId(tempPostId);
+
+		if (!dto.getRemovedImageIds().isEmpty()) {
+			imageMapper.deleteTempImages(dto.getRemovedImageIds());
+		}
+
 		if (postImages.isEmpty()) {
 			return;
 		}
@@ -127,6 +134,12 @@ public class ImageService {
 	@Transactional
 	public void removeThumbnailImage(long postId) {
 		imageMapper.deleteThumbnailImageByPostId(postId);
+	}
+
+	// 임시저장 게시글 게시 -> 썸네일 수정
+	@Transactional
+	public void removeTempThumbnailImage(long imageId) {
+		imageMapper.deleteThumbnailImageByTempPostId(imageId);
 	}
 
 	// 게시글 아이디로 이미지 조회

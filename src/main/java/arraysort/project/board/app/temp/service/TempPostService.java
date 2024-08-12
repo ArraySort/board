@@ -14,12 +14,14 @@ import arraysort.project.board.app.temp.domain.*;
 import arraysort.project.board.app.temp.mapper.TempPostMapper;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TempPostService {
 
@@ -84,14 +86,19 @@ public class TempPostService {
 	@Transactional
 	public void publishTempPost(TempPostEditReqDTO dto, long boardId, long tempPostId) {
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
+		TempPostVO tempPostDetail = tempPostMapper.selectTempPostDetailByPostId(tempPostId, boardId)
+				.orElseThrow(DetailNotFoundException::new);
 		PostVO vo = PostVO.insertOf(dto, boardId);
 
+		boolean isThumbnailChanged = false;
+
 		// 기존 임시저장 썸네일 이미지
-		vo.updateThumbnailImageId(tempPostId);
+		vo.updateThumbnailImageId(tempPostDetail.getImageId());
 
 		// 갤러리 게시판 이고, 썸네일 이미지 수정 시 실행
 		if (boardDetail.getBoardType().equals("GALLERY") && !dto.getThumbnailImage().isEmpty()) {
 			vo.updateThumbnailImageId(imageService.addThumbnailImage(dto.getThumbnailImage()));
+			isThumbnailChanged = true;
 		}
 
 		// 임시저장 -> 게시글 게시
@@ -99,6 +106,14 @@ public class TempPostService {
 
 		// 임시저장 -> 게시글 이미지 업로드
 		imageService.publishTempImages(dto, tempPostId, vo.getPostId());
+
+		// 임시저장 게시글 삭제
+		tempPostMapper.deleteTempPost(tempPostId);
+
+		// 썸네일이 변경된 경우 기존 임시저장 썸네일 이미지 삭제
+		if (isThumbnailChanged) {
+			imageService.removeTempThumbnailImage(tempPostDetail.getImageId());
+		}
 	}
 
 	/**
