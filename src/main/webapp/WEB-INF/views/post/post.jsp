@@ -1,3 +1,4 @@
+<%@ page import="arraysort.project.board.app.utils.UserUtil" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -31,9 +32,18 @@
 
     <h1>일반 게시판 페이지</h1>
 
+    <%
+        // 로그인 한 유저인지 확인하는 값
+        boolean isAuthenticatedUser = UserUtil.isAuthenticatedUser();
+        pageContext.setAttribute("isAuthenticatedUser", isAuthenticatedUser);
+    %>
+
     <div class="m-3">
         <button type="button" onclick="location.href='/home'">홈 페이지로 이동</button>
         <button type="button" onclick="location.href='/${boardId}/post/add'">게시글 추가</button>
+        <c:if test="${isAuthenticatedUser}">
+            <button type="button" onclick="location.href='/${boardId}/post/temp'">임시저장 목록</button>
+        </c:if>
     </div>
 
     <div>

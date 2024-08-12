@@ -27,7 +27,7 @@
                );
     </insert>
 
-    <!-- 게시글 리스트 조회 -->
+    <!-- 임시저장 게시글 리스트 조회 -->
     <select id="selectTempPostListWithPaging" resultType="arraysort.project.board.app.temp.domain.TempPostVO">
         select p.temp_post_id,
                p.user_id,
@@ -43,7 +43,7 @@
         inner join user u on p.user_id = u.user_id
         inner join category c on p.category_id = c.category_id
         <where>
-            p.board_id = #{boardId}
+            p.board_id = #{boardId} and p.user_id = #{userId}
             <if test="dto.search != null and dto.search != ''">
                 <choose>
                     <when test="dto.searchType != null and dto.searchType.toString() == 'ALL'">
@@ -85,7 +85,7 @@
 
     </select>
 
-    <!-- 총 게시물 개수 조회 -->
+    <!-- 임시저장 총 게시물 개수 조회 -->
     <select id="selectTotalTempPostCount" parameterType="arraysort.project.board.app.temp.domain.TempPostVO" resultType="int">
         select count(*)
         from temp_post
@@ -107,7 +107,7 @@
         </where>
     </select>
 
-    <!-- 게시글 세부내용 조회 -->
+    <!-- 임시저장 게시글 세부내용 조회 -->
     <select id="selectTempPostDetailByPostId" parameterType="long" resultType="arraysort.project.board.app.temp.domain.TempPostVO">
         select p.temp_post_id,
                p.user_id,

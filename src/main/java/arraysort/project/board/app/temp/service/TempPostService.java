@@ -12,6 +12,7 @@ import arraysort.project.board.app.post.domain.PostVO;
 import arraysort.project.board.app.post.mapper.PostMapper;
 import arraysort.project.board.app.temp.domain.*;
 import arraysort.project.board.app.temp.mapper.TempPostMapper;
+import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,7 +62,8 @@ public class TempPostService {
 						Constants.PAGE_ROW_COUNT,
 						offset,
 						dto,
-						boardId
+						boardId,
+						UserUtil.getCurrentLoginUserId()
 				)
 				.stream()
 				.map(TempPostListResDTO::of)

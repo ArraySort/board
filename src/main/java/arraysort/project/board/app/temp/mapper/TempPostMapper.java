@@ -17,7 +17,7 @@ public interface TempPostMapper {
 	int selectTotalTempPostCount(PageReqDTO dto, long boardId);
 
 	// 임시저장 게시글 리스트 조회
-	List<TempPostVO> selectTempPostListWithPaging(int pageRowCount, int offset, PageReqDTO dto, long boardId);
+	List<TempPostVO> selectTempPostListWithPaging(int pageRowCount, int offset, PageReqDTO dto, long boardId, String userId);
 
 	// 게시글 세부내용 조회
 	Optional<TempPostVO> selectTempPostDetailByPostId(long tempPostId, long boardId);
