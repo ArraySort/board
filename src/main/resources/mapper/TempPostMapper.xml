@@ -94,13 +94,13 @@
             <if test="dto.search != null and dto.search != ''">
                 <choose>
                     <when test="dto.searchType != null and dto.searchType.toString() == 'ALL'">
-                        (title like concat('%', #{search}, '%') or content like concat('%', #{search}, '%'))
+                        and (title like concat('%', #{dto.search}, '%') or content like concat('%', #{dto.search}, '%'))
                     </when>
                     <when test="dto.searchType != null and dto.searchType.toString() == 'TITLE'">
-                        title like concat('%', #{search}, '%')
+                        and title like concat('%', #{dto.search}, '%')
                     </when>
                     <when test="dto.searchType != null and dto.searchType.toString() == 'CONTENT'">
-                        content like concat('%', #{search}, '%')
+                        and content like concat('%', #{dto.search}, '%')
                     </when>
                 </choose>
             </if>
