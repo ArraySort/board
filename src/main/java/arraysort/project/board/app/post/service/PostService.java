@@ -189,19 +189,12 @@ public class PostService {
 			return;
 		}
 
-		int count = 0;
+		boolean addedImageCheck = dto.getAddedImages().stream()
+				.anyMatch(MultipartFile::isEmpty);
 
-		for (MultipartFile multipartFile : dto.getAddedImages()) {
-			if (!multipartFile.isEmpty()) {
-				count++;
-			}
-		}
+		int addedImageCount = addedImageCheck ? 0 : dto.getAddedImages().size();
 
-		if (count == 0) {
-			dto.getAddedImages().clear();
-		}
-
-		int imageCount = imageService.findImageCountByPostId(postId) + dto.getAddedImages().size() - dto.getRemovedImageIds().size();
+		int imageCount = imageService.findImageCountByPostId(postId) + addedImageCount - dto.getRemovedImageIds().size();
 
 		if (imageCount > boardDetail.getImageLimit()) {
 			throw new BoardImageOutOfRangeException("해당 게시판은 최대 " + boardDetail.getImageLimit() + " 개 까지 업로드 가능합니다.");
