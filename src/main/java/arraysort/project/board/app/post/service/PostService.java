@@ -50,8 +50,13 @@ public class PostService {
 			vo.updateThumbnailImageId(imageService.addThumbnailImage(dto.getThumbnailImage()));
 		}
 
+		// 게시글 추가
 		postMapper.insertPost(vo);
+
+		// 게시글 이미지 업로드
 		handlePostImages(dto, boardDetail, vo.getPostId());
+
+		// 게시글 기록 추가(이미지 포함)
 		postHistoryService.addPostHistory(vo, categoryDetail.getCategoryName());
 	}
 
@@ -94,10 +99,11 @@ public class PostService {
 
 		postComponent.validatePostOwnership(postDetail.getUserId());
 
-		// 이미지 수정 처리
+		// 이미지 수정
 		handlePostImages(dto, boardDetail, postId);
 
 		PostVO vo = PostVO.updateOf(dto, postId);
+		// 썸네일 이미지 수정
 		vo.updateThumbnailImageId(postDetail.getImageId());
 
 		// 썸네일 이미지 업로드 검증 : 갤러리 게시판인지, 썸네일 이미지가 비어있는지
@@ -105,7 +111,10 @@ public class PostService {
 			vo.updateThumbnailImageId(imageService.modifyThumbnailImage(dto.getThumbnailImage(), postId));
 		}
 
+		// 게시물 수정
 		postMapper.updatePost(vo, postId);
+
+		// 게시물 기록 추가(수정)
 		postHistoryService.addPostHistory(vo, categoryDetail.getCategoryName());
 	}
 
@@ -124,6 +133,7 @@ public class PostService {
 			imageService.removeThumbnailImage(postId);
 		}
 
+		// 게시물 삭제
 		postMapper.deletePost(postId);
 	}
 
