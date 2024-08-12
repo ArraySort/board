@@ -24,8 +24,7 @@ public class PostHistoryService {
 	// 게시글 기록 추가
 	@Transactional
 	public void addPostHistory(PostVO postVO, String categoryName) {
-		PostHistoryVO postHistoryVO = PostHistoryVO.of(postVO);
-		postHistoryVO.updateCategoryName(categoryName);
+		PostHistoryVO postHistoryVO = PostHistoryVO.of(postVO, categoryName);
 
 		// 게시글 내용 기록 추가
 		postHistoryMapper.insertPostHistory(postHistoryVO);
@@ -35,6 +34,7 @@ public class PostHistoryService {
 				.map(ImageVO::getImageId)
 				.toList();
 
+		// 게시글 이미지 기록 추가
 		if (!postImageIds.isEmpty()) {
 			postHistoryMapper.insertPostImageHistory(postHistoryVO.getPostHistoryId(), postImageIds);
 		}

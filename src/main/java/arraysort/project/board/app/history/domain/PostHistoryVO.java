@@ -28,22 +28,16 @@ public class PostHistoryVO {
 
 	private Date createdAt;        // 생성 날짜
 
-	private String deleteFlag;        // 삭제 여부
-
 	// 게시물 기록 추가
-	public static PostHistoryVO of(PostVO vo) {
+	public static PostHistoryVO of(PostVO vo, String categoryName) {
 		return PostHistoryVO.builder()
 				.postId(vo.getPostId())
 				.imageId(vo.getImageId())
+				.categoryName(categoryName)
 				.title(vo.getTitle())
 				.content(vo.getContent())
 				.privateFlag(vo.getPrivateFlag())
 				.activateFlag(vo.getActivateFlag())
 				.build();
-	}
-
-	// 카테고리 이름 업데이트
-	public void updateCategoryName(String categoryName) {
-		this.categoryName = categoryName;
 	}
 }
