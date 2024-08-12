@@ -6,11 +6,13 @@ import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.domain.PostImageVO;
 import arraysort.project.board.app.image.domain.TempPostImageVO;
 import arraysort.project.board.app.image.mapper.ImageMapper;
+import arraysort.project.board.app.temp.domain.TempPostEditReqDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -62,6 +64,36 @@ public class ImageService {
 		imageMapper.insertTempPostImage(tempPostImageVOList);
 	}
 
+	// 임시저장 게시글에서 일반 게시글로 게시
+	@Transactional
+	public void publishTempImages(TempPostEditReqDTO dto, long tempPostId, long postId) {
+
+		List<ImageVO> postImages = new ArrayList<>();
+
+		// 기존 임시 게시글 이미지 목록 추가
+		postImages.addAll(imageMapper.selectImagesByTempPostId(tempPostId));
+
+		// 새로 추가된 이미지 목록 추가
+		postImages.addAll(getImageVOList(dto.getAddedImages()));
+
+		// 삭제된 이미지 제거
+		postImages.removeIf(image -> dto.getRemovedImageIds().contains(image.getImageId()));
+
+		if (postImages.isEmpty()) {
+			return;
+		}
+
+		List<PostImageVO> postImageVOList = postImages
+				.stream()
+				.map(image -> PostImageVO.builder()
+						.postId(postId)
+						.imageId(image.getImageId())
+						.build())
+				.toList();
+
+		imageMapper.insertPostImage(postImageVOList);
+	}
+
 	// 썸네일 이미지 추가
 	@Transactional
 	public long addThumbnailImage(MultipartFile multipartFile) {
@@ -101,6 +133,12 @@ public class ImageService {
 	@Transactional(readOnly = true)
 	public List<ImageVO> findImagesByPostId(long postId) {
 		return imageMapper.selectImagesByPostId(postId);
+	}
+
+	// 임시저장 게시글 아이디로 이미지 조회
+	@Transactional(readOnly = true)
+	public List<ImageVO> findImagesByTempPostId(long tempPostId) {
+		return imageMapper.selectImagesByTempPostId(tempPostId);
 	}
 
 	// 이미지 ID 로 이미지 조회

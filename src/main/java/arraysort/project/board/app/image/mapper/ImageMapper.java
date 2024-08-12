@@ -23,6 +23,9 @@ public interface ImageMapper {
 	// 게시글 세부조회 -> 이미지 리스트 조회
 	List<ImageVO> selectImagesByPostId(long postId);
 
+	//  임시저장 게시글 세부조회 -> 이미지 리스트 조회
+	List<ImageVO> selectImagesByTempPostId(long tempPostId);
+
 	// 게시글 세부조회 -> 이미지 조회
 	Optional<ImageVO> selectImageById(long imageId);
 

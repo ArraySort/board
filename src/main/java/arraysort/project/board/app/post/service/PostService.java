@@ -62,7 +62,7 @@ public class PostService {
 
 	// 게시글 리스트 조회(페이징 적용)
 	@Transactional(readOnly = true)
-	public PageResDTO findPostListWithPaging(PageReqDTO dto, long boardId) {
+	public PageResDTO<PostListResDTO> findPostListWithPaging(PageReqDTO dto, long boardId) {
 		postComponent.getValidatedBoard(boardId);
 
 		int totalPostCount = postMapper.selectTotalPostCount(dto, boardId);
@@ -78,7 +78,7 @@ public class PostService {
 				.map(PostListResDTO::of)
 				.toList();
 
-		return new PageResDTO(totalPostCount, dto.getPage(), postList);
+		return new PageResDTO<>(totalPostCount, dto.getPage(), postList);
 	}
 
 	// 게시글 세부내용 조회, 게시글 조회수 증가

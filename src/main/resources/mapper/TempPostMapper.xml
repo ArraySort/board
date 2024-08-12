@@ -27,4 +27,105 @@
                );
     </insert>
 
+    <!-- 게시글 리스트 조회 -->
+    <select id="selectTempPostListWithPaging" resultType="arraysort.project.board.app.temp.domain.TempPostVO">
+        select p.temp_post_id,
+               p.user_id,
+               p.category_id,
+               p.image_id,
+               u.user_name,
+               c.category_name,
+               p.title,
+               p.private_flag,
+               p.created_at,
+               p.updated_at
+        from temp_post p
+        inner join user u on p.user_id = u.user_id
+        inner join category c on p.category_id = c.category_id
+        <where>
+            p.board_id = #{boardId}
+            <if test="dto.search != null and dto.search != ''">
+                <choose>
+                    <when test="dto.searchType != null and dto.searchType.toString() == 'ALL'">
+                        and (p.title like concat('%', #{dto.search}, '%') or p.content like concat('%', #{dto.search}, '%'))
+                    </when>
+                    <when test="dto.searchType != null and dto.searchType.toString() == 'TITLE'">
+                        and p.title like concat('%', #{dto.search}, '%')
+                    </when>
+                    <when test="dto.searchType != null and dto.searchType.toString() == 'CONTENT'">
+                        and p.content like concat('%', #{dto.search}, '%')
+                    </when>
+                </choose>
+            </if>
+        </where>
+
+        <choose>
+            <when test="dto.sortType.toString() == 'ID'">
+                order by p.temp_post_id desc
+            </when>
+
+            <when test="dto.sortType.toString() == 'LATEST'">
+                order by p.updated_at desc
+            </when>
+
+            <when test="dto.sortType.toString() == 'OLDEST'">
+                order by p.updated_at asc
+            </when>
+
+            <when test="dto.sortType.toString() == 'VIEWS'">
+                order by p.views desc
+            </when>
+
+            <otherwise>
+                order by p.temp_post_id desc
+            </otherwise>
+        </choose>
+
+        limit #{pageRowCount} offset #{offset}
+
+    </select>
+
+    <!-- 총 게시물 개수 조회 -->
+    <select id="selectTotalTempPostCount" parameterType="arraysort.project.board.app.temp.domain.TempPostVO" resultType="int">
+        select count(*)
+        from temp_post
+        <where>
+            board_id = #{boardId}
+            <if test="dto.search != null and dto.search != ''">
+                <choose>
+                    <when test="dto.searchType != null and dto.searchType.toString() == 'ALL'">
+                        (title like concat('%', #{search}, '%') or content like concat('%', #{search}, '%'))
+                    </when>
+                    <when test="dto.searchType != null and dto.searchType.toString() == 'TITLE'">
+                        title like concat('%', #{search}, '%')
+                    </when>
+                    <when test="dto.searchType != null and dto.searchType.toString() == 'CONTENT'">
+                        content like concat('%', #{search}, '%')
+                    </when>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <!-- 게시글 세부내용 조회 -->
+    <select id="selectTempPostDetailByPostId" parameterType="long" resultType="arraysort.project.board.app.temp.domain.TempPostVO">
+        select p.temp_post_id,
+               p.user_id,
+               p.board_id,
+               p.image_id,
+               u.user_name,
+               b.board_name,
+               c.category_name,
+               p.title,
+               p.content,
+               p.private_flag,
+               p.created_at,
+               p.updated_at
+        from temp_post p
+                 inner join user u on p.user_id = u.user_id
+                 inner join category c on p.category_id = c.category_id
+                 inner join board b on p.board_id = b.board_id
+        where temp_post_id = #{tempPostId} and c.board_id = #{boardId}
+    </select>
+
 </mapper>

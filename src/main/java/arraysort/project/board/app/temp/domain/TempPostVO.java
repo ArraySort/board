@@ -1,13 +1,17 @@
 package arraysort.project.board.app.temp.domain;
 
 import arraysort.project.board.app.utils.UserUtil;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TempPostVO {
 
 	private Long tempPostId;
@@ -19,6 +23,10 @@ public class TempPostVO {
 	private Long categoryId;
 
 	private Long imageId;
+
+	private String userName;
+
+	private String categoryName;
 
 	private String title;
 

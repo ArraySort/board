@@ -54,6 +54,21 @@
         where pi.post_id = #{postId} and i.delete_flag = 'N'
     </select>
 
+    <!-- 임시저장 게시글 세부조회 -> 이미지 리스트 조회 -->
+    <select id="selectImagesByTempPostId" parameterType="long" resultType="arraysort.project.board.app.image.domain.ImageVO">
+        select i.image_id,
+               i.original_name,
+               i.saved_name,
+               i.size,
+               i.image_path,
+               i.created_by,
+               i.created_at,
+               i.delete_flag
+        from image i
+                 inner join temp_post_image tpi on i.image_id = tpi.image_id
+        where tpi.temp_post_id = #{postId} and i.delete_flag = 'N'
+    </select>
+
     <!-- 게시글 세부조회 -> 이미지 조회 -->
     <select id="selectImageById" parameterType="long" resultType="arraysort.project.board.app.image.domain.ImageVO">
         select image_id,

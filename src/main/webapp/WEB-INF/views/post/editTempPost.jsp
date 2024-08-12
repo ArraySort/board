@@ -67,6 +67,7 @@
                 removedImageIds.push(imageId);
                 $(this).closest('li').remove();
                 $('#removedImagesInput').val(removedImageIds);
+                console.log(removedImageIds)
             });
 
             // 저장 버튼 눌렀을 때 검증
@@ -95,11 +96,18 @@
 
                         </li>
                     `);
+
+                    updateAddedImagesInput();
                 }
 
-                updateAddedImagesInput();
+                let dataTransfer = new DataTransfer();
+                addedImages.forEach(file => {
+                    dataTransfer.items.add(file)
+                })
+                if (addedImages.length > 0) {
+                    $('#addedImagesInput').prop('files', dataTransfer.files);
+                }
             });
-
 
             // 추가된 이미지 삭제
             $(document).on('click', '.remove-added-image-btn', function () {
@@ -121,7 +129,7 @@
                 addedImages.forEach(file => {
                     dataTransfer.items.add(file);
                 });
-                $('#imageInput')[0].files = dataTransfer.files;
+                $('#imageInput')[0].files = dataTransfer.files; // Update the input element with new files
             }
 
         });
@@ -172,10 +180,10 @@
 <body>
 
 <div style="text-align: center">
-    <h1>게시글 수정</h1>
+    <h1>게시글 추가</h1>
     <div class="container" style="max-width: 850px;">
         <form enctype="multipart/form-data" method="post"
-              action="/${boardId}/post/detail/${postDetail.postId}/edit">
+              action="/${boardId}/post/temp/${postDetail.tempPostId}/edit">
             <sec:csrfInput/>
 
             <input type="hidden" name="search" value="${page.search}">
@@ -188,7 +196,6 @@
 
             <div>작성자 : ${postDetail.userName}</div>
             <div>카테고리 : ${postDetail.categoryName}</div>
-            <div>현재 게시판 : ${postDetail.boardName}</div>
 
             <c:if test="${boardDetail.boardType == 'GALLERY'}">
                 <div>현재 썸네일 이미지</div>
@@ -287,7 +294,7 @@
             <h3>수정 시간 : <fmt:formatDate value="${postDetail.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
 
             <button type="submit" id="saveButton">저장</button>
-            <a href="/${boardId}/post/detail/${postDetail.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
+            <a href="/${boardId}/post/temp?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
                 <button type="button">취소</button>
             </a>
         </form>

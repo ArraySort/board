@@ -1,23 +1,32 @@
 package arraysort.project.board.app.temp.service;
 
 import arraysort.project.board.app.board.domain.BoardVO;
+import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
+import arraysort.project.board.app.exception.DetailNotFoundException;
 import arraysort.project.board.app.image.service.ImageService;
-import arraysort.project.board.app.temp.domain.TempPostAddDTO;
-import arraysort.project.board.app.temp.domain.TempPostVO;
+import arraysort.project.board.app.post.domain.PageReqDTO;
+import arraysort.project.board.app.post.domain.PageResDTO;
+import arraysort.project.board.app.post.domain.PostVO;
+import arraysort.project.board.app.post.mapper.PostMapper;
+import arraysort.project.board.app.temp.domain.*;
 import arraysort.project.board.app.temp.mapper.TempPostMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TempPostService {
 
+	private final ImageService imageService;
+
 	private final TempPostMapper tempPostMapper;
 
-	private final ImageService imageService;
+	private final PostMapper postMapper;
 
 	private final PostComponent postComponent;
 
@@ -33,11 +42,61 @@ public class TempPostService {
 			vo.updateThumbnailImageId(imageService.addThumbnailImage(dto.getThumbnailImage()));
 		}
 
-		// 게시글 추가
+		// 임시저장 게시글 추가
 		tempPostMapper.insertTempPost(vo);
 
-		// 게시글 이미지 업로드
+		// 임시저장 게시글 이미지 업로드
 		handleTempPostImages(dto, boardDetail, vo.getTempPostId());
+	}
+
+	// 임시 저장 게시글 목록 조회
+	@Transactional(readOnly = true)
+	public PageResDTO<TempPostListResDTO> findTempPostListWithPaging(PageReqDTO dto, long boardId) {
+		postComponent.getValidatedBoard(boardId);
+
+		int totalTempPostCount = tempPostMapper.selectTotalTempPostCount(dto, boardId);
+		int offset = (dto.getPage() - 1) * Constants.PAGE_ROW_COUNT;
+
+		List<TempPostListResDTO> tempPostList = tempPostMapper.selectTempPostListWithPaging(
+						Constants.PAGE_ROW_COUNT,
+						offset,
+						dto,
+						boardId
+				)
+				.stream()
+				.map(TempPostListResDTO::of)
+				.toList();
+
+		return new PageResDTO<>(totalTempPostCount, dto.getPage(), tempPostList);
+	}
+
+	// 임시저장 게시글 수정 시 저장된 값 조회
+	@Transactional
+	public TempPostDetailResDTO findTempPostDetailByPostId(long tempPostId, long boardId) {
+		postComponent.getValidatedBoard(boardId);
+		return TempPostDetailResDTO.of(tempPostMapper.selectTempPostDetailByPostId(tempPostId, boardId)
+				.orElseThrow(DetailNotFoundException::new));
+	}
+
+	// 임시저장 게시글에서 일반 게시글로 게시
+	@Transactional
+	public void publishTempPost(TempPostEditReqDTO dto, long boardId, long tempPostId) {
+		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
+		PostVO vo = PostVO.insertOf(dto, boardId);
+
+		// 기존 임시저장 썸네일 이미지
+		vo.updateThumbnailImageId(tempPostId);
+
+		// 갤러리 게시판 이고, 썸네일 이미지 수정 시 실행
+		if (boardDetail.getBoardType().equals("GALLERY") && !dto.getThumbnailImage().isEmpty()) {
+			vo.updateThumbnailImageId(imageService.addThumbnailImage(dto.getThumbnailImage()));
+		}
+
+		// 임시저장 -> 게시글 게시
+		postMapper.insertPost(vo);
+
+		// 임시저장 -> 게시글 이미지 업로드
+		imageService.publishTempImages(dto, tempPostId, vo.getPostId());
 	}
 
 	/**

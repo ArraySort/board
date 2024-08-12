@@ -6,13 +6,13 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class PageResDTO {
+public class PageResDTO<T> {
 
 	private final int totalPostCount;                   // 총 게시물 개수
 
 	private final int currentPage;                      // 현재 페이지
 
-	private final List<PostListResDTO> postList;           // 페이지에 보여줄 게시물 리스트
+	private final List<T> postList;           // 페이지에 보여줄 게시물 리스트
 
 	private int startBlockPage = 1;                     // 페이지 블럭의 시작 페이지
 
@@ -24,7 +24,7 @@ public class PageResDTO {
 
 	private boolean isNext = false;                     // 이전 페이지 버튼 유무
 
-	public PageResDTO(int totalPostCount, int currentPage, List<PostListResDTO> postList) {
+	public PageResDTO(int totalPostCount, int currentPage, List<T> postList) {
 		this.totalPostCount = totalPostCount == 0 ? 1 : totalPostCount;
 		this.currentPage = currentPage;
 		this.postList = postList;
