@@ -83,6 +83,8 @@ public class TempPostService {
 	@Transactional
 	public TempPostDetailResDTO findTempPostDetailByPostId(long boardId, long tempPostId) {
 		postComponent.getValidatedBoard(boardId);
+
+		// 임시저장 게시글 존재 검증
 		return TempPostDetailResDTO.of(tempPostMapper.selectTempPostDetailByPostId(tempPostId, boardId)
 				.orElseThrow(DetailNotFoundException::new));
 	}
@@ -94,14 +96,17 @@ public class TempPostService {
 		CategoryVO categoryDetail = postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
 		TempPostVO tempPostDetail = tempPostMapper.selectTempPostDetailByPostId(tempPostId, boardId)
 				.orElseThrow(DetailNotFoundException::new);
-		PostVO vo = PostVO.insertOf(dto, boardId);
 
+		// 임시저장 게시글 소유자 검증
+		postComponent.validatePostOwnership(tempPostDetail.getUserId());
+
+		PostVO vo = PostVO.insertOf(dto, boardId);
 		boolean isThumbnailChanged = false;
 
 		// 기존 임시저장 썸네일 이미지
 		vo.updateThumbnailImageId(tempPostDetail.getImageId());
 
-		// 갤러리 게시판 이고, 썸네일 이미지 수정 시 실행
+		// 갤러리 게시판 검증, 썸네일 이미지 수정 시 실행
 		if (boardDetail.getBoardType().equals("GALLERY") && !dto.getThumbnailImage().isEmpty()) {
 			vo.updateThumbnailImageId(imageService.addThumbnailImage(dto.getThumbnailImage()));
 			isThumbnailChanged = true;
@@ -131,6 +136,9 @@ public class TempPostService {
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 		TempPostVO tempPostDetail = tempPostMapper.selectTempPostDetailByPostId(tempPostId, boardId)
 				.orElseThrow(DetailNotFoundException::new);
+
+		// 임시저장 게시글 소유자 검증
+		postComponent.validatePostOwnership(tempPostDetail.getUserId());
 
 		boolean isThumbnailChanged = false;
 
@@ -164,6 +172,9 @@ public class TempPostService {
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 		TempPostVO tempPostDetail = tempPostMapper.selectTempPostDetailByPostId(tempPostId, boardId)
 				.orElseThrow(DetailNotFoundException::new);
+
+		// 임시저장 게시글 소유자 검증
+		postComponent.validatePostOwnership(tempPostDetail.getUserId());
 
 		// 임시저장 게시글 내부 이미지 삭제 처리
 		handleTempPostImageRemove(tempPostId, boardDetail);
