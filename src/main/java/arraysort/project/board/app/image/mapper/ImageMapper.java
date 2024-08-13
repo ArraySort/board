@@ -17,17 +17,11 @@ public interface ImageMapper {
 	// 게시글 이미지 관계 추가
 	void insertPostImage(List<PostImageVO> postImages);
 
-	// 임시저장 게시글 이미지 관계 추가
-	void insertTempPostImage(List<TempPostImageVO> tempPostImages);
-
-	// 게시글 세부조회 -> 이미지 리스트 조회
-	List<ImageVO> selectImagesByPostId(long postId);
-
-	//  임시저장 게시글 세부조회 -> 이미지 리스트 조회
-	List<ImageVO> selectImagesByTempPostId(long tempPostId);
-
-	// 게시글 세부조회 -> 이미지 조회
+	// 게시글 세부조회 -> 이미지 조회(이미지 ID)
 	Optional<ImageVO> selectImageById(long imageId);
+
+	// 게시글 세부조회 -> 이미지 리스트 조회(게시글 ID)
+	List<ImageVO> selectImagesByPostId(long postId);
 
 	// 게시글 수정 -> 이미지 삭제
 	void deleteImages(List<Long> imageIds);
@@ -35,24 +29,30 @@ public interface ImageMapper {
 	// 게시글 이미지 관계 삭제
 	void deletePostImageByPostId(List<Long> imageIds);
 
-	// 게시글 썸네일 이미지 삭제
+	// 게시글 썸네일 이미지 삭제(유지)
 	void deleteThumbnailImageByPostId(long postId);
 
-	// 게시글 썸네일 이미지 ID 업데이트 -> 이미지 수정 시 null 값으로 변경
+	// 게시글 썸네일 이미지 ID 업데이트 -> 썸네일 이미지 수정 시 기존 ImageId null 값으로 변경
 	void updateThumbnailImageIdByPostId(long postId);
 
-	// 게시글에 존재하는 이미지 개수 조회
+	// 게시글에 존재하는 게시글 이미지 개수 조회
 	int selectImageCountByPostId(long postId);
 
-	// 임시저장 게시글 게시 -> 이미지 삭제
+	// 임시저장 게시글 이미지 관계 추가
+	void insertTempPostImage(List<TempPostImageVO> tempPostImages);
+
+	//  임시저장 게시글 세부조회 -> 임시저장 이미지 리스트 조회(TempPostId)
+	List<ImageVO> selectImagesByTempPostId(long tempPostId);
+
+	// 임시저장 게시글 게시 -> 임시저장 이미지 삭제(ImageId)
 	void deleteTempImages(List<Long> imageIds);
 
 	// 임시저장 게시글 이미지 관계 삭제
 	void deleteTempPostImageByPostId(long tempPostId);
 
-	// 임시저장 게시글 게시 -> 썸네일 이미지 변경
+	// 임시저장 게시글 게시 -> 썸네일 이미지 수정 시 기존 ImageId 값 삭제
 	void deleteThumbnailImageByTempPostId(long imageId);
 
-	// 임시저장 게시글에 존재하는 이미지 개수 조회
+	// 임시저장 게시글에 존재하는 임시저장 게시글 이미지 개수 조회
 	int selectTempImageCountByTempPostId(long tempPostId);
 }

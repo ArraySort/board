@@ -29,17 +29,21 @@
             </foreach>
     </insert>
 
-    <!-- 임시게시글 이미지 관계 추가 -->
-    <insert id="insertTempPostImage" parameterType="arraysort.project.board.app.image.domain.TempPostImageVO">
-        insert into temp_post_image (temp_post_id, image_id)
-        values
-        <foreach collection="tempPostImages" item="tempPostImage" separator=",">
-            (#{tempPostImage.tempPostId}, #{tempPostImage.imageId})
-        </foreach>
-    </insert>
+    <!-- 게시글 세부조회 -> 이미지 조회(이미지 ID) -->
+    <select id="selectImageById" parameterType="long" resultType="arraysort.project.board.app.image.domain.ImageVO">
+        select image_id,
+               original_name,
+               saved_name,
+               size,
+               image_path,
+               created_by,
+               created_at,
+               delete_flag
+        from image
+        where image_id = #{imageId}
+    </select>
 
-
-    <!-- 게시글 세부조회 -> 이미지 리스트 조회 -->
+    <!-- 게시글 세부조회 -> 이미지 리스트 조회(게시글 ID) -->
     <select id="selectImagesByPostId" parameterType="long" resultType="arraysort.project.board.app.image.domain.ImageVO">
         select i.image_id,
                i.original_name,
@@ -52,35 +56,6 @@
         from image i
         inner join post_image pi on i.image_id = pi.image_id
         where pi.post_id = #{postId} and i.delete_flag = 'N'
-    </select>
-
-    <!-- 임시저장 게시글 세부조회 -> 이미지 리스트 조회 -->
-    <select id="selectImagesByTempPostId" parameterType="long" resultType="arraysort.project.board.app.image.domain.ImageVO">
-        select i.image_id,
-               i.original_name,
-               i.saved_name,
-               i.size,
-               i.image_path,
-               i.created_by,
-               i.created_at,
-               i.delete_flag
-        from image i
-                 inner join temp_post_image tpi on i.image_id = tpi.image_id
-        where tpi.temp_post_id = #{postId} and i.delete_flag = 'N'
-    </select>
-
-    <!-- 게시글 세부조회 -> 이미지 조회 -->
-    <select id="selectImageById" parameterType="long" resultType="arraysort.project.board.app.image.domain.ImageVO">
-        select image_id,
-               original_name,
-               saved_name,
-               size,
-               image_path,
-               created_by,
-               created_at,
-               delete_flag
-        from image
-        where image_id = #{imageId}
     </select>
 
     <!-- 게시글 수정 -> 이미지 삭제 -->
@@ -103,35 +78,52 @@
             </foreach>
     </delete>
 
-    <!-- 게시글 썸네일 이미지 삭제 -->
+    <!-- 게시글 썸네일 이미지 삭제(유지) -->
     <update id="deleteThumbnailImageByPostId" parameterType="long">
         update image
         set delete_flag = 'Y'
         where image_id = (select image_id from post where post_id = #{postId})
     </update>
 
-    <!-- 게시글 썸네일 이미지 ID 업데이트 -> 이미지 수정 시 null 값으로 변경 -->
+    <!-- 게시글 썸네일 이미지 ID 업데이트 -> 썸네일 이미지 수정 시 기존 ImageId null 값으로 변경 -->
     <update id="updateThumbnailImageIdByPostId" parameterType="long">
         update post
         set image_id = null
         where image_id = (select image_id from post where post_id = #{postId})
     </update>
 
-    <!-- 게시글에 존재하는 이미지 개수 조회 -->
+    <!-- 게시글에 존재하는 게시글 이미지 개수 조회 -->
     <select id="selectImageCountByPostId" parameterType="long" resultType="int">
         select count(*)
         from post_image
         where post_id = #{postId}
     </select>
 
-    <!-- 임시저장 게시글에 존재하는 이미지 개수 조회 -->
-    <select id="selectTempImageCountByTempPostId" parameterType="long" resultType="int">
-        select count(*)
-        from temp_post_image
-        where temp_post_id = #{tempPostId}
+    <!-- 임시게시글 이미지 관계 추가 -->
+    <insert id="insertTempPostImage" parameterType="arraysort.project.board.app.image.domain.TempPostImageVO">
+        insert into temp_post_image (temp_post_id, image_id)
+        values
+        <foreach collection="tempPostImages" item="tempPostImage" separator=",">
+            (#{tempPostImage.tempPostId}, #{tempPostImage.imageId})
+        </foreach>
+    </insert>
+
+    <!-- 임시저장 게시글 세부조회 -> 임시저장 이미지 리스트 조회(TempPostId) -->
+    <select id="selectImagesByTempPostId" parameterType="long" resultType="arraysort.project.board.app.image.domain.ImageVO">
+        select i.image_id,
+               i.original_name,
+               i.saved_name,
+               i.size,
+               i.image_path,
+               i.created_by,
+               i.created_at,
+               i.delete_flag
+        from image i
+                 inner join temp_post_image tpi on i.image_id = tpi.image_id
+        where tpi.temp_post_id = #{postId} and i.delete_flag = 'N'
     </select>
 
-    <!-- 임시저장 게시글 이미지 관계 삭제 -->
+    <!-- 임시저장 게시글 게시 -> 임시저장 이미지 삭제(ImageId) -->
     <delete id="deleteTempPostImageByPostId" parameterType="long">
         delete
         from temp_post_image
@@ -148,11 +140,18 @@
         </foreach>
     </delete>
 
-    <!-- 게시글 썸네일 이미지 삭제 -->
+    <!-- 임시저장 게시글 게시 -> 썸네일 이미지 수정 시 기존 ImageId 값 삭제 -->
     <delete id="deleteThumbnailImageByTempPostId" parameterType="long">
         delete
         from image
         where image_id = #{imageId}
     </delete>
+
+    <!-- 임시저장 게시글에 존재하는 임시저장 게시글 이미지 개수 조회 -->
+    <select id="selectTempImageCountByTempPostId" parameterType="long" resultType="int">
+        select count(*)
+        from temp_post_image
+        where temp_post_id = #{tempPostId}
+    </select>
 
 </mapper>

@@ -82,10 +82,9 @@
         </choose>
 
         limit #{pageRowCount} offset #{offset}
-
     </select>
 
-    <!-- 임시저장 총 게시물 개수 조회 -->
+    <!-- 임시저장 게시글 총 개수 조회 -->
     <select id="selectTotalTempPostCount" parameterType="arraysort.project.board.app.temp.domain.TempPostVO" resultType="int">
         select count(*)
         from temp_post

@@ -41,9 +41,9 @@ public class PostService {
 	// 게시글 추가
 	@Transactional
 	public void addPost(PostAddReqDTO dto, long boardId) {
-		PostVO vo = PostVO.insertOf(dto, boardId);
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 		CategoryVO categoryDetail = postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
+		PostVO vo = PostVO.insertOf(dto, boardId);
 
 		// 갤러리 게시판일 때 썸네일 이미지 추가
 		if (boardDetail.getBoardType().equals("GALLERY")) {
@@ -84,8 +84,10 @@ public class PostService {
 	// 게시글 세부내용 조회, 게시글 조회수 증가
 	@Transactional
 	public PostDetailResDTO findPostDetailByPostId(long postId, long boardId) {
-		increaseViews(postId);
 		postComponent.getValidatedBoard(boardId);
+
+		// 게시글 조회수 증가
+		increaseViews(postId);
 
 		return postComponent.getValidatedPost(postId, boardId);
 	}
@@ -97,6 +99,7 @@ public class PostService {
 		CategoryVO categoryDetail = postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
 		PostDetailResDTO postDetail = postComponent.getValidatedPost(postId, boardId);
 
+		// 게시글 소유자 검증
 		postComponent.validatePostOwnership(postDetail.getUserId());
 
 		// 이미지 수정
@@ -123,6 +126,8 @@ public class PostService {
 	public void removePost(long postId, long boardId) {
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 		PostDetailResDTO postDetail = postComponent.getValidatedPost(postId, boardId);
+
+		// 게시글 소유자 검증
 		postComponent.validatePostOwnership(postDetail.getUserId());
 
 		// 게시글 내부 이미지 삭제 처리

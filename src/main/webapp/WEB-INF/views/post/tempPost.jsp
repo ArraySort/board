@@ -61,7 +61,7 @@
 
     <c:if test="${boardDetail.boardType == 'GENERAL'}">
         <!-- 게시판 시작 -->
-        <div class="container" style="max-width: 850px; height: 500px; overflow-y: auto">
+        <div class="container" style="height: 500px; overflow-y: auto">
             <table class="table">
                 <thead>
                 <tr class="text-center">

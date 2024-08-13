@@ -85,7 +85,6 @@
         </choose>
 
         limit #{pageRowCount} offset #{offset}
-
     </select>
 
     <!-- 총 게시물 개수 조회 -->
