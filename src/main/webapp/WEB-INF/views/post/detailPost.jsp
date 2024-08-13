@@ -1,4 +1,3 @@
-<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
 <%@ page import="arraysort.project.board.app.utils.UserUtil" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>

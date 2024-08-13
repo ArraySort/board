@@ -91,9 +91,11 @@
                 </thead>
 
                 <tbody>
-                <c:forEach var="post" items="${pagination.postList}">
+                <c:forEach var="post" items="${pagination.postList}" varStatus="status">
+                    <c:set var="postNumber"
+                           value="${pagination.totalPostCount - ((pagination.currentPage - 1) * 10) - status.index}"/>
                     <tr>
-                        <td>${post.postNumber}</td>
+                        <td>${postNumber}</td>
                         <td>
                             <a href="/${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">${post.title}</a>
                         </td>

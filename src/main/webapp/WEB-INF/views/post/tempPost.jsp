@@ -76,9 +76,11 @@
                 </thead>
 
                 <tbody>
-                <c:forEach var="post" items="${pagination.postList}">
+                <c:forEach var="post" items="${pagination.postList}" varStatus="status">
                     <tr>
-                        <td>${post.postId}</td>
+                        <c:set var="postNumber"
+                               value="${pagination.totalPostCount - ((pagination.currentPage - 1) * 10) - status.index}"/>
+                        <td>${postNumber}</td>
                         <td>
                             <a href="/${boardId}/post/temp/${post.postId}/edit">${post.title}</a>
                         </td>

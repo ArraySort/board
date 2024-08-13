@@ -1,6 +1,5 @@
 package arraysort.project.board.app.temp.domain;
 
-import arraysort.project.board.app.common.NumberAssignable;
 import arraysort.project.board.app.common.enums.Flag;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +8,7 @@ import java.util.Date;
 
 @Getter
 @Builder
-public class TempPostListResDTO implements NumberAssignable {
+public class TempPostListResDTO {
 
 	private long postId;
 
@@ -44,10 +43,5 @@ public class TempPostListResDTO implements NumberAssignable {
 				.updatedAt(vo.getUpdatedAt())
 				.privateFlag(vo.getPrivateFlag())
 				.build();
-	}
-
-	@Override
-	public void updateNumber(long number) {
-		this.postNumber = number;
 	}
 }

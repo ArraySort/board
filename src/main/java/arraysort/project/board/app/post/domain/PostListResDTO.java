@@ -1,6 +1,5 @@
 package arraysort.project.board.app.post.domain;
 
-import arraysort.project.board.app.common.NumberAssignable;
 import arraysort.project.board.app.common.enums.Flag;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +8,7 @@ import java.util.Date;
 
 @Getter
 @Builder
-public class PostListResDTO implements NumberAssignable {
+public class PostListResDTO {
 
 	private long postId;
 
@@ -44,11 +43,5 @@ public class PostListResDTO implements NumberAssignable {
 				.views(vo.getViews())
 				.privateFlag(vo.getPrivateFlag())
 				.build();
-	}
-
-	// 게시글 번호 업데이트
-	@Override
-	public void updateNumber(long number) {
-		this.postNumber = number;
 	}
 }

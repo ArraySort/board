@@ -1,7 +1,6 @@
 package arraysort.project.board.app.post.domain;
 
 import arraysort.project.board.app.common.Constants;
-import arraysort.project.board.app.common.NumberAssignable;
 import lombok.Getter;
 
 import java.util.List;
@@ -30,7 +29,6 @@ public class PageResDTO<T> {
 		this.currentPage = currentPage;
 		this.postList = postList;
 		setPage();
-		setPostNumber();
 	}
 
 
@@ -53,18 +51,5 @@ public class PageResDTO<T> {
 
 		// 다음 버튼 유무
 		isNext = endBlockPage < totalPageCount;
-	}
-
-	/**
-	 * 게시글 번호 지정
-	 */
-	private void setPostNumber() {
-		long number = totalPostCount - ((currentPage - 1L) * Constants.PAGE_ROW_COUNT);
-
-		for (int i = 0; i < postList.size(); i++) {
-			if (postList.get(i) instanceof NumberAssignable assignable) {
-				assignable.updateNumber(number - i);
-			}
-		}
 	}
 }
