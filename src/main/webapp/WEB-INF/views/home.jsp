@@ -21,12 +21,14 @@
 
     <h1>${message}</h1>
 
-    <c:forEach var="board" items="${boards}">
-        <button type="button"
-                onclick="location.href='/${board.boardId}/post'">${board.boardName}
-            으로 이동
-        </button>
-    </c:forEach>
+    <div class="d-flex flex-column align-items-center">
+        <c:forEach var="board" items="${boards}">
+            <button type="button" class="btn btn-outline-dark mb-2"
+                    onclick="location.href='/${board.boardId}/post'">${board.boardName}으로 이동
+            </button>
+        </c:forEach>
+    </div>
+
 
     <c:if test="${!isAuthenticatedUser}">
         <button type="button" onclick="location.href='/user/login'">로그인 페이지로 이동</button>

@@ -29,8 +29,14 @@
 <body>
 
 <div style="text-align: center; overflow-y: auto">
-
-    <h1>일반 게시판 페이지</h1>
+    <c:choose>
+        <c:when test="${boardDetail.boardType == 'GALLERY'}">
+            <h1>갤러리 게시판 : ${boardDetail.boardName}</h1>
+        </c:when>
+        <c:otherwise>
+            <h1>일반 게시판 : ${boardDetail.boardName}</h1>
+        </c:otherwise>
+    </c:choose>
 
     <%
         // 로그인 한 유저인지 확인하는 값

@@ -52,4 +52,7 @@ public interface ImageMapper {
 
 	// 임시저장 게시글 게시 -> 썸네일 이미지 변경
 	void deleteThumbnailImageByTempPostId(long imageId);
+
+	// 임시저장 게시글에 존재하는 이미지 개수 조회
+	int selectTempImageCountByTempPostId(long tempPostId);
 }

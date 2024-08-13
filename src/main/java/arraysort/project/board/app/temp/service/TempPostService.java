@@ -195,7 +195,7 @@ public class TempPostService {
 
 		int addedImageCount = addedImageCheck ? 0 : dto.getAddedImages().size();
 
-		int imageCount = imageService.findImageCountByPostId(tempPostId) + addedImageCount - dto.getRemovedImageIds().size();
+		int imageCount = imageService.findTempImageCountByTempPostId(tempPostId) + addedImageCount - dto.getRemovedImageIds().size();
 
 		if (imageCount > boardDetail.getImageLimit()) {
 			throw new BoardImageOutOfRangeException("해당 게시판은 최대 " + boardDetail.getImageLimit() + " 개 까지 업로드 가능합니다.");

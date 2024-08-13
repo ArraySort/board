@@ -117,11 +117,18 @@
         where image_id = (select image_id from post where post_id = #{postId})
     </update>
 
-    <!-- 게시글에 존해하는 이미지 개수 조회 -->
+    <!-- 게시글에 존재하는 이미지 개수 조회 -->
     <select id="selectImageCountByPostId" parameterType="long" resultType="int">
         select count(*)
         from post_image
         where post_id = #{postId}
+    </select>
+
+    <!-- 임시저장 게시글에 존재하는 이미지 개수 조회 -->
+    <select id="selectTempImageCountByTempPostId" parameterType="long" resultType="int">
+        select count(*)
+        from temp_post_image
+        where temp_post_id = #{tempPostId}
     </select>
 
     <!-- 임시저장 게시글 이미지 관계 삭제 -->

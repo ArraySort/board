@@ -94,8 +94,8 @@ public class PostComponent {
 				throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
 			}
 
-			// 3. 게시글을 추가하려는 게시판의 접근 가능한 사용자 등급이 현재 작성자의 등급보다 높은 경우, 작성자의 등급이 작성 가능 등급보다 낮은 경우 검증
-			if ((boardDetail.getAccessLevel() > userDetail.getAccessLevel()) || userDetail.getAccessLevel() < 2) {
+			// 3. 게시글을 추가하려는 게시판의 접근 가능한 사용자 등급이 현재 작성자의 등급보다 높은 경우
+			if ((boardDetail.getAccessLevel() > userDetail.getAccessLevel())) {
 				throw new InvalidPrincipalException("올바르지 않은 사용자 접근 등급입니다.");
 			}
 		} else if (boardDetail.getAccessLevel() != 0) {

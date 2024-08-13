@@ -178,6 +178,12 @@ public class ImageService {
 		return imageMapper.selectImageCountByPostId(postId);
 	}
 
+	// 임시저장 게시글에 존재하는 이미지 개수 조회
+	@Transactional(readOnly = true)
+	public int findTempImageCountByTempPostId(long tempPostId) {
+		return imageMapper.selectTempImageCountByTempPostId(tempPostId);
+	}
+
 	/**
 	 * 업로드된 이미지 리스트 생성
 	 *
