@@ -102,16 +102,9 @@ public class TempPostService {
 		postComponent.validatePostOwnership(tempPostDetail.getUserId());
 
 		PostVO vo = PostVO.insertOf(dto, boardId);
-		boolean isThumbnailChanged = false;
 
-		// 기존 임시저장 썸네일 이미지
-		vo.updateThumbnailImageId(tempPostDetail.getImageId());
-
-		// 갤러리 게시판 검증, 썸네일 이미지 수정 시 실행
-		if (boardDetail.getBoardType() == BoardType.GALLERY && !dto.getThumbnailImage().isEmpty()) {
-			vo.updateThumbnailImageId(imageService.addThumbnailImage(dto.getThumbnailImage()));
-			isThumbnailChanged = true;
-		}
+		// 임시저장 게시글 썸네일 이미지 처리 -> 변경 여부 반환
+		boolean isThumbnailChanged = handleThumbnailImage(dto, vo, tempPostDetail, boardDetail);
 
 		// 임시저장 -> 게시글 게시
 		postMapper.insertPost(vo);
@@ -141,21 +134,13 @@ public class TempPostService {
 		// 임시저장 게시글 소유자 검증
 		postComponent.validatePostOwnership(tempPostDetail.getUserId());
 
-		boolean isThumbnailChanged = false;
-
 		// 임시저장 게시글 이미지 처리
 		handleTempPostImages(dto, boardDetail, tempPostId);
 
 		TempPostVO vo = TempPostVO.updateOf(dto, tempPostId);
 
-		// 기존 썸네일 이미지
-		vo.updateThumbnailImageId(tempPostDetail.getImageId());
-
-		// 썸네일 이미지 업로드 검증 : 갤러리 게시판인지, 썸네일 이미지가 비어있는지
-		if (boardDetail.getBoardType() == BoardType.GALLERY && !dto.getThumbnailImage().isEmpty()) {
-			vo.updateThumbnailImageId(imageService.modifyThumbnailImage(dto.getThumbnailImage(), tempPostId));
-			isThumbnailChanged = true;
-		}
+		// 임시저장 게시글 썸네일 이미지 처리 -> 변경 여부 반환
+		boolean isThumbnailChanged = handleThumbnailImage(dto, vo, tempPostDetail, boardDetail, tempPostId);
 
 		// 임시저장 게시물 수정
 		tempPostMapper.updateTempPost(vo, tempPostId);
@@ -225,16 +210,8 @@ public class TempPostService {
 			return;
 		}
 
-		boolean addedImageCheck = dto.getAddedImages().stream()
-				.anyMatch(MultipartFile::isEmpty);
-
-		int addedImageCount = addedImageCheck ? 0 : dto.getAddedImages().size();
-
-		int imageCount = imageService.findTempImageCountByTempPostId(tempPostId) + addedImageCount - dto.getRemovedImageIds().size();
-
-		if (imageCount > boardDetail.getImageLimit()) {
-			throw new BoardImageOutOfRangeException("해당 게시판은 최대 " + boardDetail.getImageLimit() + " 개 까지 업로드 가능합니다.");
-		}
+		// 이미지 추가, 삭제에 대한 총 이미지 업로드 수 검증
+		validateImageCount(dto, boardDetail, tempPostId);
 
 		if (!dto.getRemovedImageIds().isEmpty()) {
 			imageService.removeTempImages(dto.getRemovedImageIds(), tempPostId);
@@ -263,6 +240,77 @@ public class TempPostService {
 
 		if (!deletePostImageIds.isEmpty()) {
 			imageService.removeTempImages(deletePostImageIds, tempPostId);
+		}
+	}
+
+	/**
+	 * 썸네일 이미지 처리
+	 * 기존 썸네일 이미지 저장
+	 * 게시판 타입에 대한 검증 후 썸네일 이미지가 변경된 경우 변경 여부 반환
+	 *
+	 * @param dto            임시저장 -> 게시글 변환 DTO
+	 * @param vo             게시되는 게시글 VO
+	 * @param tempPostDetail 검증된 임시저장 게시글 세부정보
+	 * @param boardDetail    검증된 게시판 세부정보
+	 * @return 썸네일 이미지 변경 여부
+	 */
+	private boolean handleThumbnailImage(TempPostPublishReqDTO dto, PostVO vo, TempPostVO tempPostDetail, BoardVO boardDetail) {
+		boolean isThumbnailChanged = false;
+
+		// 기존 임시저장 썸네일 이미지
+		vo.updateThumbnailImageId(tempPostDetail.getImageId());
+
+		// 갤러리 게시판 검증, 썸네일 이미지 수정 시 실행
+		if (boardDetail.getBoardType() == BoardType.GALLERY && !dto.getThumbnailImage().isEmpty()) {
+			vo.updateThumbnailImageId(imageService.addThumbnailImage(dto.getThumbnailImage()));
+			isThumbnailChanged = true;
+		}
+		return isThumbnailChanged;
+	}
+
+	/**
+	 * 썸네일 이미지 처리
+	 * 기존 썸네일 이미지 저장
+	 * 게시판 타입에 대한 검증 후 썸네일 이미지가 변경된 경우 변경 여부 반환
+	 *
+	 * @param dto            임시저장 게시글 수정 DTO
+	 * @param tempPostId     임시저장 게시글 ID
+	 * @param vo             임시저장 게시글 VO
+	 * @param tempPostDetail 검증된 임시저장 게시글 세부정보
+	 * @param boardDetail    검증된 게시판 세부정보
+	 * @return 썸네일 이미지 변경 여부
+	 */
+	private boolean handleThumbnailImage(TempPostEditReqDTO dto, TempPostVO vo, TempPostVO tempPostDetail, BoardVO boardDetail, long tempPostId) {
+		boolean isThumbnailChanged = false;
+		// 기존 썸네일 이미지
+		vo.updateThumbnailImageId(tempPostDetail.getImageId());
+
+		// 썸네일 이미지 업로드 검증 : 갤러리 게시판인지, 썸네일 이미지가 비어있는지
+		if (boardDetail.getBoardType() == BoardType.GALLERY && !dto.getThumbnailImage().isEmpty()) {
+			vo.updateThumbnailImageId(imageService.modifyThumbnailImage(dto.getThumbnailImage(), tempPostId));
+			isThumbnailChanged = true;
+		}
+		return isThumbnailChanged;
+	}
+
+	/**
+	 * 이미지 총 개수 검증
+	 * 추가된 이미지, 기존이미지, 삭제한 이미지에 대한 업로드 수 검증
+	 *
+	 * @param dto         Edit 시 받아오는 DTO
+	 * @param boardDetail 검증된 게시판 정보
+	 * @param tempPostId  수정하는 임시저장 게시글 ID
+	 */
+	private void validateImageCount(TempPostEditReqDTO dto, BoardVO boardDetail, long tempPostId) {
+		boolean addedImageCheck = dto.getAddedImages().stream()
+				.anyMatch(MultipartFile::isEmpty);
+
+		int addedImageCount = addedImageCheck ? 0 : dto.getAddedImages().size();
+
+		int imageCount = imageService.findTempImageCountByTempPostId(tempPostId) + addedImageCount - dto.getRemovedImageIds().size();
+
+		if (imageCount > boardDetail.getImageLimit()) {
+			throw new BoardImageOutOfRangeException("해당 게시판은 최대 " + boardDetail.getImageLimit() + " 개 까지 업로드 가능합니다.");
 		}
 	}
 }

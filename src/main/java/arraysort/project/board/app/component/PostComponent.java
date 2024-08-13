@@ -14,6 +14,7 @@ import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -38,6 +39,7 @@ public class PostComponent {
 	 * @param boardId 현재 접속한 페이지의 게시판 ID
 	 * @return 1, 2, 3 번이 검증된 게시판의 세부정보
 	 */
+	@Transactional(readOnly = true)
 	public BoardVO getValidatedBoard(long boardId) {
 		// 1. 게시글을 추가하려는 게시판 존재하는지 검증
 		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
@@ -61,6 +63,7 @@ public class PostComponent {
 	 * @param categoryId  카테고리 ID
 	 * @param boardDetail 게시판 세부정보
 	 */
+	@Transactional(readOnly = true)
 	public CategoryVO getValidatedCategory(Long categoryId, BoardVO boardDetail) {
 		// 1. 게시글 추가 시 선택한 카테고리가 존재하는지 검증
 		CategoryVO categoryDetail = categoryMapper.selectCategoryDetailById(categoryId)
@@ -83,7 +86,6 @@ public class PostComponent {
 	 *
 	 * @param boardDetail 검증된 게시판 세부정보
 	 */
-
 	private void validateUserPermissionForBoard(BoardVO boardDetail) {
 		if (UserUtil.isAuthenticatedUser()) {
 			// 1. 게시글을 추가할 때 작성자가 현재 로그인 한 사용자인지 검증
@@ -113,6 +115,7 @@ public class PostComponent {
 	 * @param boardId 현재 게시판 ID
 	 * @return 검증된 게시글 세부정보
 	 */
+	@Transactional(readOnly = true)
 	public PostDetailResDTO getValidatedPost(long postId, long boardId) {
 		// 1. 조회 한 게시글이 존재하는지 검증
 		PostDetailResDTO postDetail = PostDetailResDTO.of(postMapper.selectPostDetailByPostId(postId, boardId)

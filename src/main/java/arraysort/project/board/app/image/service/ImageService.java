@@ -166,6 +166,7 @@ public class ImageService {
 		imageMapper.deletePostImageByPostId(imageIds);
 	}
 
+	// 임시저장 게시글 이미지 삭제
 	@Transactional
 	public void removeTempImages(List<Long> imageIds, long tempPostId) {
 		imageMapper.deleteTempPostImageByPostId(tempPostId);
