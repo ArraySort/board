@@ -121,18 +121,22 @@
 
             // 게시 버튼 클릭 시 액션 변경
             $('#publishButton').on('click', function (e) {
-                validateForm(e);
+                validatePublishTempPostForm(e);
                 const form = $(this).closest('form');
                 form.attr('action', '/${boardId}/post/temp/${postDetail.tempPostId}/publish');
-                form.submit();
             });
 
             // 저장 버튼 클릭 시 액션 변경
             $('#saveButton').on('click', function (e) {
-                validateForm(e);
+                validateEditTempPostForm(e);
                 const form = $(this).closest('form');
                 form.attr('action', '/${boardId}/post/temp/${postDetail.tempPostId}/save');
-                form.submit();
+            });
+
+            // 삭제 버튼 클릭 시 액션 변경
+            $('#deleteButton').on('click', function (e) {
+                const form = $(this).closest('form');
+                form.attr('action', '/${boardId}/post/temp/${postDetail.tempPostId}/delete');
             });
 
             // 추가된 이미지 상태업데이트
@@ -152,8 +156,8 @@
             alert(message);
         }
 
-        // 입력 폼 검증
-        function validateForm(e) {
+        // 임시저장 게시글 게시 시 입력 폼 검증
+        function validatePublishTempPostForm(e) {
             const category = $('#category').val();
             const title = $('#title').val();
             const content = $('#content').val();
@@ -163,6 +167,17 @@
             } else if (title.length < 1 || title.length > 50) {
                 alertMessage(e, "제목은 최소 1글자, 최대 50글자이어야 합니다.");
             } else if (content.length < 1 || content.length > 500) {
+                alertMessage(e, "내용은 최소 1글자, 최대 500글자이어야 합니다.");
+            }
+        }
+
+        // 임시저장 게시글 수정 시 입력 폼 검증
+        function validateEditTempPostForm(e) {
+            const title = $('#title').val();
+
+            if (!title) {
+                alertMessage(e, "임시저장 시 제목은 필수 입력사항입니다.");
+            } else if (title.length < 1 || title.length > 50) {
                 alertMessage(e, "내용은 최소 1글자, 최대 500글자이어야 합니다.");
             }
         }
@@ -307,6 +322,7 @@
 
             <button type="submit" id="publishButton">게시</button>
             <button type="submit" id="saveButton">저장</button>
+            <button type="submit" id="deleteButton">삭제</button>
             <a href="/${boardId}/post/temp?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
                 <button type="button">취소</button>
             </a>

@@ -6,7 +6,7 @@ import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.domain.PostImageVO;
 import arraysort.project.board.app.image.domain.TempPostImageVO;
 import arraysort.project.board.app.image.mapper.ImageMapper;
-import arraysort.project.board.app.temp.domain.TempPostEditReqDTO;
+import arraysort.project.board.app.temp.domain.TempPostPublishReqDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +66,7 @@ public class ImageService {
 
 	// 임시저장 게시글에서 일반 게시글로 게시
 	@Transactional
-	public void publishTempImages(TempPostEditReqDTO dto, long tempPostId, long postId) {
+	public void publishTempImages(TempPostPublishReqDTO dto, long tempPostId, long postId) {
 		List<ImageVO> postImages = new ArrayList<>();
 
 		// 기존 임시 게시글 이미지 목록 추가

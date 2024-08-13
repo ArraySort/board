@@ -7,6 +7,7 @@ import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.service.PostService;
 import arraysort.project.board.app.temp.domain.TempPostAddReqDTO;
 import arraysort.project.board.app.temp.domain.TempPostEditReqDTO;
+import arraysort.project.board.app.temp.domain.TempPostPublishReqDTO;
 import arraysort.project.board.app.temp.service.TempPostService;
 import arraysort.project.board.app.utils.ControllerUtil;
 import jakarta.validation.Valid;
@@ -53,7 +54,7 @@ public class TempPostController {
 		postService.validateAddByUserLevel();
 
 		model.addAttribute("boardDetail", boardService.findBoardDetailById(boardId));
-		model.addAttribute("postDetail", tempPostService.findTempPostDetailByPostId(tempPostId, boardId));
+		model.addAttribute("postDetail", tempPostService.findTempPostDetailByPostId(boardId, tempPostId));
 		model.addAttribute("categories", categoryService.findCategoryList(boardId));
 		model.addAttribute("images", imageService.findImagesByTempPostId(tempPostId));
 		return "post/editTempPost";
@@ -70,10 +71,19 @@ public class TempPostController {
 
 	// 임시저장 게시글 게시 요청
 	@PostMapping("/temp/{tempPostId}/publish")
-	public String processPublishTempPost(@PathVariable long boardId, @PathVariable long tempPostId, @Valid @ModelAttribute TempPostEditReqDTO dto, Model model) {
+	public String processPublishTempPost(@PathVariable long boardId, @PathVariable long tempPostId, @Valid @ModelAttribute TempPostPublishReqDTO dto, Model model) {
 		tempPostService.publishTempPost(dto, boardId, tempPostId);
-		
+
 		ControllerUtil.addMessageAndRequest(model, "임시저장 게시물이 게시 되었습니다.", "PUBLISH_POST");
+		return "common/alert";
+	}
+
+	// 임시저장 게시글 삭제 요청
+	@PostMapping("/temp/{tempPostId}/delete")
+	public String processRemovePost(@PathVariable long boardId, @PathVariable long tempPostId, Model model) {
+		tempPostService.removeTempPost(boardId, tempPostId);
+
+		ControllerUtil.addMessageAndRequest(model, "임시저장 게시글이 삭제되었습니다.", "DELETE_TEMP");
 		return "common/alert";
 	}
 }

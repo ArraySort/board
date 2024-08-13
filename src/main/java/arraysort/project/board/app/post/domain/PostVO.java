@@ -1,6 +1,6 @@
 package arraysort.project.board.app.post.domain;
 
-import arraysort.project.board.app.temp.domain.TempPostEditReqDTO;
+import arraysort.project.board.app.temp.domain.TempPostPublishReqDTO;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -83,7 +83,7 @@ public class PostVO {
 	}
 
 	// 임시저장 게시물 추가
-	public static PostVO insertOf(TempPostEditReqDTO dto, long boardId) {
+	public static PostVO insertOf(TempPostPublishReqDTO dto, long boardId) {
 		return PostVO.builder()
 				.userId(UserUtil.getCurrentLoginUserId())
 				.boardId(boardId)

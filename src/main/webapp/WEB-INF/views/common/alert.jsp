@@ -22,6 +22,8 @@
             window.location.href = "/${boardId}/post";
         } else if (request === "PUBLISH_POST") {
             window.location.href = "/${boardId}/post/temp";
+        } else if (request === "DELETE_TEMP") {
+            window.location.href = "/${boardId}/post/temp"
         } else {
             window.history.back();
         }

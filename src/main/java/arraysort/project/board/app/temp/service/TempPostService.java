@@ -7,6 +7,7 @@ import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
 import arraysort.project.board.app.exception.DetailNotFoundException;
 import arraysort.project.board.app.history.service.PostHistoryService;
+import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PageResDTO;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -79,7 +81,7 @@ public class TempPostService {
 
 	// 임시저장 게시글 수정 시 저장된 값 조회
 	@Transactional
-	public TempPostDetailResDTO findTempPostDetailByPostId(long tempPostId, long boardId) {
+	public TempPostDetailResDTO findTempPostDetailByPostId(long boardId, long tempPostId) {
 		postComponent.getValidatedBoard(boardId);
 		return TempPostDetailResDTO.of(tempPostMapper.selectTempPostDetailByPostId(tempPostId, boardId)
 				.orElseThrow(DetailNotFoundException::new));
@@ -87,7 +89,7 @@ public class TempPostService {
 
 	// 임시저장 게시글에서 일반 게시글로 게시
 	@Transactional
-	public void publishTempPost(TempPostEditReqDTO dto, long boardId, long tempPostId) {
+	public void publishTempPost(TempPostPublishReqDTO dto, long boardId, long tempPostId) {
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 		CategoryVO categoryDetail = postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
 		TempPostVO tempPostDetail = tempPostMapper.selectTempPostDetailByPostId(tempPostId, boardId)
@@ -153,7 +155,28 @@ public class TempPostService {
 		if (isThumbnailChanged) {
 			imageService.removeTempThumbnailImage(tempPostDetail.getImageId());
 		}
+
 	}
+
+	// 임시저장 게시글 삭제
+	@Transactional
+	public void removeTempPost(long boardId, long tempPostId) {
+		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
+		TempPostVO tempPostDetail = tempPostMapper.selectTempPostDetailByPostId(tempPostId, boardId)
+				.orElseThrow(DetailNotFoundException::new);
+
+		// 임시저장 게시글 내부 이미지 삭제 처리
+		handleTempPostImageRemove(tempPostId, boardDetail);
+
+		// 갤러리 게시판일 때 썸네일 이미지 삭제
+		if (Objects.equals(boardDetail.getBoardType(), "GALLERY")) {
+			imageService.removeTempThumbnailImage(tempPostDetail.getImageId());
+		}
+
+		// 임시저장 게시글 삭제
+		tempPostMapper.deleteTempPost(tempPostId);
+	}
+
 
 	/**
 	 * [임시저장 게시글 이미지 처리(추가)]
@@ -206,5 +229,28 @@ public class TempPostService {
 		}
 
 		imageService.addTempImages(dto.getAddedImages(), tempPostId);
+	}
+
+	/**
+	 * [임시저장 게시글 삭제 시 이미지 삭제 처리]
+	 * 게시판의 이미지 허용 여부가 Y 일 때만 실행
+	 *
+	 * @param tempPostId  삭제하려는 임시저장 게시글 ID
+	 * @param boardDetail 검증된 게시판 세부정보
+	 */
+	private void handleTempPostImageRemove(long tempPostId, BoardVO boardDetail) {
+		// 이미지 삭제, 게시글에서 이미지 업로드 허용한 경우
+		if (Objects.equals(boardDetail.getImageFlag(), "N")) {
+			return;
+		}
+
+		List<Long> deletePostImageIds = imageService.findImagesByTempPostId(tempPostId)
+				.stream()
+				.map(ImageVO::getImageId)
+				.toList();
+
+		if (!deletePostImageIds.isEmpty()) {
+			imageService.removeTempImages(deletePostImageIds, tempPostId);
+		}
 	}
 }

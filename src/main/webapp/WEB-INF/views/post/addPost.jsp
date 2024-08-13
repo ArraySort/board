@@ -23,7 +23,7 @@
             }
 
             // 입력 폼 검증
-            function validateForm(e) {
+            function validateAddForm(e) {
                 const category = $('#category').val();
                 const title = $('#title').val();
                 const content = $('#content').val();
@@ -37,7 +37,7 @@
                 }
             }
 
-            function validateTempForm(e) {
+            function validateAddTempForm(e) {
                 const title = $('#title').val();
 
                 if (!title) {
@@ -63,13 +63,13 @@
             // 저장 버튼
             $('#addPost').on('click', function (e) {
                 $('#postForm').attr('action', '<c:url value="/${boardId}/post/process-add-post"/>');
-                validateForm(e);
+                validateAddForm(e);
             });
 
             // 임시저장 버튼
             $('#saveTempPost').on('click', function (e) {
                 $('#postForm').attr('action', '<c:url value="/${boardId}/post/process-save-temp-post"/>');
-                validateTempForm(e);
+                validateAddTempForm(e);
             });
         })
         ;
