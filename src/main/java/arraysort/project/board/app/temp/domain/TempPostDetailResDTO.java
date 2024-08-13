@@ -1,5 +1,6 @@
 package arraysort.project.board.app.temp.domain;
 
+import arraysort.project.board.app.common.enums.Flag;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -25,7 +26,7 @@ public class TempPostDetailResDTO {
 
 	private String content;
 
-	private String privateFlag;
+	private Flag privateFlag;
 
 	private Date createdAt;
 

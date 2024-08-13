@@ -1,5 +1,6 @@
 package arraysort.project.board.app.post.domain;
 
+import arraysort.project.board.app.common.enums.Flag;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -27,11 +28,11 @@ public class PostDetailResDTO {
 
 	private String content;
 
-	private String privateFlag;
+	private Flag privateFlag;
 
-	private String activateFlag;
+	private Flag activateFlag;
 
-	private String deleteFlag;
+	private Flag deleteFlag;
 
 	private Date createdAt;
 
@@ -39,6 +40,7 @@ public class PostDetailResDTO {
 
 	private long views;
 
+	// 게시글 세부 조회
 	public static PostDetailResDTO of(PostVO vo) {
 		return builder()
 				.postId(vo.getPostId())

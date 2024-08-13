@@ -3,6 +3,8 @@ package arraysort.project.board.app.post.service;
 import arraysort.project.board.app.board.domain.BoardVO;
 import arraysort.project.board.app.category.domain.CategoryVO;
 import arraysort.project.board.app.common.Constants;
+import arraysort.project.board.app.common.enums.BoardType;
+import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
 import arraysort.project.board.app.exception.IdNotFoundException;
@@ -22,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +47,7 @@ public class PostService {
 		PostVO vo = PostVO.insertOf(dto, boardId);
 
 		// 갤러리 게시판일 때 썸네일 이미지 추가
-		if (boardDetail.getBoardType().equals("GALLERY")) {
+		if (boardDetail.getBoardType() == BoardType.GALLERY) {
 			vo.updateThumbnailImageId(imageService.addThumbnailImage(dto.getThumbnailImage()));
 		}
 
@@ -110,7 +111,7 @@ public class PostService {
 		vo.updateThumbnailImageId(postDetail.getImageId());
 
 		// 썸네일 이미지 업로드 검증 : 갤러리 게시판인지, 썸네일 이미지가 비어있는지
-		if (boardDetail.getBoardType().equals("GALLERY") && !dto.getThumbnailImage().isEmpty()) {
+		if (boardDetail.getBoardType() == BoardType.GALLERY && !dto.getThumbnailImage().isEmpty()) {
 			vo.updateThumbnailImageId(imageService.modifyThumbnailImage(dto.getThumbnailImage(), postId));
 		}
 
@@ -134,7 +135,7 @@ public class PostService {
 		handlePostImageRemove(postId, boardDetail);
 
 		// 갤러리 게시판에서 게시글을 삭제했을 때 썸네일 이미지 삭제
-		if (Objects.equals(boardDetail.getBoardType(), "GALLERY")) {
+		if (boardDetail.getBoardType() == BoardType.GALLERY) {
 			imageService.removeThumbnailImage(postId);
 		}
 
@@ -179,7 +180,7 @@ public class PostService {
 	 * @param postId      게시글 ID
 	 */
 	private void handlePostImages(PostAddReqDTO dto, BoardVO boardDetail, long postId) {
-		if (boardDetail.getImageFlag().equals("N")) {
+		if (boardDetail.getImageFlag() == Flag.N) {
 			return;
 		}
 
@@ -200,7 +201,7 @@ public class PostService {
 	 * @param postId      게시글 ID
 	 */
 	private void handlePostImages(PostEditReqDTO dto, BoardVO boardDetail, long postId) {
-		if (boardDetail.getImageFlag().equals("N")) {
+		if (boardDetail.getImageFlag() == Flag.N) {
 			return;
 		}
 
@@ -231,7 +232,7 @@ public class PostService {
 	 */
 	private void handlePostImageRemove(long postId, BoardVO boardDetail) {
 		// 이미지 삭제, 게시글에서 이미지 업로드 허용한 경우
-		if (Objects.equals(boardDetail.getImageFlag(), "N")) {
+		if (boardDetail.getImageFlag() == Flag.N) {
 			return;
 		}
 

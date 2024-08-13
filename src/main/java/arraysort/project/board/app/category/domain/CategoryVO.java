@@ -1,5 +1,6 @@
 package arraysort.project.board.app.category.domain;
 
+import arraysort.project.board.app.common.enums.Flag;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,6 +18,10 @@ public class CategoryVO {
 
 	private String updatedBy;    // 최종 수정자
 
-	private String deleteFlag;    // 삭제 여부
-	
+	private String createdAt;    // 최초 생성 날짜
+
+	private String updatedAt;    // 최종 수정 날짜
+
+	private Flag deleteFlag;    // 삭제 여부
+
 }

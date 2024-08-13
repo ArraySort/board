@@ -1,5 +1,7 @@
 package arraysort.project.board.app.board.domain;
 
+import arraysort.project.board.app.common.enums.BoardType;
+import arraysort.project.board.app.common.enums.Flag;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,21 +15,21 @@ public class BoardVO {
 
 	private String boardName;    // 게시판 이름
 
-	private String boardType;    // 게시판 타입 [GENERAL, GALLERY]
+	private BoardType boardType;    // 게시판 타입 [GENERAL, GALLERY]
 
 	private int boardOrder;    // 게시판 순서
 
-	private String imageFlag;    // 첨부이미지 사용 여부
+	private Flag imageFlag;    // 첨부이미지 사용 여부
 
 	private Integer imageLimit;    // 첨부이미지 최대 개수
 
 	private int noticeCount;    // 공지글 개수
 
-	private String commentFlag;    // 댓글 사용 여부
+	private Flag commentFlag;    // 댓글 사용 여부
 
 	private int accessLevel;    // 게시판 접근 등급
 
-	private String activateFlag;    // 활성화 여부
+	private Flag activateFlag;    // 활성화 여부
 
 	private String createdBy;    // 최초 생성자
 
@@ -37,6 +39,6 @@ public class BoardVO {
 
 	private Date updatedAt;    // 최종 수정 시간
 
-	private String deleteFlag;    // 삭제 여부
+	private Flag deleteFlag;    // 삭제 여부
 
 }

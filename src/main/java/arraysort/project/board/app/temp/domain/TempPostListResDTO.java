@@ -1,6 +1,7 @@
 package arraysort.project.board.app.temp.domain;
 
 import arraysort.project.board.app.common.NumberAssignable;
+import arraysort.project.board.app.common.enums.Flag;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -26,7 +27,7 @@ public class TempPostListResDTO implements NumberAssignable {
 
 	private Date updatedAt;
 
-	private String privateFlag;
+	private Flag privateFlag;
 
 	private long postNumber;
 

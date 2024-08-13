@@ -3,6 +3,8 @@ package arraysort.project.board.app.temp.service;
 import arraysort.project.board.app.board.domain.BoardVO;
 import arraysort.project.board.app.category.domain.CategoryVO;
 import arraysort.project.board.app.common.Constants;
+import arraysort.project.board.app.common.enums.BoardType;
+import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
 import arraysort.project.board.app.exception.DetailNotFoundException;
@@ -22,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +47,7 @@ public class TempPostService {
 		postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
 
 		// 갤러리 게시판일 때 썸네일 이미지 추가
-		if (boardDetail.getBoardType().equals("GALLERY")) {
+		if (boardDetail.getBoardType() == BoardType.GALLERY) {
 			vo.updateThumbnailImageId(imageService.addThumbnailImage(dto.getThumbnailImage()));
 		}
 
@@ -107,7 +108,7 @@ public class TempPostService {
 		vo.updateThumbnailImageId(tempPostDetail.getImageId());
 
 		// 갤러리 게시판 검증, 썸네일 이미지 수정 시 실행
-		if (boardDetail.getBoardType().equals("GALLERY") && !dto.getThumbnailImage().isEmpty()) {
+		if (boardDetail.getBoardType() == BoardType.GALLERY && !dto.getThumbnailImage().isEmpty()) {
 			vo.updateThumbnailImageId(imageService.addThumbnailImage(dto.getThumbnailImage()));
 			isThumbnailChanged = true;
 		}
@@ -151,7 +152,7 @@ public class TempPostService {
 		vo.updateThumbnailImageId(tempPostDetail.getImageId());
 
 		// 썸네일 이미지 업로드 검증 : 갤러리 게시판인지, 썸네일 이미지가 비어있는지
-		if (boardDetail.getBoardType().equals("GALLERY") && !dto.getThumbnailImage().isEmpty()) {
+		if (boardDetail.getBoardType() == BoardType.GALLERY && !dto.getThumbnailImage().isEmpty()) {
 			vo.updateThumbnailImageId(imageService.modifyThumbnailImage(dto.getThumbnailImage(), tempPostId));
 			isThumbnailChanged = true;
 		}
@@ -180,7 +181,7 @@ public class TempPostService {
 		handleTempPostImageRemove(tempPostId, boardDetail);
 
 		// 갤러리 게시판일 때 썸네일 이미지 삭제
-		if (Objects.equals(boardDetail.getBoardType(), "GALLERY")) {
+		if (boardDetail.getBoardType() == BoardType.GALLERY) {
 			imageService.removeTempThumbnailImage(tempPostDetail.getImageId());
 		}
 
@@ -199,7 +200,7 @@ public class TempPostService {
 	 * @param postId      게시글 ID
 	 */
 	private void handleTempPostImages(TempPostAddReqDTO dto, BoardVO boardDetail, long postId) {
-		if (boardDetail.getImageFlag().equals("N")) {
+		if (boardDetail.getImageFlag() == Flag.N) {
 			return;
 		}
 
@@ -220,7 +221,7 @@ public class TempPostService {
 	 * @param tempPostId  게시글 ID
 	 */
 	private void handleTempPostImages(TempPostEditReqDTO dto, BoardVO boardDetail, long tempPostId) {
-		if (boardDetail.getImageFlag().equals("N")) {
+		if (boardDetail.getImageFlag() == Flag.N) {
 			return;
 		}
 
@@ -251,7 +252,7 @@ public class TempPostService {
 	 */
 	private void handleTempPostImageRemove(long tempPostId, BoardVO boardDetail) {
 		// 이미지 삭제, 게시글에서 이미지 업로드 허용한 경우
-		if (Objects.equals(boardDetail.getImageFlag(), "N")) {
+		if (boardDetail.getImageFlag() == Flag.N) {
 			return;
 		}
 

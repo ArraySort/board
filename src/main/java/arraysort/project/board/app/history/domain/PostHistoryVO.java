@@ -1,5 +1,6 @@
 package arraysort.project.board.app.history.domain;
 
+import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.post.domain.PostVO;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,9 +23,9 @@ public class PostHistoryVO {
 
 	private String content;        // 내용
 
-	private String privateFlag;        // 비공개 여부
+	private Flag privateFlag;        // 비공개 여부
 
-	private String activateFlag;        // 활성화 여부
+	private Flag activateFlag;        // 활성화 여부
 
 	private Date createdAt;        // 생성 날짜
 

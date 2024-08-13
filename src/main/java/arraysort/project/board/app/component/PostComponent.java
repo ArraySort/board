@@ -4,6 +4,7 @@ import arraysort.project.board.app.board.domain.BoardVO;
 import arraysort.project.board.app.board.mapper.BoardMapper;
 import arraysort.project.board.app.category.domain.CategoryVO;
 import arraysort.project.board.app.category.mapper.CategoryMapper;
+import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.exception.*;
 import arraysort.project.board.app.post.domain.PostDetailResDTO;
 import arraysort.project.board.app.post.mapper.PostMapper;
@@ -43,7 +44,7 @@ public class PostComponent {
 				.orElseThrow(BoardNotFoundException::new);
 
 		// 2. 게시글을 추가하려는 게시판이 비활성화 상태인지, 삭제된 상태인지 검증
-		if (boardDetail.getActivateFlag().equals("N") || boardDetail.getDeleteFlag().equals("Y")) {
+		if (boardDetail.getActivateFlag() == Flag.N || boardDetail.getDeleteFlag() == Flag.Y) {
 			throw new BoardNotFoundException();
 		}
 
@@ -90,7 +91,7 @@ public class PostComponent {
 					.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
 
 			// 2. 게시글을 추가할 때 작성자가 비활성화 상태, 삭제된 상태인지 검증
-			if (Objects.equals(userDetail.getActivateFlag(), "N") || Objects.equals(userDetail.getDeleteFlag(), "Y")) {
+			if (userDetail.getActivateFlag() == Flag.N || userDetail.getDeleteFlag() == Flag.Y) {
 				throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
 			}
 
@@ -118,7 +119,7 @@ public class PostComponent {
 				.orElseThrow(DetailNotFoundException::new));
 
 		// 2. 조회 한 게시글의 삭제, 비활성화 여부 검증
-		if (postDetail.getActivateFlag().equals("N") || postDetail.getDeleteFlag().equals("Y")) {
+		if (postDetail.getActivateFlag() == Flag.N || postDetail.getDeleteFlag() == Flag.Y) {
 			throw new DetailNotFoundException();
 		}
 
@@ -148,7 +149,7 @@ public class PostComponent {
 	 */
 	private void validatePrivatePost(PostDetailResDTO postDetail) {
 		// 1. 현재 조회하는 게시글이 비공개 게시글인지 검증
-		if (postDetail.getPrivateFlag().equals("Y") &&
+		if (postDetail.getPrivateFlag() == Flag.Y &&
 				!Objects.equals(postDetail.getUserId(), UserUtil.getCurrentLoginUserId())) {
 			throw new InvalidPrincipalException("비공개 게시글은 작성자만 볼 수 있습니다.");
 		}

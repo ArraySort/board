@@ -1,5 +1,6 @@
 package arraysort.project.board.app.post.domain;
 
+import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.temp.domain.TempPostPublishReqDTO;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.AllArgsConstructor;
@@ -39,15 +40,15 @@ public class PostVO {
 
 	private long views;    // 조회수
 
-	private String privateFlag;    // 비공개 여부
+	private Flag privateFlag;    // 비공개 여부
 
-	private String noticeFlag;    // 공지사항 여부
+	private Flag noticeFlag;    // 공지사항 여부
 
-	private String activateFlag;    // 활성화 여부
+	private Flag activateFlag;    // 활성화 여부
 
-	private String adoptedCommentFlag;    // 채택 댓글 여부
+	private Flag adoptedCommentFlag;    // 채택 댓글 여부
 
-	private String deleteFlag;    // 삭제 여부
+	private Flag deleteFlag;    // 삭제 여부
 
 	private String createdBy;    // 최초 생성자
 

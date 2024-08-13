@@ -1,5 +1,6 @@
 package arraysort.project.board.app.image.domain;
 
+import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +25,7 @@ public class ImageVO {
 
 	private Date createdAt;     // 이미지 생성 날짜
 
-	private String deleteFlag;      // 삭제 여부
+	private Flag deleteFlag;      // 삭제 여부
 
 	// 이미지 추가
 	public static ImageVO insertOf(ImageMetaData imageMetaData) {

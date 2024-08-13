@@ -1,5 +1,6 @@
 package arraysort.project.board.app.user.domain;
 
+import arraysort.project.board.app.common.enums.Flag;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -19,7 +20,7 @@ public class UserVO {
 
 	private Date accessTime;    // 최근 접속 시간
 
-	private String activateFlag;    // 활성화 여부
+	private Flag activateFlag;    // 활성화 여부
 
 	private String createdBy;    // 최초 생성자
 
@@ -27,7 +28,7 @@ public class UserVO {
 
 	private String updatedAt;    // 최종 수정 시간
 
-	private String deleteFlag;  // 삭제 여부
+	private Flag deleteFlag;  // 삭제 여부
 
 	public static UserVO of(UserSignupReqDTO dto) {
 		return UserVO.builder()

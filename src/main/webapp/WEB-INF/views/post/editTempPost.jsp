@@ -1,4 +1,3 @@
-<%@ page import="arraysort.project.board.app.post.domain.BoardType" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
@@ -134,7 +133,7 @@
             });
 
             // 삭제 버튼 클릭 시 액션 변경
-            $('#deleteButton').on('click', function (e) {
+            $('#deleteButton').on('click', function () {
                 const form = $(this).closest('form');
                 form.attr('action', '/${boardId}/post/temp/${postDetail.tempPostId}/delete');
             });

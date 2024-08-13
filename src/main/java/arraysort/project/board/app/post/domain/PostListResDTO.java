@@ -1,6 +1,7 @@
 package arraysort.project.board.app.post.domain;
 
 import arraysort.project.board.app.common.NumberAssignable;
+import arraysort.project.board.app.common.enums.Flag;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -26,10 +27,11 @@ public class PostListResDTO implements NumberAssignable {
 
 	private long views;
 
-	private String privateFlag;
+	private Flag privateFlag;
 
 	private long postNumber;
 
+	// 게시글 리스트 조회
 	public static PostListResDTO of(PostVO vo) {
 		return PostListResDTO.builder()
 				.postId(vo.getPostId())
@@ -43,7 +45,8 @@ public class PostListResDTO implements NumberAssignable {
 				.privateFlag(vo.getPrivateFlag())
 				.build();
 	}
-	
+
+	// 게시글 번호 업데이트
 	@Override
 	public void updateNumber(long number) {
 		this.postNumber = number;

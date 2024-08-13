@@ -1,5 +1,6 @@
 package arraysort.project.board.app.post.domain;
 
+import arraysort.project.board.app.common.enums.Flag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -22,7 +23,7 @@ public class PostAddReqDTO {
 	private String content;
 
 	@NotNull(message = "비공개 여부는 필수 입력사항입니다.")
-	private String privateFlag;
+	private Flag privateFlag;
 
 	@NotNull(message = "카테고리는 필수 입력사항입니다.")
 	private Long categoryId;

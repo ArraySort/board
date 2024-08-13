@@ -1,5 +1,6 @@
 package arraysort.project.board.app.temp.domain;
 
+import arraysort.project.board.app.common.enums.Flag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -19,7 +20,7 @@ public class TempPostEditReqDTO {
 
 	private String content;
 
-	private String privateFlag;
+	private Flag privateFlag;
 
 	@NotNull(message = "임시저장 시 카테고리는 필수 입력사항입니다.")
 	private Long categoryId;

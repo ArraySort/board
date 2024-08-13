@@ -1,5 +1,6 @@
 package arraysort.project.board.app.temp.domain;
 
+import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,9 +33,9 @@ public class TempPostVO {
 
 	private String content;
 
-	private String privateFlag;
+	private Flag privateFlag;
 
-	private String noticeFlag;
+	private Flag noticeFlag;
 
 	private String createdBy;
 
