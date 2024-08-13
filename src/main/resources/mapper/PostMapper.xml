@@ -63,10 +63,6 @@
         </where>
 
         <choose>
-            <when test="dto.sortType.toString() == 'ID'">
-                order by p.post_id desc
-            </when>
-
             <when test="dto.sortType.toString() == 'LATEST'">
                 order by p.updated_at desc
             </when>

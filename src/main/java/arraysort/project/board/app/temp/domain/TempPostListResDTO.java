@@ -1,5 +1,6 @@
 package arraysort.project.board.app.temp.domain;
 
+import arraysort.project.board.app.common.NumberAssignable;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,7 +8,7 @@ import java.util.Date;
 
 @Getter
 @Builder
-public class TempPostListResDTO {
+public class TempPostListResDTO implements NumberAssignable {
 
 	private long postId;
 
@@ -27,6 +28,8 @@ public class TempPostListResDTO {
 
 	private String privateFlag;
 
+	private long postNumber;
+
 	// 임시저장 게시글 목록 조회
 	public static TempPostListResDTO of(TempPostVO vo) {
 		return TempPostListResDTO.builder()
@@ -40,5 +43,10 @@ public class TempPostListResDTO {
 				.updatedAt(vo.getUpdatedAt())
 				.privateFlag(vo.getPrivateFlag())
 				.build();
+	}
+
+	@Override
+	public void updateNumber(long number) {
+		this.postNumber = number;
 	}
 }

@@ -18,6 +18,6 @@ public class PageReqDTO {
 	public PageReqDTO() {
 		this.page = 1;
 		this.searchType = SearchType.ALL;
-		this.sortType = SortType.ID;
+		this.sortType = SortType.LATEST;
 	}
 }

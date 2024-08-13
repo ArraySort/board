@@ -57,7 +57,6 @@
         <form class="ms-auto d-inline-block m-2" method="get" action="/${boardId}/post">
             <div class="input-group">
                 <select name="sortType" aria-label="sortType select">
-                    <option value="ID" ${page.sortType == 'ID' ? 'selected' : ''}>번호순</option>
                     <option value="LATEST" ${page.sortType == 'LATEST' ? 'selected' : ''}>최신순</option>
                     <option value="OLDEST" ${page.sortType == 'OLDEST' ? 'selected' : ''}>오래된순</option>
                     <option value="VIEWS" ${page.sortType == 'VIEWS' ? 'selected' : ''}>조회순</option>
@@ -94,7 +93,7 @@
                 <tbody>
                 <c:forEach var="post" items="${pagination.postList}">
                     <tr>
-                        <td>${post.postId}</td>
+                        <td>${post.postNumber}</td>
                         <td>
                             <a href="/${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">${post.title}</a>
                         </td>
