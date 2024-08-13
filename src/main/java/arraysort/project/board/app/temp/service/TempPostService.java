@@ -1,10 +1,12 @@
 package arraysort.project.board.app.temp.service;
 
 import arraysort.project.board.app.board.domain.BoardVO;
+import arraysort.project.board.app.category.domain.CategoryVO;
 import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
 import arraysort.project.board.app.exception.DetailNotFoundException;
+import arraysort.project.board.app.history.service.PostHistoryService;
 import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PageResDTO;
@@ -25,6 +27,8 @@ import java.util.List;
 public class TempPostService {
 
 	private final ImageService imageService;
+
+	private final PostHistoryService postHistoryService;
 
 	private final TempPostMapper tempPostMapper;
 
@@ -85,6 +89,7 @@ public class TempPostService {
 	@Transactional
 	public void publishTempPost(TempPostEditReqDTO dto, long boardId, long tempPostId) {
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
+		CategoryVO categoryDetail = postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
 		TempPostVO tempPostDetail = tempPostMapper.selectTempPostDetailByPostId(tempPostId, boardId)
 				.orElseThrow(DetailNotFoundException::new);
 		PostVO vo = PostVO.insertOf(dto, boardId);
@@ -113,6 +118,9 @@ public class TempPostService {
 		if (isThumbnailChanged) {
 			imageService.removeTempThumbnailImage(tempPostDetail.getImageId());
 		}
+
+		// 임시저장 -> 게시글 게시 완료 시 기록 추가
+		postHistoryService.addPostHistory(vo, categoryDetail.getCategoryName());
 	}
 
 	// 임시저장 게시글 수정
