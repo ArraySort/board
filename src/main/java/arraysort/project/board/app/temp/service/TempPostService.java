@@ -14,14 +14,13 @@ import arraysort.project.board.app.temp.domain.*;
 import arraysort.project.board.app.temp.mapper.TempPostMapper;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class TempPostService {
 
@@ -35,7 +34,7 @@ public class TempPostService {
 
 	// 임시저장 게시글 추가
 	@Transactional
-	public void addTempPost(TempPostAddDTO dto, long boardId) {
+	public void addTempPost(TempPostAddReqDTO dto, long boardId) {
 		TempPostVO vo = TempPostVO.insertOf(dto, boardId);
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 		postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
@@ -116,6 +115,38 @@ public class TempPostService {
 		}
 	}
 
+	// 임시저장 게시글 수정
+	@Transactional
+	public void modifyTempPost(TempPostEditReqDTO dto, long boardId, long tempPostId) {
+		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
+		TempPostVO tempPostDetail = tempPostMapper.selectTempPostDetailByPostId(tempPostId, boardId)
+				.orElseThrow(DetailNotFoundException::new);
+
+		boolean isThumbnailChanged = false;
+
+		// 임시저장 게시글 이미지 처리
+		handleTempPostImages(dto, boardDetail, tempPostId);
+
+		TempPostVO vo = TempPostVO.updateOf(dto, tempPostId);
+
+		// 기존 썸네일 이미지
+		vo.updateThumbnailImageId(tempPostDetail.getImageId());
+
+		// 썸네일 이미지 업로드 검증 : 갤러리 게시판인지, 썸네일 이미지가 비어있는지
+		if (boardDetail.getBoardType().equals("GALLERY") && !dto.getThumbnailImage().isEmpty()) {
+			vo.updateThumbnailImageId(imageService.modifyThumbnailImage(dto.getThumbnailImage(), tempPostId));
+			isThumbnailChanged = true;
+		}
+
+		// 임시저장 게시물 수정
+		tempPostMapper.updateTempPost(vo, tempPostId);
+
+		// 썸네일이 변경된 경우 기존 임시저장 썸네일 이미지 삭제
+		if (isThumbnailChanged) {
+			imageService.removeTempThumbnailImage(tempPostDetail.getImageId());
+		}
+	}
+
 	/**
 	 * [임시저장 게시글 이미지 처리(추가)]
 	 * 게시판의 이미지 허용 여부가 Y 일 때만 실행
@@ -125,7 +156,7 @@ public class TempPostService {
 	 * @param boardDetail 검증된 게시판 세부정보
 	 * @param postId      게시글 ID
 	 */
-	private void handleTempPostImages(TempPostAddDTO dto, BoardVO boardDetail, long postId) {
+	private void handleTempPostImages(TempPostAddReqDTO dto, BoardVO boardDetail, long postId) {
 		if (boardDetail.getImageFlag().equals("N")) {
 			return;
 		}
@@ -135,5 +166,37 @@ public class TempPostService {
 		}
 
 		imageService.addTempImages(dto.getImages(), postId);
+	}
+
+	/**
+	 * [게시글 이미지 처리(수정)]
+	 * 게시판의 이미지 허용 여부가 Y 일 때만 실행
+	 * 게시판의 이미지 허용 여부가 Y 일 때 최대 업로드 가용 이미지 검증
+	 *
+	 * @param dto         수정되는 게시글 정보(사용자 입력)
+	 * @param boardDetail 검증된 게시판 세부정보
+	 * @param tempPostId  게시글 ID
+	 */
+	private void handleTempPostImages(TempPostEditReqDTO dto, BoardVO boardDetail, long tempPostId) {
+		if (boardDetail.getImageFlag().equals("N")) {
+			return;
+		}
+
+		boolean addedImageCheck = dto.getAddedImages().stream()
+				.anyMatch(MultipartFile::isEmpty);
+
+		int addedImageCount = addedImageCheck ? 0 : dto.getAddedImages().size();
+
+		int imageCount = imageService.findImageCountByPostId(tempPostId) + addedImageCount - dto.getRemovedImageIds().size();
+
+		if (imageCount > boardDetail.getImageLimit()) {
+			throw new BoardImageOutOfRangeException("해당 게시판은 최대 " + boardDetail.getImageLimit() + " 개 까지 업로드 가능합니다.");
+		}
+
+		if (!dto.getRemovedImageIds().isEmpty()) {
+			imageService.removeTempImages(dto.getRemovedImageIds(), tempPostId);
+		}
+
+		imageService.addTempImages(dto.getAddedImages(), tempPostId);
 	}
 }

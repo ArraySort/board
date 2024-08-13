@@ -24,4 +24,7 @@ public interface TempPostMapper {
 
 	// 임시저장 게시글 게시 후 임시저장 게시글 삭제
 	void deleteTempPost(long tempPostId);
+
+	// 임시저장 게시글 수정
+	void updateTempPost(TempPostVO vo, long tempPostId);
 }

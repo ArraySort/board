@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class TempPostAddDTO {
+public class TempPostAddReqDTO {
 
 	@NotBlank(message = "제목은 필수 입력사항입니다.")
 	@Size(min = 1, max = 50, message = "제목은 최소 1글자 최대 50글자까지 입력 가능합니다.")
@@ -25,5 +25,5 @@ public class TempPostAddDTO {
 	private MultipartFile thumbnailImage;
 
 	private List<MultipartFile> images;
-	
+
 }

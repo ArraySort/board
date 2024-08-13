@@ -135,4 +135,15 @@
         where temp_post_id = #{tempPostId}
     </delete>
 
+    <!-- 임시저장 게시글 수정 -->
+    <update id="updateTempPost">
+        update temp_post
+        set image_id = #{vo.imageId},
+            title = #{vo.title},
+            content = #{vo.content},
+            private_flag = #{vo.privateFlag},
+            category_id = #{vo.categoryId}
+        where temp_post_id = #{tempPostId}
+    </update>
+
 </mapper>

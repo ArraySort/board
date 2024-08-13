@@ -20,6 +20,8 @@
             window.location.href = "/${boardId}/post";
         } else if (request === "ADD_TEMP") {
             window.location.href = "/${boardId}/post";
+        } else if (request === "PUBLISH_POST") {
+            window.location.href = "/${boardId}/post/temp";
         } else {
             window.history.back();
         }

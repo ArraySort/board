@@ -67,7 +67,6 @@ public class ImageService {
 	// 임시저장 게시글에서 일반 게시글로 게시
 	@Transactional
 	public void publishTempImages(TempPostEditReqDTO dto, long tempPostId, long postId) {
-
 		List<ImageVO> postImages = new ArrayList<>();
 
 		// 기존 임시 게시글 이미지 목록 추가
@@ -165,6 +164,12 @@ public class ImageService {
 	public void removeImages(List<Long> imageIds) {
 		imageMapper.deleteImages(imageIds);
 		imageMapper.deletePostImageByPostId(imageIds);
+	}
+
+	@Transactional
+	public void removeTempImages(List<Long> imageIds, long tempPostId) {
+		imageMapper.deleteTempPostImageByPostId(tempPostId);
+		imageMapper.deleteTempImages(imageIds);
 	}
 
 	// 게시글에 존재하는 이미지 개수 조회

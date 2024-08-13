@@ -131,6 +131,7 @@
         where temp_post_id = #{tempPostId}
     </delete>
 
+    <!-- 임시저장 게시글 이미지 삭제-->
     <delete id="deleteTempImages" parameterType="long">
         delete
         from image

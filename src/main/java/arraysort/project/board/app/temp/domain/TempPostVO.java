@@ -45,7 +45,7 @@ public class TempPostVO {
 	private Date updatedAt;
 
 	// 임시 게시글 추가
-	public static TempPostVO insertOf(TempPostAddDTO dto, long boardId) {
+	public static TempPostVO insertOf(TempPostAddReqDTO dto, long boardId) {
 		return TempPostVO.builder()
 				.userId(UserUtil.getCurrentLoginUserId())
 				.boardId(boardId)
@@ -54,6 +54,18 @@ public class TempPostVO {
 				.content(dto.getContent())
 				.privateFlag(dto.getPrivateFlag())
 				.createdBy(UserUtil.getCurrentLoginUserId())
+				.updatedBy(UserUtil.getCurrentLoginUserId())
+				.build();
+	}
+
+	// 임시 게시글 수정
+	public static TempPostVO updateOf(TempPostEditReqDTO dto, long tempPostId) {
+		return TempPostVO.builder()
+				.tempPostId(tempPostId)
+				.categoryId(dto.getCategoryId())
+				.title(dto.getTitle())
+				.content(dto.getContent())
+				.privateFlag(dto.getPrivateFlag())
 				.updatedBy(UserUtil.getCurrentLoginUserId())
 				.build();
 	}

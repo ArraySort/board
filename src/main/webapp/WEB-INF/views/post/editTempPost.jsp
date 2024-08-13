@@ -70,11 +70,6 @@
                 console.log(removedImageIds)
             });
 
-            // 저장 버튼 눌렀을 때 검증
-            $('#saveButton').on('click', function (e) {
-                validateForm(e);
-            });
-
             // 새로운 이미지 추가
             $('#imageInput').on('change', function () {
                 const files = this.files;
@@ -124,12 +119,29 @@
                 $('#imageInput').click();
             });
 
+            // 게시 버튼 클릭 시 액션 변경
+            $('#publishButton').on('click', function (e) {
+                validateForm(e);
+                const form = $(this).closest('form');
+                form.attr('action', '/${boardId}/post/temp/${postDetail.tempPostId}/publish');
+                form.submit();
+            });
+
+            // 저장 버튼 클릭 시 액션 변경
+            $('#saveButton').on('click', function (e) {
+                validateForm(e);
+                const form = $(this).closest('form');
+                form.attr('action', '/${boardId}/post/temp/${postDetail.tempPostId}/save');
+                form.submit();
+            });
+
+            // 추가된 이미지 상태업데이트
             function updateAddedImagesInput() {
                 let dataTransfer = new DataTransfer();
                 addedImages.forEach(file => {
                     dataTransfer.items.add(file);
                 });
-                $('#imageInput')[0].files = dataTransfer.files; // Update the input element with new files
+                $('#imageInput')[0].files = dataTransfer.files;
             }
 
         });
@@ -293,6 +305,7 @@
             <h3>작성 시간 : <fmt:formatDate value="${postDetail.createdAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
             <h3>수정 시간 : <fmt:formatDate value="${postDetail.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
 
+            <button type="submit" id="publishButton">게시</button>
             <button type="submit" id="saveButton">저장</button>
             <a href="/${boardId}/post/temp?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
                 <button type="button">취소</button>
