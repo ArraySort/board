@@ -1,6 +1,6 @@
 package arraysort.project.board.app.config.security;
 
-import arraysort.project.board.app.user.service.OAuth2UserService;
+import arraysort.project.board.app.user.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ public class SecurityConfig {
 
 	private final LoginFailureHandler loginFailureHandler;
 
-	private final OAuth2UserService oAuth2UserService;
+	private final CustomOAuth2UserService customOAuth2UserService;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -46,7 +46,7 @@ public class SecurityConfig {
 				.oauth2Login(oauth2 -> oauth2
 						.loginPage("/user/login")
 						.userInfoEndpoint(userInfo -> userInfo
-								.userService(oAuth2UserService)
+								.userService(customOAuth2UserService)
 						)
 						.failureHandler(loginFailureHandler)
 						.defaultSuccessUrl("/home")

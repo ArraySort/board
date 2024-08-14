@@ -4,8 +4,8 @@ import java.util.Map;
 
 public class GoogleAttributes extends OAuthAttributes {
 
-	public GoogleAttributes(Map<String, Object> attributes, String nameAttributeKey, String oAuthProvider) {
-		super(attributes, nameAttributeKey, oAuthProvider);
+	public GoogleAttributes(Map<String, Object> attributes, String nameAttributeKey) {
+		super(attributes, nameAttributeKey, "GOOGLE");
 	}
 
 	@Override

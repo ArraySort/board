@@ -49,6 +49,8 @@
     <button type="submit" id="loginButton" form="loginForm">로그인</button>
     <button type="button" onclick="location.href='/home'">홈 페이지로 이동</button>
     <button type="button" onclick="location.href='/oauth2/authorization/google'">구글 로그인</button>
+    <button type="button" onclick="location.href='/oauth2/authorization/kakao'">카카오 로그인</button>
+    <button type="button" onclick="location.href='/oauth2/authorization/naver'">네이버 로그인</button>
 
 </div>
 
