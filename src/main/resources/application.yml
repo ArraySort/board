@@ -1,10 +1,10 @@
 #  DataBase
 spring:
   datasource:
-    url: jdbc:mariadb://127.0.0.1:3306/board?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:log4jdbc:mariadb://127.0.0.1:3306/board?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: 1234
-    driver-class-name: org.mariadb.jdbc.Driver
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
 
   mvc:
     view:
@@ -28,5 +28,14 @@ mybatis:
 file:
   upload-path: /Users/an-yeongjun/Desktop/project/image
   stored-path: file:///Users/an-yeongjun/Desktop/project/image/
-  default-image: /images/userProfile.png
   allowed-extensions: jpg,jpeg,png
+
+# log4j2 설정
+logging:
+  level:
+    jdbc.sqlonly: off
+    jdbc.sqltiming: info
+    jdbc.resultsettable: info
+    jdbc.audit: off
+    jdbc.resultset: off
+    jdbc.connection: off
