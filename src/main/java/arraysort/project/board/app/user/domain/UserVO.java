@@ -1,13 +1,17 @@
 package arraysort.project.board.app.user.domain;
 
 import arraysort.project.board.app.common.enums.Flag;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserVO {
 
 	private String userId;  // 유저 ID
@@ -15,6 +19,8 @@ public class UserVO {
 	private String userPassword;    // 유저 비밀번호
 
 	private String userName;    // 유저 이름
+
+	private String provider;    // Oath 제공자
 
 	private Integer accessLevel;    // 유저 접근 등급
 
@@ -35,7 +41,7 @@ public class UserVO {
 				.userId(dto.getUserId())
 				.userPassword(dto.getUserPassword())
 				.userName(dto.getUserName())
-				.accessLevel(2) // TODO : access_level 수정
+				.accessLevel(1)
 				.createdBy(dto.getUserId())
 				.build();
 	}

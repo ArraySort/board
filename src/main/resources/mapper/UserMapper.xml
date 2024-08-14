@@ -48,4 +48,20 @@
         where user_id = #{userId}
     </select>
 
+    <insert id="insertOAuthUser" useGeneratedKeys="true" keyProperty="userId">
+        insert into
+            user (user_id,
+                  user_name,
+                  provider,
+                  created_by)
+        values
+            (#{userId}, #{userName}, #{oAuthProvider}, #{createdBy})
+    </insert>
+
+    <select id="selectOAuthUserByUserId">
+        select user_id, user_name, provider
+        from user
+        where user_id = #{userId}
+    </select>
+
 </mapper>

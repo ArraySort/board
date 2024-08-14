@@ -1,5 +1,6 @@
 package arraysort.project.board.app.user.mapper;
 
+import arraysort.project.board.app.user.domain.OAuthVO;
 import arraysort.project.board.app.user.domain.UserVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -19,4 +20,11 @@ public interface UserMapper {
 
 	// 로그인 시 저장된 아이디 확인
 	Optional<UserVO> selectUserByUserId(String userId);
+
+	// OAuth 회원가입
+	void insertOAuthUser(OAuthVO oAuthVO);
+
+	// OAuth 로 회원가입 한 유저 조회
+	Optional<OAuthVO> selectOAuthUserByUserId(String userId);
+
 }

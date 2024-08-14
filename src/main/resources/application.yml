@@ -18,6 +18,17 @@ spring:
     livereload:
       enabled: true
 
+  # Oauth2 설정(구글)
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ENC(p6AFP4L3TWgKgP6fBZiWr8jXAoTZOarZc335sn5rWDXUAAIVAbzftri/xnypSeUf1RLc6Cd2UDq0qGlJTfUiTcQjgtEcQ/RAL2W1fOyjr3W3G9J7CEBOXw==)
+            client-secret: ENC(zQmgrwNgMriLP7pVkN6nlFKlde+fSA2wfjO8Krks+IYjK3MBqBaWtpnZ5Vmgu2Be)
+            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+            scope: profile
+
 # mybatis mapper 경로 설정
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -34,8 +45,8 @@ file:
 logging:
   level:
     jdbc.sqlonly: off
-    jdbc.sqltiming: info
-    jdbc.resultsettable: info
+    jdbc.sqltiming: off
+    jdbc.resultsettable: off
     jdbc.audit: off
     jdbc.resultset: off
     jdbc.connection: off
