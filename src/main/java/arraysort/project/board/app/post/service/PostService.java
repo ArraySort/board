@@ -2,7 +2,6 @@ package arraysort.project.board.app.post.service;
 
 import arraysort.project.board.app.board.domain.BoardVO;
 import arraysort.project.board.app.category.domain.CategoryVO;
-import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.common.enums.BoardType;
 import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.component.PostComponent;
@@ -67,14 +66,9 @@ public class PostService {
 		postComponent.getValidatedBoard(boardId);
 
 		int totalPostCount = postMapper.selectTotalPostCount(dto, boardId);
-		int offset = (dto.getPage() - 1) * Constants.PAGE_ROW_COUNT;
+		PageDTO pageDTO = new PageDTO(totalPostCount, dto, boardId);
 
-		List<PostListResDTO> postList = postMapper.selectPostListWithPaging(
-						Constants.PAGE_ROW_COUNT,
-						offset,
-						dto,
-						boardId
-				)
+		List<PostListResDTO> postList = postMapper.selectPostListWithPaging(pageDTO)
 				.stream()
 				.map(PostListResDTO::of)
 				.toList();

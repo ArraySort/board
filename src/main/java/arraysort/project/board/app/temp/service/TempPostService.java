@@ -2,7 +2,6 @@ package arraysort.project.board.app.temp.service;
 
 import arraysort.project.board.app.board.domain.BoardVO;
 import arraysort.project.board.app.category.domain.CategoryVO;
-import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.common.enums.BoardType;
 import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.component.PostComponent;
@@ -11,13 +10,13 @@ import arraysort.project.board.app.exception.DetailNotFoundException;
 import arraysort.project.board.app.history.service.PostHistoryService;
 import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.service.ImageService;
+import arraysort.project.board.app.post.domain.PageDTO;
 import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PageResDTO;
 import arraysort.project.board.app.post.domain.PostVO;
 import arraysort.project.board.app.post.mapper.PostMapper;
 import arraysort.project.board.app.temp.domain.*;
 import arraysort.project.board.app.temp.mapper.TempPostMapper;
-import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,15 +63,9 @@ public class TempPostService {
 		postComponent.getValidatedBoard(boardId);
 
 		int totalTempPostCount = tempPostMapper.selectTotalTempPostCount(dto, boardId);
-		int offset = (dto.getPage() - 1) * Constants.PAGE_ROW_COUNT;
+		PageDTO pageDTO = new PageDTO(totalTempPostCount, dto, boardId);
 
-		List<TempPostListResDTO> tempPostList = tempPostMapper.selectTempPostListWithPaging(
-						Constants.PAGE_ROW_COUNT,
-						offset,
-						dto,
-						boardId,
-						UserUtil.getCurrentLoginUserId()
-				)
+		List<TempPostListResDTO> tempPostList = tempPostMapper.selectTempPostListWithPaging(pageDTO)
 				.stream()
 				.map(TempPostListResDTO::of)
 				.toList();
