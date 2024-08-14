@@ -1,4 +1,4 @@
-package arraysort.project.board.app.security;
+package arraysort.project.board.app.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

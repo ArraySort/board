@@ -1,4 +1,4 @@
-package arraysort.project.board.app.security;
+package arraysort.project.board.app.config.security;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,12 +13,12 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class LoginFailureHandler implements AuthenticationFailureHandler {
-    @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.error("[폼 로그인 에러 : ]", exception);
+	@Override
+	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+		log.error("[폼 로그인 에러 : ]", exception);
 
-        request.setAttribute("message", "아이디와 비밀번호를 다시 확인해주세요.");
+		request.setAttribute("message", "아이디와 비밀번호를 다시 확인해주세요.");
 
-        request.getRequestDispatcher("/WEB-INF/views/common/alert.jsp").forward(request, response);
-    }
+		request.getRequestDispatcher("/WEB-INF/views/common/alert.jsp").forward(request, response);
+	}
 }

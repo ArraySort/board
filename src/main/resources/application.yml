@@ -1,9 +1,9 @@
 #  DataBase
 spring:
   datasource:
-    url: jdbc:log4jdbc:mariadb://127.0.0.1:3306/board?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: 1234
+    url: ENC(tumGKonMWXpO4uQUpAkUBTw6JWloKiI4Nsg/ArwT18vaPf1+kQBjSEVnNVG1RMjAAhboQdbhejTG3bEB685wV34sBOxncMkbuOkEmWtgKp9BOdSQCBw/KjamYPsT1JVqiSSD7KJqJvw=)
+    username: ENC(V/TYpjWkapbPr7+fGEqQ6w==)
+    password: ENC(Z+v9LsPI0C/pdRJGf+QS2Q==)
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
 
   mvc:
