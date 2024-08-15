@@ -22,6 +22,8 @@ public class SecurityConfig {
 
 	private final CustomOAuth2UserService customOAuth2UserService;
 
+	private final CustomSessionExpiredStrategy customSessionExpiredStrategy;
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
@@ -45,8 +47,7 @@ public class SecurityConfig {
 
 				.oauth2Login(oauth2 -> oauth2
 						.loginPage("/user/login")
-						.userInfoEndpoint(userInfo -> userInfo
-								.userService(customOAuth2UserService)
+						.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService)
 						)
 						.failureHandler(loginFailureHandler)
 						.defaultSuccessUrl("/home")
@@ -58,6 +59,12 @@ public class SecurityConfig {
 						.invalidateHttpSession(true)
 						.deleteCookies("JSESSIONID")
 						.permitAll()
+				)
+
+				.sessionManagement(session -> session
+						.maximumSessions(1)
+						.expiredSessionStrategy(customSessionExpiredStrategy)
+						.maxSessionsPreventsLogin(false)
 				);
 
 		return http.build();
