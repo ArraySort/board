@@ -1,4 +1,4 @@
-package arraysort.project.board.app.user.domain;
+package arraysort.project.board.app.user.domain.attributes;
 
 import arraysort.project.board.app.common.Constants;
 

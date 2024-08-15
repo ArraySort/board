@@ -1,4 +1,4 @@
-package arraysort.project.board.app.user.domain;
+package arraysort.project.board.app.user.domain.attributes;
 
 import arraysort.project.board.app.common.Constants;
 
@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class KakaoAttributes extends OAuthAttributes {
 	public KakaoAttributes(Map<String, Object> attributes, String nameAttributeKey) {
-		super(attributes, nameAttributeKey, Constants.REGISTRATION_ID_KAKAO);
+		super(attributes, nameAttributeKey, Constants.OAUTH_PROVIDER_KAKAO);
 	}
 
 	@Override

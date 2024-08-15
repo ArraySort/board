@@ -1,9 +1,9 @@
 package arraysort.project.board.app.user.service;
 
-import arraysort.project.board.app.user.domain.OAuthAttributeFactory;
-import arraysort.project.board.app.user.domain.OAuthAttributes;
+import arraysort.project.board.app.common.OAuthAttributeFactory;
 import arraysort.project.board.app.user.domain.OAuthDTO;
 import arraysort.project.board.app.user.domain.OAuthVO;
+import arraysort.project.board.app.user.domain.attributes.OAuthAttributes;
 import arraysort.project.board.app.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

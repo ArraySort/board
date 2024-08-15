@@ -1,6 +1,9 @@
-package arraysort.project.board.app.user.domain;
+package arraysort.project.board.app.common;
 
-import arraysort.project.board.app.common.Constants;
+import arraysort.project.board.app.user.domain.attributes.GoogleAttributes;
+import arraysort.project.board.app.user.domain.attributes.KakaoAttributes;
+import arraysort.project.board.app.user.domain.attributes.NaverAttributes;
+import arraysort.project.board.app.user.domain.attributes.OAuthAttributes;
 
 import java.util.Map;
 
