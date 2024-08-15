@@ -1,20 +1,21 @@
 package arraysort.project.board.app.user.domain;
 
+import arraysort.project.board.app.common.Constants;
+
 import java.util.Map;
 
 public class GoogleAttributes extends OAuthAttributes {
-
 	public GoogleAttributes(Map<String, Object> attributes, String nameAttributeKey) {
-		super(attributes, nameAttributeKey, "GOOGLE");
-	}
-
-	@Override
-	public String getName() {
-		return (String) super.getAttributes().get("name");
+		super(attributes, nameAttributeKey, Constants.OAUTH_PROVIDER_GOOGLE);
 	}
 
 	@Override
 	public String getUserIdentify() {
-		return (String) super.getAttributes().get(getNameAttributeKey());
+		return String.valueOf(super.getAttributes().get(getNameAttributeKey()));
+	}
+
+	@Override
+	public String getUserName() {
+		return String.valueOf(super.getAttributes().get("name"));
 	}
 }

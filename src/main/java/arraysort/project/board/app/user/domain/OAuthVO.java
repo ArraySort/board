@@ -27,6 +27,7 @@ public class OAuthVO {
 				.userId(dto.getUserId())
 				.userName(dto.getUserName())
 				.oAuthProvider(dto.getOAuthProvider())
+				.accessLevel(2)
 				.createdBy(dto.getUserId())
 				.build();
 	}

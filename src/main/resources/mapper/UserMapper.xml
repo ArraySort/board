@@ -53,9 +53,10 @@
             user (user_id,
                   user_name,
                   provider,
+                  access_level,
                   created_by)
         values
-            (#{userId}, #{userName}, #{oAuthProvider}, #{createdBy})
+            (#{userId}, #{userName}, #{oAuthProvider}, #{accessLevel}, #{createdBy})
     </insert>
 
     <select id="selectOAuthUserByUserId">

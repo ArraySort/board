@@ -32,21 +32,23 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
-		OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
 
+		// Provider ID : [GOOGLE : google, KAKAO : kakao, NAVER : naver]
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
+
+		// Provider 가 제공하는 클라이언트 ID 의 Key 값 => [GOOGLE : sub, KAKAO : id, NAVER : response]
 		String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
-		Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
+		Map<String, Object> attributes = new HashMap<>(oAuth2UserService.loadUser(userRequest).getAttributes());
 
-		OAuthAttributes oAuthAttributes = OAuthAttributeFactory.getAttributeByProvider(attributes, userNameAttributeName, registrationId);
+		// Provider 에 따른 Attributes 반환 : [registrationId : google, kakao, naver]
+		OAuthAttributes oAuthAttributes = OAuthAttributeFactory.getAttributeByProvider(attributes, registrationId, userNameAttributeName);
 
 		String userIdentify = oAuthAttributes.getUserIdentify();
-		String name = oAuthAttributes.getName();
+		String userName = oAuthAttributes.getUserName();
 
-		OAuthDTO oAuthDTO = new OAuthDTO(userIdentify, name, oAuthAttributes.getOAuthProvider());
-
-		String userId = String.valueOf(saveOrUpdate(oAuthDTO));
+		OAuthDTO dto = new OAuthDTO(userIdentify, userName, oAuthAttributes.getOAuthProvider());
+		String userId = String.valueOf(checkOAuthUser(dto));
 
 		oAuthAttributes.getAttributes().put("userId", userId);
 
@@ -59,11 +61,24 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		);
 	}
 
-	private String saveOrUpdate(OAuthDTO dto) {
+	/**
+	 * OAuth 로 로그인을 진행한 유저인지 검사
+	 * 최초 로그인 시 OAuth 가입 절차 진행
+	 *
+	 * @param dto OAuth 제공자로부터 생성된 회원 정보
+	 * @return userId
+	 */
+	private String checkOAuthUser(OAuthDTO dto) {
 		Optional<OAuthVO> vo = userMapper.selectOAuthUserByUserId(dto.getUserId());
 		return vo.map(OAuthVO::getUserId).orElseGet(() -> signupOAuth(dto));
 	}
 
+	/**
+	 * OAuth 가입
+	 *
+	 * @param dto OAuth 제공자로부터 생성된 회원 정보
+	 * @return userId
+	 */
 	private String signupOAuth(OAuthDTO dto) {
 		OAuthVO vo = OAuthVO.of(dto);
 		userMapper.insertOAuthUser(vo);
