@@ -43,6 +43,11 @@
                 <label for="userPassword">비밀번호 : </label>
                 <input placeholder="비밀번호" type="password" name="userPassword" id="userPassword"/>
             </div>
+
+            <div>
+                <label for="remember-me">로그인 상태 유지</label>
+                <input type="checkbox" id="remember-me" name="remember-me">
+            </div>
         </form>
     </div>
 

@@ -57,7 +57,7 @@ public class SecurityConfig {
 						.logoutUrl("/process-logout")
 						.logoutSuccessUrl("/home")
 						.invalidateHttpSession(true)
-						.deleteCookies("JSESSIONID")
+						.deleteCookies("JSESSIONID", "remember-me")
 						.permitAll()
 				)
 
@@ -65,6 +65,12 @@ public class SecurityConfig {
 						.maximumSessions(1)
 						.expiredSessionStrategy(customSessionExpiredStrategy)
 						.maxSessionsPreventsLogin(false)
+				)
+
+				.rememberMe(rememberMe -> rememberMe
+						.rememberMeParameter("remember-me")
+						.tokenValiditySeconds(30 * 24 * 60 * 60)    // 유효기간 : 30일
+						.alwaysRemember(false)
 				);
 
 		return http.build();
