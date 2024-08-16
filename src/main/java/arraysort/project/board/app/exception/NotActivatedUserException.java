@@ -1,4 +1,9 @@
 package arraysort.project.board.app.exception;
 
-public class NotActivatedUserException extends RuntimeException {
+import org.springframework.security.core.AuthenticationException;
+
+public class NotActivatedUserException extends AuthenticationException {
+	public NotActivatedUserException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
 }

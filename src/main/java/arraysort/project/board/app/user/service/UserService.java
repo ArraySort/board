@@ -2,6 +2,7 @@ package arraysort.project.board.app.user.service;
 
 import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.exception.DuplicatedUserException;
+import arraysort.project.board.app.exception.InvalidPrincipalException;
 import arraysort.project.board.app.exception.NotActivatedUserException;
 import arraysort.project.board.app.exception.PasswordCheckException;
 import arraysort.project.board.app.user.domain.UserSignupReqDTO;
@@ -80,7 +81,8 @@ public class UserService implements UserDetailsService {
 	 */
 	private void validateUser(UserVO vo) {
 		if (vo.getActivateFlag() == Flag.N) {
-			throw new NotActivatedUserException();
+			throw new NotActivatedUserException("관리자에 의해 비활성화 된 계정입니다.",
+					new InvalidPrincipalException("정책 위반"));
 		}
 
 		if (vo.getDeleteFlag() == Flag.Y) {
