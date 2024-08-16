@@ -18,7 +18,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 		log.error("[폼 로그인 에러 : ]", exception);
 
-		if (exception.getCause() instanceof NotActivatedUserException) {
+		if (exception instanceof NotActivatedUserException || exception.getCause() instanceof NotActivatedUserException) {
 			request.setAttribute("message", "관리자에 의해 비활성화 된 계정입니다.");
 		} else {
 			request.setAttribute("message", "아이디와 비밀번호를 다시 확인해주세요.");

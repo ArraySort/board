@@ -1,6 +1,9 @@
 package arraysort.project.board.app.user.service;
 
 import arraysort.project.board.app.common.OAuthAttributeFactory;
+import arraysort.project.board.app.common.enums.Flag;
+import arraysort.project.board.app.exception.InvalidPrincipalException;
+import arraysort.project.board.app.exception.NotActivatedUserException;
 import arraysort.project.board.app.user.domain.OAuthDTO;
 import arraysort.project.board.app.user.domain.OAuthVO;
 import arraysort.project.board.app.user.domain.attributes.OAuthAttributes;
@@ -8,6 +11,7 @@ import arraysort.project.board.app.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -70,18 +74,39 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	 */
 	private String checkOAuthUser(OAuthDTO dto) {
 		Optional<OAuthVO> vo = userMapper.selectOAuthUserByUserId(dto.getUserId());
-		return vo.map(OAuthVO::getUserId).orElseGet(() -> signupOAuth(dto));
+		OAuthVO user = vo.orElseGet(() -> signupOAuth(dto));
+
+		validateUser(user);
+
+		return user.getUserId();
 	}
 
 	/**
 	 * OAuth 가입
 	 *
 	 * @param dto OAuth 제공자로부터 생성된 회원 정보
-	 * @return userId
+	 * @return vo DB 에 저장된 회원 정보
 	 */
-	private String signupOAuth(OAuthDTO dto) {
+	private OAuthVO signupOAuth(OAuthDTO dto) {
 		OAuthVO vo = OAuthVO.of(dto);
 		userMapper.insertOAuthUser(vo);
-		return vo.getUserId();
+		return vo;
+	}
+
+
+	/**
+	 * 로그인 하려는 유저가 비활성화 상태인지, 삭제된 상태인지 검증
+	 *
+	 * @param vo 로그인 유저의 정보
+	 */
+	private void validateUser(OAuthVO vo) {
+		if (vo.getActivateFlag() == Flag.N) {
+			throw new NotActivatedUserException("관리자에 의해 비활성화 된 계정입니다.",
+					new InvalidPrincipalException("정책 위반"));
+		}
+
+		if (vo.getDeleteFlag() == Flag.Y) {
+			throw new UsernameNotFoundException(vo.getUserId());
+		}
 	}
 }

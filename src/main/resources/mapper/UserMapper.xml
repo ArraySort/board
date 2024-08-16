@@ -48,6 +48,7 @@
         where user_id = #{userId}
     </select>
 
+    <!-- OAuth 회원가입 -->
     <insert id="insertOAuthUser" useGeneratedKeys="true" keyProperty="userId">
         insert into
             user (user_id,
@@ -59,8 +60,18 @@
             (#{userId}, #{userName}, #{oAuthProvider}, #{accessLevel}, #{createdBy})
     </insert>
 
+    <!-- OAuth 로 회원가입 한 유저 조회 -->
     <select id="selectOAuthUserByUserId">
-        select user_id, user_name, provider
+        select user_id,
+               user_password,
+               user_name,
+               provider,
+               access_level,
+               activate_flag,
+               created_by,
+               created_at,
+               updated_at,
+               delete_flag
         from user
         where user_id = #{userId}
     </select>
