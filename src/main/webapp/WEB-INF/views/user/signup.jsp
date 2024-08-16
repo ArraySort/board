@@ -16,7 +16,6 @@
             }
 
             $('#signupButton').on('click', function (e) {
-
                 const userId = $('#userId').val();
                 const userPassword = $('#userPassword').val();
                 const userName = $('#userName').val();
@@ -37,50 +36,122 @@
         });
     </script>
 
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        function execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    const roadAddr = data.roadAddress;
+                    let extraRoadAddr = '';
+
+                    if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+                        extraRoadAddr += data.bname;
+                    }
+                    if (data.buildingName !== '' && data.apartment === 'Y') {
+                        extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                    }
+                    if (extraRoadAddr !== '') {
+                        extraRoadAddr = ' (' + extraRoadAddr + ')';
+                    }
+
+                    document.getElementById('postcode').value = data.zonecode;
+                    document.getElementById("roadAddress").value = roadAddr;
+
+                    if (roadAddr !== '') {
+                        document.getElementById("extraAddress").value = extraRoadAddr;
+                    } else {
+                        document.getElementById("extraAddress").value = '';
+                    }
+
+                    var guideTextBox = document.getElementById("guide");
+                    if (data.autoRoadAddress) {
+                        var expRoadAddr = data.autoRoadAddress + extraRoadAddr;
+                        guideTextBox.innerHTML = '(예상 도로명 주소 : ' + expRoadAddr + ')';
+                        guideTextBox.style.display = 'block';
+                    } else {
+                        guideTextBox.innerHTML = '';
+                        guideTextBox.style.display = 'none';
+                    }
+                }
+            }).open({autoClose: true});
+        }
+    </script>
+
 </head>
-<body>
+<body class="bg-light">
 
-<div style="text-align: center">
-    <h1>회원가입 페이지</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5">
+                <div class="card-header text-center">
+                    <h1>회원가입 페이지</h1>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="${pageContext.request.contextPath}/user/process-signup" id="signupForm">
+                        <sec:csrfInput/>
 
-    <form method="post" action="${pageContext.request.contextPath}/user/process-signup" id="signupForm">
-        <sec:csrfInput/>
-        <div>
-            <div>
-                <label for="userId">아이디 : </label>
-                <input placeholder="아이디" type="text" name="userId" id="userId"/>
-            </div>
+                        <div class="mb-3">
+                            <label for="userId" class="form-label">아이디</label>
+                            <input type="text" class="form-control" id="userId" name="userId" placeholder="아이디"
+                                   required>
+                        </div>
 
-            <br/>
+                        <div class="mb-3">
+                            <label for="userPassword" class="form-label">비밀번호</label>
+                            <input type="password" class="form-control" id="userPassword" name="userPassword"
+                                   placeholder="비밀번호" required>
+                        </div>
 
-            <div>
-                <label for="userPassword">비밀번호 : </label>
-                <input placeholder="비밀번호" type="password" name="userPassword" id="userPassword"/>
-            </div>
+                        <div class="mb-3">
+                            <label for="userPasswordCheck" class="form-label">비밀번호 확인</label>
+                            <input type="password" class="form-control" id="userPasswordCheck" name="userPasswordCheck"
+                                   placeholder="비밀번호 확인" required>
+                        </div>
 
-            <br/>
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">이름</label>
+                            <input type="text" class="form-control" id="userName" name="userName" placeholder="이름"
+                                   required>
+                        </div>
 
-            <div>
-                <label for="userPasswordCheck">비밀번호 확인: </label>
-                <input placeholder="비밀번호" type="password" name="userPasswordCheck" id="userPasswordCheck"/>
-            </div>
+                        <div class="mb-3">
+                            <label for="postcode" class="form-label">우편번호</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="postcode" placeholder="우편번호" name="zipcode"
+                                       readonly>
+                                <button type="button" class="btn btn-secondary" onclick="execDaumPostcode()">
+                                    우편번호 찾기
+                                </button>
+                            </div>
+                        </div>
 
-            <br/>
+                        <div class="mb-3">
+                            <label for="roadAddress" class="form-label">도로명주소</label>
+                            <input type="text" class="form-control" id="roadAddress" placeholder="도로명주소" name="address"
+                                   readonly>
+                        </div>
 
-            <div>
-                <label for="userName">이름 : </label>
-                <input placeholder="이름" type="text" name="userName" id="userName">
+                        <div class="mb-3">
+                            <label for="detailAddress" class="form-label">상세주소</label>
+                            <input type="text" class="form-control" id="detailAddress" placeholder="상세주소"
+                                   name="addressDetail">
+                        </div>
+
+                        <div id="guide" class="form-text text-muted mb-3" style="display:none;"></div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary" id="signupButton">회원가입</button>
+                        </div>
+                    </form>
+
+                    <div class="d-grid mt-2">
+                        <button type="button" class="btn btn-link" onclick="location.href='/home'">홈 페이지로 이동</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </form>
-
-    <br/>
-
-    <div>
-        <button type="submit" id="signupButton" form="signupForm">회원가입</button>
-        <button type="button" onclick="location.href='/home'">홈 페이지로 이동</button>
     </div>
-
 </div>
 
 </body>

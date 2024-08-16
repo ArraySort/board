@@ -9,11 +9,17 @@
         insert into user(user_id,
                          user_password,
                          user_name,
+                         zipcode,
+                         address,
+                         address_detail,
                          access_level,
                          created_by)
         values (#{userId},
                 #{userPassword},
                 #{userName},
+                #{zipcode},
+                #{address},
+                #{addressDetail},
                 #{accessLevel},
                 #{createdBy})
     </insert>

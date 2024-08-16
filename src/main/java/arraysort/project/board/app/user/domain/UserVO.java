@@ -20,6 +20,12 @@ public class UserVO {
 
 	private String userName;    // 유저 이름
 
+	private String zipcode;    // 유저 우편번호
+
+	private String address;    // 유저 기본 주소
+
+	private String addressDetail;    // 유저 상세 주소
+
 	private String provider;    // Oath 제공자
 
 	private Integer accessLevel;    // 유저 접근 등급
@@ -46,7 +52,10 @@ public class UserVO {
 				.userId(dto.getUserId())
 				.userPassword(dto.getUserPassword())
 				.userName(dto.getUserName())
-				.accessLevel(1)
+				.zipcode(dto.getZipcode())
+				.address(dto.getAddress())
+				.addressDetail(dto.getAddressDetail())
+				.accessLevel(2)
 				.createdBy(dto.getUserId())
 				.build();
 	}
