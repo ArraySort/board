@@ -26,6 +26,10 @@ public class UserVO {
 
 	private Date accessTime;    // 최근 접속 시간
 
+	private Integer loginTryCount;    // 로그인 시도 횟수
+
+	private Date loginLock;    // 로그인 잠금 시간
+
 	private Flag activateFlag;    // 활성화 여부
 
 	private String createdBy;    // 최초 생성자
@@ -36,6 +40,7 @@ public class UserVO {
 
 	private Flag deleteFlag;  // 삭제 여부
 
+	// 로그인
 	public static UserVO of(UserSignupReqDTO dto) {
 		return UserVO.builder()
 				.userId(dto.getUserId())
@@ -44,5 +49,15 @@ public class UserVO {
 				.accessLevel(1)
 				.createdBy(dto.getUserId())
 				.build();
+	}
+
+	// 로그인 시도 횟수 업데이트
+	public void updateLoginTryCount(int loginTryCount) {
+		this.loginTryCount = loginTryCount;
+	}
+
+	// 로그인 잠금 업데이트
+	public void updateLoginLock(Date loginLock) {
+		this.loginLock = loginLock;
 	}
 }

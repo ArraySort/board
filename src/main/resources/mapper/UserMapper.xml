@@ -39,6 +39,8 @@
                user_name,
                access_level,
                access_time,
+               login_try_count,
+               login_lock,
                activate_flag,
                created_by,
                created_at,
@@ -75,5 +77,13 @@
         from user
         where user_id = #{userId}
     </select>
+
+    <!-- 로그인 시도 정보 업데이트 -->
+    <update id="updateLoginAttempts">
+        update user
+        set login_try_count = #{loginTryCount},
+            login_lock = #{loginLock}
+        where user_id = #{userId}
+    </update>
 
 </mapper>

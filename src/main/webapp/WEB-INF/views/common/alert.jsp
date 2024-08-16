@@ -4,7 +4,7 @@
 <script type="text/javascript">
     $(() => {
         const message = "${message}";
-        const request = "${request}"
+        const request = "${request}";
 
         if (message) {
             alert(message);
@@ -23,7 +23,7 @@
         } else if (request === "PUBLISH_POST") {
             window.location.href = "/${boardId}/post/temp";
         } else if (request === "DELETE_TEMP") {
-            window.location.href = "/${boardId}/post/temp"
+            window.location.href = "/${boardId}/post/temp";
         } else {
             window.history.back();
         }

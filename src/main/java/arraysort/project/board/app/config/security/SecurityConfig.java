@@ -18,6 +18,8 @@ public class SecurityConfig {
 
 	private final String[] permittedUrls = {"/", "/home", "/user/login", "/user/process-login", "/user/signup", "/user/process-signup", "/WEB-INF/views/**", "/resources/**"};
 
+	private final LoginSuccessHandler loginSuccessHandler;
+
 	private final LoginFailureHandler loginFailureHandler;
 
 	private final CustomOAuth2UserService customOAuth2UserService;
@@ -41,7 +43,7 @@ public class SecurityConfig {
 						.usernameParameter("userId")
 						.passwordParameter("userPassword")
 						.failureHandler(loginFailureHandler)
-						.defaultSuccessUrl("/home")
+						.successHandler(loginSuccessHandler)
 						.permitAll()
 				)
 

@@ -15,6 +15,10 @@ public class Constants {
 	public static final String OAUTH_PROVIDER_KAKAO = "KAKAO";
 	public static final String OAUTH_PROVIDER_NAVER = "NAVER";
 
+	// Login Attempts
+	public static final int MAX_ATTEMPTS_COUNT = 3;    // 로그인 시도 최대 횟수
+	public static final int LOGIN_LOCK_SEC = 30;    // 로그인 잠금 시간
+
 
 	private Constants() {
 	}

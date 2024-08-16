@@ -27,4 +27,7 @@ public interface UserMapper {
 	// OAuth 로 회원가입 한 유저 조회
 	Optional<OAuthVO> selectOAuthUserByUserId(String userId);
 
+	// 로그인 시도 정보 업데이트
+	void updateLoginAttempts(UserVO vo);
+
 }

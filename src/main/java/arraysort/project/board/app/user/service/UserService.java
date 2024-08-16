@@ -1,10 +1,8 @@
 package arraysort.project.board.app.user.service;
 
+import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.common.enums.Flag;
-import arraysort.project.board.app.exception.DuplicatedUserException;
-import arraysort.project.board.app.exception.InvalidPrincipalException;
-import arraysort.project.board.app.exception.NotActivatedUserException;
-import arraysort.project.board.app.exception.PasswordCheckException;
+import arraysort.project.board.app.exception.*;
 import arraysort.project.board.app.user.domain.UserSignupReqDTO;
 import arraysort.project.board.app.user.domain.UserVO;
 import arraysort.project.board.app.user.mapper.UserMapper;
@@ -18,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -52,7 +51,24 @@ public class UserService implements UserDetailsService {
 		// 유저 검증
 		validateUser(vo);
 
+		// 로그인 시도 검증, 잠금 시간 체크
+		validateLoginAttempts(vo);
+
 		return createUserDetails(vo);
+	}
+
+	/**
+	 * 로그인 시도 검증
+	 * 로그인 잠금 시간 검증
+	 *
+	 * @param vo 로그인 하려는 사용자 정보
+	 */
+	private void validateLoginAttempts(UserVO vo) {
+		if (vo.getLoginTryCount() >= Constants.MAX_ATTEMPTS_COUNT &&
+				vo.getLoginLock() != null && vo.getLoginLock().toInstant().isAfter(Instant.now())) {
+			throw new LoginLockException("로그인 시도가 지정된 횟수를 초과하여 계정이 잠금 처리되었습니다. 잠시후에 다시 시도하세요.",
+					new InvalidPrincipalException("정책위반"));
+		}
 	}
 
 	/**
