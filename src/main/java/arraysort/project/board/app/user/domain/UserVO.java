@@ -1,11 +1,14 @@
 package arraysort.project.board.app.user.domain;
 
+import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.common.enums.Flag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Date;
 
 @Getter
@@ -60,13 +63,19 @@ public class UserVO {
 				.build();
 	}
 
-	// 로그인 시도 횟수 업데이트
-	public void updateLoginTryCount(int loginTryCount) {
-		this.loginTryCount = loginTryCount;
+	// 로그인 시도 횟수 증가
+	public void incrementLoginTryCount() {
+		this.loginTryCount = loginTryCount + 1;
 	}
 
-	// 로그인 잠금 업데이트
-	public void updateLoginLock(Date loginLock) {
-		this.loginLock = loginLock;
+	// 로그인 잠금 활성화
+	public void activateLoginLock() {
+		this.loginLock = Timestamp.from(Instant.now().plusSeconds(Constants.LOGIN_LOCK_SEC));
+	}
+
+	// 로그인 상태 초기화
+	public void resetLoginStatus() {
+		this.loginLock = null;
+		this.loginTryCount = 0;
 	}
 }

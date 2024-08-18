@@ -2,7 +2,6 @@ package arraysort.project.board.app.user.service;
 
 import arraysort.project.board.app.common.OAuthAttributeFactory;
 import arraysort.project.board.app.common.enums.Flag;
-import arraysort.project.board.app.exception.InvalidPrincipalException;
 import arraysort.project.board.app.exception.NotActivatedUserException;
 import arraysort.project.board.app.user.domain.OAuthDTO;
 import arraysort.project.board.app.user.domain.OAuthVO;
@@ -101,8 +100,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	 */
 	private void validateUser(OAuthVO vo) {
 		if (vo.getActivateFlag() == Flag.N) {
-			throw new NotActivatedUserException("관리자에 의해 비활성화 된 계정입니다.",
-					new InvalidPrincipalException("정책 위반"));
+			throw new NotActivatedUserException("관리자에 의해 비활성화 된 계정입니다.");
 		}
 
 		if (vo.getDeleteFlag() == Flag.Y) {

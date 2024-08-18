@@ -2,7 +2,10 @@ package arraysort.project.board.app.user.service;
 
 import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.common.enums.Flag;
-import arraysort.project.board.app.exception.*;
+import arraysort.project.board.app.exception.DuplicatedUserException;
+import arraysort.project.board.app.exception.LoginLockException;
+import arraysort.project.board.app.exception.NotActivatedUserException;
+import arraysort.project.board.app.exception.PasswordCheckException;
 import arraysort.project.board.app.user.domain.UserSignupReqDTO;
 import arraysort.project.board.app.user.domain.UserVO;
 import arraysort.project.board.app.user.mapper.UserMapper;
@@ -41,7 +44,7 @@ public class UserService implements UserDetailsService {
 		userMapper.insertUser(vo);
 	}
 
-	// 로그인 : Spring Security 적용
+	// 로그인 : 성공 시 LoginSuccessHandler 처리 / 실패 시 LoginFailureHandler 처리
 	@Transactional(readOnly = true)
 	@Override
 	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
@@ -58,17 +61,39 @@ public class UserService implements UserDetailsService {
 	}
 
 	/**
-	 * 로그인 시도 검증
-	 * 로그인 잠금 시간 검증
+	 * 로그인 시도 실패 시 시도 횟수 증가
+	 * 시도 횟수가 설정된 횟수보다 많으면 로그인 잠금 활성화
 	 *
-	 * @param vo 로그인 하려는 사용자 정보
+	 * @param userId 로그인을 시도하는 유저 ID
 	 */
-	private void validateLoginAttempts(UserVO vo) {
-		if (vo.getLoginTryCount() >= Constants.MAX_ATTEMPTS_COUNT &&
-				vo.getLoginLock() != null && vo.getLoginLock().toInstant().isAfter(Instant.now())) {
-			throw new LoginLockException("로그인 시도가 지정된 횟수를 초과하여 계정이 잠금 처리되었습니다. 잠시후에 다시 시도하세요.",
-					new InvalidPrincipalException("정책위반"));
-		}
+	@Transactional
+	public void handleFailedLoginAttempts(String userId) {
+		userMapper.selectUserByUserId(userId).ifPresent(vo -> {
+			vo.incrementLoginTryCount();
+
+			if (vo.getLoginTryCount() >= Constants.MAX_ATTEMPTS_COUNT &&
+					vo.getLoginTryCount() % Constants.MAX_ATTEMPTS_COUNT == 0) {
+				vo.activateLoginLock();
+			}
+
+			userMapper.updateLoginAttempts(vo);
+		});
+	}
+
+	/**
+	 * 로그인 상태 초기화
+	 * 로그인 성공 시 로그인 시도 횟수, 로그인 잠금에 대한 초기화
+	 *
+	 * @param userId 로그인을 시도하는 유저 ID
+	 */
+	@Transactional
+	public void resetLoginAttempts(String userId) {
+		userMapper.selectUserByUserId(userId).ifPresent(vo -> {
+			if (vo.getLoginTryCount() > 0 || vo.getLoginLock() != null) {
+				vo.resetLoginStatus();
+				userMapper.updateLoginAttempts(vo);
+			}
+		});
 	}
 
 	/**
@@ -97,12 +122,24 @@ public class UserService implements UserDetailsService {
 	 */
 	private void validateUser(UserVO vo) {
 		if (vo.getActivateFlag() == Flag.N) {
-			throw new NotActivatedUserException("관리자에 의해 비활성화 된 계정입니다.",
-					new InvalidPrincipalException("정책 위반"));
+			throw new NotActivatedUserException("관리자에 의해 비활성화 된 계정입니다.");
 		}
 
 		if (vo.getDeleteFlag() == Flag.Y) {
 			throw new UsernameNotFoundException(vo.getUserId());
+		}
+	}
+
+	/**
+	 * 로그인 시도 검증
+	 * 로그인 잠금 시간 검증
+	 *
+	 * @param vo 로그인 하려는 사용자 정보
+	 */
+	private void validateLoginAttempts(UserVO vo) {
+		if (vo.getLoginTryCount() >= Constants.MAX_ATTEMPTS_COUNT &&
+				vo.getLoginLock() != null && vo.getLoginLock().toInstant().isAfter(Instant.now())) {
+			throw new LoginLockException("로그인 시도가 지정된 횟수를 초과하여 계정이 잠금 처리되었습니다. 잠시후에 다시 시도하세요.");
 		}
 	}
 
