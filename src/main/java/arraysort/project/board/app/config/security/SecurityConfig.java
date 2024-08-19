@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final String[] permittedUrls = {"/", "/home", "/user/login", "/user/process-login", "/user/signup", "/user/process-signup", "/WEB-INF/views/**", "/resources/**"};
+	private final String[] permittedUrls = {"/", "/home", "/user/login", "/user/process-login", "/user/signup", "/user/process-signup", "/user/send-email-verification", "/user/verify-email-code", "/WEB-INF/views/**", "/resources/**"};
 
 	private final LoginSuccessHandler loginSuccessHandler;
 

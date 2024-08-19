@@ -21,6 +21,12 @@ public class GlobalExceptionControllerAdvice {
 		return getModelAndView("입력한 비밀번호와 확인 값이 일치하지 않습니다.");
 	}
 
+	// 회원가입 시 발생하는 이메일 예외
+	@ExceptionHandler(EmailValidationException.class)
+	public ModelAndView handleEmailValidationException(EmailValidationException e) {
+		return getModelAndView(e.getMessage());
+	}
+
 	// 게시글 추가 시 잘못된 게시판 ID 접근
 	@ExceptionHandler(BoardNotFoundException.class)
 	public ModelAndView handleBoardNotFoundException() {

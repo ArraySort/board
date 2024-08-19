@@ -2,13 +2,11 @@ package arraysort.project.board.app.user.service;
 
 import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.common.enums.Flag;
-import arraysort.project.board.app.exception.DuplicatedUserException;
-import arraysort.project.board.app.exception.LoginLockException;
-import arraysort.project.board.app.exception.NotActivatedUserException;
-import arraysort.project.board.app.exception.PasswordCheckException;
+import arraysort.project.board.app.exception.*;
 import arraysort.project.board.app.user.domain.UserSignupReqDTO;
 import arraysort.project.board.app.user.domain.UserVO;
 import arraysort.project.board.app.user.mapper.UserMapper;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -33,15 +31,19 @@ public class UserService implements UserDetailsService {
 
 	// 회원가입
 	@Transactional
-	public void addUser(UserSignupReqDTO dto) {
+	public void addUser(UserSignupReqDTO dto, HttpSession session) {
 		// 회원가입 검증
 		validateAdd(dto);
+
+		// 이메일 인증 검증
+		validateEmailVerified(session);
 
 		dto.encodePassword(passwordEncoder.encode(dto.getUserPassword()));
 
 		UserVO vo = UserVO.of(dto);
-
 		userMapper.insertUser(vo);
+
+		session.removeAttribute("isEmailVerified");
 	}
 
 	// 로그인 : 성공 시 LoginSuccessHandler 처리 / 실패 시 LoginFailureHandler 처리
@@ -140,6 +142,18 @@ public class UserService implements UserDetailsService {
 		if (vo.getLoginTryCount() >= Constants.MAX_ATTEMPTS_COUNT &&
 				vo.getLoginLock() != null && vo.getLoginLock().toInstant().isAfter(Instant.now())) {
 			throw new LoginLockException("로그인 시도가 지정된 횟수를 초과하여 계정이 잠금 처리되었습니다. 잠시후에 다시 시도하세요.");
+		}
+	}
+
+	/**
+	 * 이메일 검증 여부 확인
+	 *
+	 * @param session 회원가입 페이지에서의 세션
+	 */
+	private void validateEmailVerified(HttpSession session) {
+		boolean isEmailVerified = (boolean) session.getAttribute("isEmailVerified");
+		if (!isEmailVerified) {
+			throw new EmailValidationException("이메일 인증이 완료되지 않았습니다.");
 		}
 	}
 

@@ -7,6 +7,9 @@
     <title>SignUp</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
 
+    <meta id="_csrf" name="_csrf" content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}"/>
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript">
         $(() => {
@@ -15,6 +18,69 @@
                 alert(message);
             }
 
+            // CSRF
+            $.ajaxSetup({
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader($('meta[name="_csrf_header"]').attr('content'), $('meta[name="_csrf"]').attr('content'));
+                }
+            });
+
+            // 인증코드 전송 버튼
+            $('#sendEmailVerificationButton').on('click', function (e) {
+                const email = $('#email').val();
+
+                if (!email) {
+                    e.preventDefault();
+                    alertMessage(e, "이메일을 올바르게 입력해주십시오.");
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "${pageContext.request.contextPath}/user/send-email-verification",
+                    data: {email: email},
+                    success: function (response) {
+                        alert(response);
+                        $('#emailVerificationCodeForm').show();
+                    },
+                    error: function (xhr) {
+                        alertMessage(e, "인증번호 전송 중 오류가 발생했습니다.");
+                    }
+                });
+            });
+
+            // 인증 버튼
+            $('#verifyEmailCodeButton').on('click', function (e) {
+                const inputVerificationCode = $('#inputVerificationCode').val();
+
+                if (!inputVerificationCode) {
+                    e.preventDefault();
+                    alertMessage(e, "입력한 이메일로 전송된 인증코드를 입력하십시오.");
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "${pageContext.request.contextPath}/user/verify-email-code",
+                    data: {inputVerificationCode: inputVerificationCode},
+                    success: function (response) {
+                        alert(response);
+
+                        // 인증 완료 시 입력 태그 및 버튼 비활성화
+                        $('#email').prop('disabled', true);
+                        $('#sendEmailVerificationButton').prop('disabled', true);
+                        $('#emailVerificationCode').prop('disabled', true);
+                        $('#verifyEmailCodeButton').prop('disabled', true);
+
+                        $('#signupForm').show();
+                    },
+                    error: function (xhr) {
+                        alert("인증에 실패했습니다.");
+                    }
+                });
+            });
+
+            // 회원가입 버튼
             $('#signupButton').on('click', function (e) {
                 const userId = $('#userId').val();
                 const userPassword = $('#userPassword').val();
@@ -88,7 +154,32 @@
                     <h1>회원가입 페이지</h1>
                 </div>
                 <div class="card-body">
-                    <form method="post" action="${pageContext.request.contextPath}/user/process-signup" id="signupForm">
+
+                    <!-- 이메일 인증 요청 폼 -->
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="이메일"
+                               required>
+                        <button type="button"
+                                class="btn btn-primary"
+                                id="sendEmailVerificationButton">인증 코드 전송
+                        </button>
+                    </div>
+
+                    <br/>
+
+                    <!-- 인증 코드 입력 폼 -->
+                    <div class="input-group" id="emailVerificationCodeForm" style="display: none">
+                        <input type="number" class="form-control" id="inputVerificationCode"
+                               name="inputVerificationCode" placeholder="인증 코드를 입력하세요" required>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                id="verifyEmailCodeButton">인증 코드 확인
+                        </button>
+                    </div>
+
+                    <!-- 회원가입 입력 폼 -->
+                    <form method="post" action="${pageContext.request.contextPath}/user/process-signup" id="signupForm"
+                          style="display:none;">
                         <sec:csrfInput/>
 
                         <div class="mb-3">
@@ -146,7 +237,9 @@
                     </form>
 
                     <div class="d-grid mt-2">
-                        <button type="button" class="btn btn-link" onclick="location.href='/home'">홈 페이지로 이동</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="location.href='/home'">홈 페이지로
+                            이동
+                        </button>
                     </div>
                 </div>
             </div>

@@ -54,6 +54,22 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
+  # 이메일 인증을 위한 설정
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: dudwns1045@gmail.com
+    password: ENC(LniQdqogwbs9+6vBOv4n1p2Nt3e8zNK8w+QYfWkhW3c=)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+            required: true
+
+
 # mybatis mapper 경로 설정
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -63,7 +79,6 @@ mybatis:
 # 이미지 업로드 설정
 file:
   upload-path: /Users/an-yeongjun/Desktop/project/image
-  stored-path: file:///Users/an-yeongjun/Desktop/project/image/
   allowed-extensions: jpg,jpeg,png
 
 # log4j2 설정
