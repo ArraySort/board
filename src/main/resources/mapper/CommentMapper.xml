@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="arraysort.project.board.app.comment.mapper.CommentMapper">
+
+    <!-- 댓글 추가 -->
+    <insert id="insertComment">
+        insert into comment(
+                            user_id,
+                            post_id,
+                            content,
+                            created_by,
+                            updated_by)
+        values (#{userId},
+                #{postId},
+                #{commentContent},
+                #{createdBy},
+                #{updatedBy})
+    </insert>
+
+</mapper>

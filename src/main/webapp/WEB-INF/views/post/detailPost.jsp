@@ -41,6 +41,28 @@
         }
     </style>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript">
+        $(() => {
+            function alertMessage(e, message) {
+                e.preventDefault();
+                alert(message);
+            }
+
+            $('#addCommentButton').on('click', function (e) {
+                const commentContent = $('#commentContent').val();
+
+                if (!commentContent) {
+                    e.preventDefault();
+                    alertMessage(e, "댓글을 등록하려면 내용을 입력하세요.");
+                } else if (commentContent.length < 1 || commentContent.length > 200) {
+                    e.preventDefault();
+                    alertMessage(e, "댓글은 최소 1글자 이상, 200자 미만이어야 합니다.");
+                }
+            });
+        });
+    </script>
+
     <script>
         // 이미지 팝업
         function showImage(imageId) {
@@ -137,6 +159,17 @@
         <h3>작성 시간 : <fmt:formatDate value="${postDetail.createdAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
         <h3>수정 시간 : <fmt:formatDate value="${postDetail.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
         <h3>조회수 : ${postDetail.views}</h3>
+
+        <div class="d-flex justify-content-center m-5">
+
+            <form method="post" action="/${boardId}/post/detail/${postId}/comment/add">
+                <sec:csrfInput/>
+                <div class="input-group">
+                    <input type="text" name="commentContent" id="commentContent" placeholder="댓글 입력 . . .">
+                    <button type="submit" id="addCommentButton">입력</button>
+                </div>
+            </form>
+        </div>
 
         <div class="d-flex justify-content-center">
             <form method="get" action="/${boardId}/post">
