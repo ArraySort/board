@@ -9,7 +9,7 @@
         insert into comment(
                             user_id,
                             post_id,
-                            content,
+                            comment_content,
                             created_by,
                             updated_by)
         values (#{userId},
@@ -27,7 +27,7 @@
                c.post_id,
                c.parent_id,
                u.user_name,
-               c.content,
+               c.comment_content,
                c.activate_flag,
                c.adopted_flag,
                c.created_by,
@@ -47,5 +47,30 @@
         from comment
         where post_id = #{postId} and delete_flag = 'N'
     </select>
+
+    <!-- 댓글 조회 -->
+    <select id="selectCommentById" parameterType="long" resultType="arraysort.project.board.app.comment.domain.CommentVO">
+        select comment_id,
+               admin_id,
+               user_id,
+               post_id,
+               parent_id,
+               comment_content,
+               activate_flag,
+               adopted_flag,
+               created_by,
+               updated_by,
+               created_at,
+               updated_at,
+               delete_flag
+        from comment
+        where comment_id = #{commentId}
+    </select>
+    
+    <update id="updateComment" parameterType="arraysort.project.board.app.comment.domain.CommentVO">
+        update comment
+        set comment_content = #{commentContent}
+        where comment_id = #{commentId}
+    </update>
 
 </mapper>

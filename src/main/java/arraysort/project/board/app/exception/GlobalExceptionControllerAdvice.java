@@ -57,6 +57,12 @@ public class GlobalExceptionControllerAdvice {
 		return getModelAndView("갤러리 게시판에서 썸네일 이미지는 필수로 업로드 되어야 합니다.");
 	}
 
+	// 댓글 수정, 삭제 시 잘못된 댓글 ID 접근
+	@ExceptionHandler(CommentNotFoundException.class)
+	public ModelAndView handleCommentNotFoundException() {
+		return getModelAndView("해당 댓글을 찾을 수 없습니다.");
+	}
+
 	// 이미지 업로드 시 발생 예외
 	@ExceptionHandler(ImageUploadException.class)
 	public ModelAndView handleImageUploadException(ImageUploadException e) {

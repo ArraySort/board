@@ -1,6 +1,7 @@
 package arraysort.project.board.app.comment.controller;
 
 import arraysort.project.board.app.comment.domain.CommentAddReqDTO;
+import arraysort.project.board.app.comment.domain.CommentEditReqDTO;
 import arraysort.project.board.app.comment.service.CommentService;
 import arraysort.project.board.app.utils.ControllerUtil;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,14 @@ public class CommentController {
 		commentService.addComment(dto, boardId, postId);
 
 		ControllerUtil.addMessageAndRequest(model, "댓글이 추가되었습니다.", "ADD_COMMENT");
+		return "common/alert";
+	}
+
+	@PostMapping("/edit")
+	public String processEditComment(@PathVariable long boardId, @PathVariable long postId, @ModelAttribute CommentEditReqDTO dto, Model model) {
+		commentService.modifyComment(dto, boardId, postId);
+
+		ControllerUtil.addMessageAndRequest(model, "댓글이 수정 되었습니다.", "MODIFY_COMMENT");
 		return "common/alert";
 	}
 }

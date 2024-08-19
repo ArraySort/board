@@ -60,6 +60,20 @@
                     alertMessage(e, "댓글은 최소 1글자 이상, 200자 미만이어야 합니다.");
                 }
             });
+
+            // 수정 버튼 클릭 이벤트 핸들러
+            $('.edit-btn').click(function () {
+                const commentId = $(this).data('id');
+                $('#commentContent-' + commentId).hide();
+                $('#editForm-' + commentId).show();
+            });
+
+            // 취소 버튼 클릭 이벤트 핸들러
+            $('.cancel-btn').click(function () {
+                const commentId = $(this).data('id');
+                $('#editForm-' + commentId).hide();
+                $('#commentContent-' + commentId).show();
+            });
         });
     </script>
 
@@ -165,22 +179,70 @@
             <form method="post" action="/${boardId}/post/detail/${postId}/comment/add">
                 <sec:csrfInput/>
                 <div class="input-group">
-                    <input type="text" name="commentContent" id="commentContent" placeholder="댓글 입력 . . .">
-                    <button type="submit" id="addCommentButton">입력</button>
+                    <input type="text"
+                           name="commentContent"
+                           id="commentContent"
+                           class="form-control"
+                           placeholder="댓글 입력 . . .">
+                    <button type="submit" id="addCommentButton" class="btn btn-outline-dark">입력</button>
                 </div>
             </form>
         </div>
 
-        <c:forEach var="comment" items="${commentPagination.postList}">
-            <p>
-                작성자 : ${comment.userName}
-                내용 : ${comment.commentContent}
+        <div class="container mt-4">
+            <ul class="list-group">
+                <c:forEach var="comment" items="${commentPagination.postList}">
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <strong>작성자:</strong> ${comment.userName}
+                                <br/>
+                                <strong>내용:</strong>
+                                <span id="commentContent-${comment.commentId}">${comment.commentContent}</span>
+                                <div class="text-end">
+                                    <small class="text-muted">작성시간:
+                                        <fmt:formatDate value="${comment.createdAt}" pattern="yyyy-MM-dd HH:mm"/>
+                                    </small>
+                                    <br/>
+                                    <small class="text-muted">수정시간:
+                                        <fmt:formatDate value="${comment.updatedAt}" pattern="yyyy-MM-dd HH:mm"/>
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="ms-3 d-flex align-items-center">
+                                <!-- 수정 버튼 -->
+                                <button class="btn btn-sm btn-outline-primary me-2 edit-btn"
+                                        data-id="${comment.commentId}">수정
+                                </button>
+                                <!-- 삭제 버튼 -->
+                                <form method="post" action="/${boardId}/post/detail/${postId}/comment/delete"
+                                      class="m-0">
+                                    <sec:csrfInput/>
+                                    <input type="hidden" name="commentId" value="${comment.commentId}"/>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+                                </form>
+                            </div>
+                        </div>
 
-                작성시간 : <fmt:formatDate value="${comment.createdAt}" pattern="yyyy-MM-dd HH:mm"/>
-                수정시간 : <fmt:formatDate value="${comment.updatedAt}" pattern="yyyy-MM-dd HH:mm"/>
-            </p>
-        </c:forEach>
-
+                        <!-- 댓글 수정 폼 (초기에는 숨김) -->
+                        <div id="editForm-${comment.commentId}" class="mt-3" style="display:none;">
+                            <form method="post" action="/${boardId}/post/detail/${postId}/comment/edit">
+                                <sec:csrfInput/>
+                                <input type="hidden" name="commentId" value="${comment.commentId}"/>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="commentContent"
+                                           value="${comment.commentContent}">
+                                    <button type="submit" class="btn btn-success">저장</button>
+                                    <button type="button" class="btn btn-secondary cancel-btn"
+                                            data-id="${comment.commentId}">취소
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </li>
+                </c:forEach>
+            </ul>
+        </div>
         <!-- 페이지 버튼 -->
         <nav>
             <ul class="pagination justify-content-center">

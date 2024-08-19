@@ -54,4 +54,12 @@ public class CommentVO {
 				.build();
 	}
 
+	// 댓글 수정
+	public static CommentVO updateOf(CommentEditReqDTO dto, long postId) {
+		return CommentVO.builder()
+				.commentId(dto.getCommentId())
+				.postId(postId)
+				.commentContent(dto.getCommentContent())
+				.build();
+	}
 }

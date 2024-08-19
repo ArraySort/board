@@ -2,11 +2,13 @@ package arraysort.project.board.app.comment.service;
 
 import arraysort.project.board.app.board.domain.BoardVO;
 import arraysort.project.board.app.comment.domain.CommentAddReqDTO;
+import arraysort.project.board.app.comment.domain.CommentEditReqDTO;
 import arraysort.project.board.app.comment.domain.CommentListResDTO;
 import arraysort.project.board.app.comment.domain.CommentVO;
 import arraysort.project.board.app.comment.mapper.CommentMapper;
 import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.component.PostComponent;
+import arraysort.project.board.app.exception.CommentNotFoundException;
 import arraysort.project.board.app.exception.InvalidPrincipalException;
 import arraysort.project.board.app.post.domain.PageDTO;
 import arraysort.project.board.app.post.domain.PageReqDTO;
@@ -34,6 +36,22 @@ public class CommentService {
 
 		CommentVO vo = CommentVO.insertOf(dto, postId);
 		commentMapper.insertComment(vo);
+	}
+
+	// 댓글 수정
+	@Transactional
+	public void modifyComment(CommentEditReqDTO dto, long boardId, long postId) {
+		// 게시판 검증(존재, 상태 검증)
+		postComponent.getValidatedBoard(boardId);
+
+		// 게시글 검증(존재, 상태 검증)
+		postComponent.getValidatedPost(postId, boardId);
+
+		// 댓글 검증(존재, 상태 검증)
+		validateModify(dto);
+
+		CommentVO vo = CommentVO.updateOf(dto, postId);
+		commentMapper.updateComment(vo);
 	}
 
 	// 댓글 리스트 조회(페이징)
@@ -83,5 +101,23 @@ public class CommentService {
 
 		// 4. 게시글 검증(존재, 상태 검증)
 		postComponent.getValidatedPost(postId, boardId);
+	}
+
+	/**
+	 * 댓글 수정 전 검증
+	 * 1. 댓글 존재 검증
+	 * 2. 댓글 상태 검증
+	 *
+	 * @param dto 수정하려는 댓글 정보
+	 */
+	private void validateModify(CommentEditReqDTO dto) {
+		// 1. 댓글 존재 검증
+		CommentVO commentDetail = commentMapper.selectCommentById(dto.getCommentId())
+				.orElseThrow(CommentNotFoundException::new);
+
+		// 2. 댓글 상태 검증
+		if (commentDetail.getActivateFlag() == Flag.N || commentDetail.getDeleteFlag() == Flag.Y) {
+			throw new CommentNotFoundException();
+		}
 	}
 }
