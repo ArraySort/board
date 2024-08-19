@@ -171,6 +171,62 @@
             </form>
         </div>
 
+        <c:forEach var="comment" items="${commentPagination.postList}">
+            <p>
+                작성자 : ${comment.userName}
+                내용 : ${comment.commentContent}
+
+                작성시간 : <fmt:formatDate value="${comment.createdAt}" pattern="yyyy-MM-dd HH:mm"/>
+                수정시간 : <fmt:formatDate value="${comment.updatedAt}" pattern="yyyy-MM-dd HH:mm"/>
+            </p>
+        </c:forEach>
+
+        <!-- 페이지 버튼 -->
+        <nav>
+            <ul class="pagination justify-content-center">
+                <!-- 처음 페이지로 이동하는 버튼 -->
+                <li class="page-item">
+                    <a class="page-link"
+                       href="/${boardId}/post/detail/${postId}?page=${page.page}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}&commentPage=1">&laquo</a>
+                </li>
+                <!-- 이전 블록으로 이동하는 버튼 -->
+                <c:if test="${commentPagination.prev}">
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="/${boardId}/post/detail/${postId}?page=${page.page}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}&commentPage=${commentPagination.startBlockPage - 1}">
+                            &lt;
+                        </a>
+                    </li>
+                </c:if>
+                <!-- 페이지 번호 -->
+                <c:forEach var="pageNum" begin="${commentPagination.startBlockPage}"
+                           end="${commentPagination.endBlockPage}">
+                    <li class="page-item ${pageNum == commentPagination.currentPage ? 'active' : ''}">
+                        <a class="page-link"
+                           href="/${boardId}/post/detail/${postId}?page=${page.page}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}&commentPage=${pageNum}">
+                                ${pageNum}
+                        </a>
+                    </li>
+                </c:forEach>
+                <!-- 다음 블록으로 이동하는 버튼 -->
+                <c:if test="${commentPagination.next}">
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="/${boardId}/post/detail/${postId}?page=${page.page}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}&commentPage=${commentPagination.endBlockPage + 1}">
+                            &gt;
+                        </a>
+                    </li>
+                </c:if>
+                <!-- 끝 페이지로 이동하는 버튼 -->
+                <li class="page-item">
+                    <a class="page-link"
+                       href="/${boardId}/post/detail/${postId}?page=${page.page}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}&commentPage=${commentPagination.totalPageCount}">
+                        &raquo;
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
         <div class="d-flex justify-content-center">
             <form method="get" action="/${boardId}/post">
                 <input type="hidden" name="search" value="${page.search}">

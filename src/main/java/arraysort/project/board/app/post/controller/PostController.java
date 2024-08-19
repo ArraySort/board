@@ -2,6 +2,7 @@ package arraysort.project.board.app.post.controller;
 
 import arraysort.project.board.app.board.service.BoardService;
 import arraysort.project.board.app.category.service.CategoryService;
+import arraysort.project.board.app.comment.service.CommentService;
 import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PostAddReqDTO;
@@ -26,6 +27,8 @@ public class PostController {
 	private final CategoryService categoryService;
 
 	private final ImageService imageService;
+
+	private final CommentService commentService;
 
 	// 게시판 페이지 이동, 게시글 리스트 조회
 	@GetMapping
@@ -60,6 +63,7 @@ public class PostController {
 		model.addAttribute("boardDetail", boardService.findBoardDetailById(boardId));
 		model.addAttribute("postDetail", postService.findPostDetailByPostId(postId, boardId));
 		model.addAttribute("images", imageService.findImagesByPostId(postId));
+		model.addAttribute("commentPagination", commentService.findCommentListWithPaging(dto, boardId, postId));
 		return "post/detailPost";
 	}
 

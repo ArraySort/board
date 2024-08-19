@@ -11,6 +11,8 @@ public class PageDTO {
 
 	private long totalPostCount;
 
+	private long totalCommentCount;
+
 	private int offset;
 
 	private int pageRowCount;
@@ -18,6 +20,8 @@ public class PageDTO {
 	private PageReqDTO dto;
 
 	private long boardId;
+
+	private long postId;
 
 	private String userId;
 
@@ -28,5 +32,15 @@ public class PageDTO {
 		this.dto = dto;
 		this.userId = UserUtil.getCurrentLoginUserId();
 		offset = (dto.getPage() - 1) * pageRowCount;
+	}
+
+	public PageDTO(long totalCommentCount, PageReqDTO dto, long boardId, long postId) {
+		this.totalCommentCount = totalCommentCount;
+		this.pageRowCount = Constants.PAGE_ROW_COUNT;
+		this.boardId = boardId;
+		this.postId = postId;
+		this.dto = dto;
+		this.userId = UserUtil.getCurrentLoginUserId();
+		offset = (dto.getCommentPage() - 1) * pageRowCount;
 	}
 }

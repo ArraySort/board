@@ -2,13 +2,17 @@ package arraysort.project.board.app.comment.domain;
 
 import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.utils.UserUtil;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CommentVO {
 
 	private Long commentId;    // 댓글 ID
@@ -20,6 +24,8 @@ public class CommentVO {
 	private Long postId;    // 게시글 ID
 
 	private Long parentId;    // 댓글 부모 ID
+
+	private String userName;    // 유저 이름
 
 	private String commentContent;    // 댓글 내용
 

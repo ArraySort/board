@@ -9,6 +9,8 @@ public class PageReqDTO {
 
 	private int page;
 
+	private int commentPage;
+
 	private String search;
 
 	private SearchType searchType;
@@ -17,6 +19,7 @@ public class PageReqDTO {
 
 	public PageReqDTO() {
 		this.page = 1;
+		this.commentPage = 1;
 		this.searchType = SearchType.ALL;
 		this.sortType = SortType.LATEST;
 	}

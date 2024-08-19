@@ -2,15 +2,21 @@ package arraysort.project.board.app.comment.service;
 
 import arraysort.project.board.app.board.domain.BoardVO;
 import arraysort.project.board.app.comment.domain.CommentAddReqDTO;
+import arraysort.project.board.app.comment.domain.CommentListResDTO;
 import arraysort.project.board.app.comment.domain.CommentVO;
 import arraysort.project.board.app.comment.mapper.CommentMapper;
 import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.InvalidPrincipalException;
+import arraysort.project.board.app.post.domain.PageDTO;
+import arraysort.project.board.app.post.domain.PageReqDTO;
+import arraysort.project.board.app.post.domain.PageResDTO;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +34,26 @@ public class CommentService {
 
 		CommentVO vo = CommentVO.insertOf(dto, postId);
 		commentMapper.insertComment(vo);
+	}
+
+	// 댓글 리스트 조회(페이징)
+	@Transactional(readOnly = true)
+	public PageResDTO<CommentListResDTO> findCommentListWithPaging(PageReqDTO dto, long boardId, long postId) {
+		// 게시판 검증(존재, 상태 검증)
+		postComponent.getValidatedBoard(boardId);
+
+		// 게시글 검증(존재, 상태 검증)
+		postComponent.getValidatedPost(postId, boardId);
+
+		int totalCommentCount = commentMapper.selectTotalCommentCount(dto, postId);
+		PageDTO pageDTO = new PageDTO(totalCommentCount, dto, boardId, postId);
+
+		List<CommentListResDTO> commentList = commentMapper.selectCommentListWithPaging(pageDTO)
+				.stream()
+				.map(CommentListResDTO::of)
+				.toList();
+
+		return new PageResDTO<>(totalCommentCount, dto.getCommentPage(), commentList);
 	}
 
 

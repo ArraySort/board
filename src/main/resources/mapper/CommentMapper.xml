@@ -5,7 +5,7 @@
 <mapper namespace="arraysort.project.board.app.comment.mapper.CommentMapper">
 
     <!-- 댓글 추가 -->
-    <insert id="insertComment">
+    <insert id="insertComment" parameterType="arraysort.project.board.app.comment.domain.CommentVO">
         insert into comment(
                             user_id,
                             post_id,
@@ -18,5 +18,34 @@
                 #{createdBy},
                 #{updatedBy})
     </insert>
+
+    <!-- 댓글 리스트 조회 -->
+    <select id="selectCommentListWithPaging" resultType="arraysort.project.board.app.comment.domain.CommentVO">
+        select c.comment_id,
+               c.admin_id,
+               c.user_id,
+               c.post_id,
+               c.parent_id,
+               u.user_name,
+               c.content,
+               c.activate_flag,
+               c.adopted_flag,
+               c.created_by,
+               c.updated_by,
+               c.created_at,
+               c.updated_at,
+               c.delete_flag
+        from comment c
+        inner join board.user u on c.user_id = u.user_id
+        where post_id = #{postId} and c.delete_flag = 'N'
+        limit #{pageRowCount} offset #{offset}
+    </select>
+
+    <!-- 댓글 총 개수 조회 -->
+    <select id="selectTotalCommentCount" resultType="int">
+        select count(*)
+        from comment
+        where post_id = #{postId} and delete_flag = 'N'
+    </select>
 
 </mapper>
