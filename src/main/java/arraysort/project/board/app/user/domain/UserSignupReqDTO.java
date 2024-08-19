@@ -24,8 +24,10 @@ public class UserSignupReqDTO {
 	@Size(min = 2, max = 10, message = "이름은 최소 2글자 최대 10글자여야 합니다")
 	private String userName;
 
+	@NotBlank(message = "우편번호는 필수로 입력되어야 합니다.")
 	private String zipcode;
 
+	@NotBlank(message = "주소는 필수로 입력되어야 합니다.")
 	private String address;
 
 	private String addressDetail;
