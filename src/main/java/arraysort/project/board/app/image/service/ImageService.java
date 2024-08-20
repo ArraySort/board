@@ -2,6 +2,7 @@ package arraysort.project.board.app.image.service;
 
 import arraysort.project.board.app.component.ImageComponent;
 import arraysort.project.board.app.exception.ThumbnailImageNotFoundException;
+import arraysort.project.board.app.image.domain.CommentImageVO;
 import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.domain.PostImageVO;
 import arraysort.project.board.app.image.domain.TempPostImageVO;
@@ -24,7 +25,7 @@ public class ImageService {
 
 	private final ImageMapper imageMapper;
 
-	// 이미지 추가
+	// 게시글 이미지 추가
 	@Transactional
 	public void addImages(List<MultipartFile> images, long postId) {
 		List<ImageVO> imageVOList = getImageVOList(images);
@@ -62,6 +63,26 @@ public class ImageService {
 				.toList();
 
 		imageMapper.insertTempPostImage(tempPostImageVOList);
+	}
+
+	// 게시글 이미지 추가
+	@Transactional
+	public void addCommentImages(List<MultipartFile> images, long commentId) {
+		List<ImageVO> imageVOList = getImageVOList(images);
+
+		if (imageVOList.isEmpty()) {
+			return;
+		}
+
+		List<CommentImageVO> commentImageVOList = imageVOList
+				.stream()
+				.map(image -> CommentImageVO.builder()
+						.commentId(commentId)
+						.imageId(image.getImageId())
+						.build())
+				.toList();
+
+		imageMapper.insertCommentImage(commentImageVOList);
 	}
 
 	// 임시저장 게시글에서 일반 게시글로 게시

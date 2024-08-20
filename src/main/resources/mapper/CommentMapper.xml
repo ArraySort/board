@@ -5,7 +5,7 @@
 <mapper namespace="arraysort.project.board.app.comment.mapper.CommentMapper">
 
     <!-- 댓글 추가 -->
-    <insert id="insertComment" parameterType="arraysort.project.board.app.comment.domain.CommentVO">
+    <insert id="insertComment" parameterType="arraysort.project.board.app.comment.domain.CommentVO" useGeneratedKeys="true" keyProperty="commentId">
         insert into comment(
                             user_id,
                             post_id,

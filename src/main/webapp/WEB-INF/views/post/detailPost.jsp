@@ -8,47 +8,56 @@
 <head>
     <title>Post Detail</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
-
-    <style>
-        #popupOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #popup {
-            position: relative;
-            width: 80%;
-            max-width: 800px;
-            height: 80%;
-            max-height: 600px;
-            background: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        #popup img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript">
         $(() => {
-            function alertMessage(e, message) {
-                e.preventDefault();
-                alert(message);
-            }
 
+            let commentImages = [];
+
+            // 새로운 댓글 이미지 추가
+            $('#commentImageInput').on('change', function () {
+                const files = this.files;
+
+                commentImages = [];
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const imageUrl = URL.createObjectURL(file);
+
+                    commentImages.push(file);
+
+                    $('#addedCommentImagesList').append(`
+                        <li class="list-group-item d-flex justify-content-center align-items-center">
+                            <a href="javascript:showImage('\${imageUrl}')" class="text-center mx-auto">
+                                \${file.name}
+                            </a>
+                            <button type="button" class="btn btn-danger btn-sm remove-added-image-btn ml-auto">X</button>
+                        </li>
+                    `);
+                }
+
+                updateAddedImagesInput();
+            });
+
+            // 추가된 이미지 삭제
+            $(document).on('click', '.remove-added-image-btn', function () {
+                const index = $(this).closest('li').index();
+
+                commentImages.splice(index, 1);
+                $(this).closest('li').remove();
+
+                updateAddedImagesInput();
+            });
+
+            // 이미지 업로드 버튼 (+) 버튼 클릭 시 input 활성화
+            $('#uploadCommentImageButton').click(function () {
+                $('#commentImageInput').click();
+            });
+
+
+            // 댓글 추가 버튼 클릭 시 댓글 내용 검증
             $('#addCommentButton').on('click', function (e) {
                 const commentContent = $('#commentContent').val();
 
@@ -61,31 +70,43 @@
                 }
             });
 
-            // 수정 버튼 클릭 이벤트 핸들러
-            $('.edit-btn').click(function () {
+            // 댓글 수정 버튼 클릭 시
+            $('#commentEditButton').click(function () {
                 const commentId = $(this).data('id');
                 $('#commentContent-' + commentId).hide();
                 $('#editForm-' + commentId).show();
             });
 
-            // 취소 버튼 클릭 이벤트 핸들러
-            $('.cancel-btn').click(function () {
+            // 댓글 수정 취소 버튼 클릭 시
+            $('#commentEditCancelButton').click(function () {
                 const commentId = $(this).data('id');
                 $('#editForm-' + commentId).hide();
                 $('#commentContent-' + commentId).show();
             });
+
+            // 메세지 출력
+            function alertMessage(e, message) {
+                e.preventDefault();
+                alert(message);
+            }
+
+            // 추가 이미지 업데이트
+            function updateAddedImagesInput() {
+                let dataTransfer = new DataTransfer();
+                commentImages.forEach(file => {
+                    dataTransfer.items.add(file);
+                });
+                $('#commentImageInput')[0].files = dataTransfer.files;
+            }
         });
     </script>
 
     <script>
         // 이미지 팝업
-        function showImage(imageId) {
-            const imageUrl = "/image/" + imageId;
-
+        function showImage(imageUrl) {
             const popupOverlay = document.getElementById('popupOverlay');
             const popupImage = document.getElementById('popupImage');
             popupImage.src = imageUrl;
-
             popupOverlay.style.display = 'flex';
         }
 
@@ -114,6 +135,13 @@
 
     <div class="container" style="max-width: 850px;">
 
+        <!-- 팝업 이미지 : 게시글 이미지, 댓글 이미지 -->
+        <div id="popupOverlay" onclick="closePopup()">
+            <div id="popup" onclick="stopPropagation()">
+                <img id="popupImage" src="" alt="이미지"/>
+            </div>
+        </div>
+
         <div>작성자 : ${postDetail.userName}</div>
         <div>카테고리 : ${postDetail.categoryName}</div>
         <div>현재 게시판 : ${postDetail.boardName}</div>
@@ -132,9 +160,7 @@
                    id="title"
                    readonly/>
         </div>
-
         <br/>
-
         <div>
             <label for="content">내용 : </label>
             <textarea type="text"
@@ -147,23 +173,18 @@
 
         <h4>이미지 목록</h4>
 
+        <!-- 이미지 목록 -->
         <ul class="d-flex flex-column align-items-center">
             <c:forEach var="image" items="${images}">
                 <li class="list-group-item d-flex justify-content-center align-items-center"
                     style="width: 50%">
-                    <a href="javascript:showImage(${image.imageId})"
+                    <a href="javascript:showImage(`/image/ + ${image.imageId}`)"
                        class="text-center mx-auto">
                             ${image.originalName}
                     </a>
                 </li>
             </c:forEach>
         </ul>
-
-        <div id="popupOverlay" onclick="closePopup()">
-            <div id="popup" onclick="stopPropagation()">
-                <img id="popupImage" src="" alt="이미지"/>
-            </div>
-        </div>
 
         <div>
             <label for="privateFlag-Y">공개</label>
@@ -179,11 +200,17 @@
         <h3>수정 시간 : <fmt:formatDate value="${postDetail.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
         <h3>조회수 : ${postDetail.views}</h3>
 
+        <!-- 댓글 추가 폼 시작 -->
         <div class="d-flex justify-content-center m-5">
-
-            <form method="post" action="/${boardId}/post/detail/${postId}/comment/add">
+            <form method="post" action="/${boardId}/post/detail/${postId}/comment/add" enctype="multipart/form-data">
                 <sec:csrfInput/>
                 <div class="input-group">
+
+                    <!-- 이미지 업로드 버튼 -->
+                    <button type="button" class="btn btn-outline-secondary" id="uploadCommentImageButton">+</button>
+                    <input type="file" name="commentImages" id="commentImageInput" class="d-none" multiple>
+
+                    <!-- 댓글 입력 -->
                     <input type="text"
                            name="commentContent"
                            id="commentContent"
@@ -191,9 +218,13 @@
                            placeholder="댓글 입력 . . .">
                     <button type="submit" id="addCommentButton" class="btn btn-outline-dark">입력</button>
                 </div>
+                <!-- 추가된 이미지 리스트 -->
+                <ul id="addedCommentImagesList" class="d-flex flex-column align-items-center"></ul>
             </form>
         </div>
+        <!-- 댓글 추가 폼 끝 -->
 
+        <!-- 댓글 리스트 시작 -->
         <div class="container mt-4">
             <ul class="list-group">
                 <c:forEach var="comment" items="${commentPagination.postList}">
@@ -217,7 +248,8 @@
                             <c:if test="${currentUserId == comment.userId}">
                                 <div class="ms-3 d-flex align-items-center">
                                     <!-- 수정 버튼 -->
-                                    <button class="btn btn-sm btn-outline-primary me-2 edit-btn"
+                                    <button class="btn btn-sm btn-outline-primary me-2"
+                                            id="commentEditButton"
                                             data-id="${comment.commentId}">수정
                                     </button>
                                     <!-- 삭제 버튼 -->
@@ -240,7 +272,8 @@
                                     <input type="text" class="form-control" name="commentContent"
                                            value="${comment.commentContent}">
                                     <button type="submit" class="btn btn-success">저장</button>
-                                    <button type="button" class="btn btn-secondary cancel-btn"
+                                    <button type="button" class="btn btn-secondary"
+                                            id="commentEditCancelButton"
                                             data-id="${comment.commentId}">취소
                                     </button>
                                 </div>
@@ -250,7 +283,9 @@
                 </c:forEach>
             </ul>
         </div>
-        <!-- 페이지 버튼 -->
+        <!-- 댓글 리스트 끝 -->
+
+        <!-- 페이지 버튼 시작-->
         <nav>
             <ul class="pagination justify-content-center">
                 <!-- 처음 페이지로 이동하는 버튼 -->
@@ -295,7 +330,9 @@
                 </li>
             </ul>
         </nav>
+        <!-- 페이지 버튼 끝-->
 
+        <!-- 목록, 수정, 삭제 버튼 -->
         <div class="d-flex justify-content-center">
             <form method="get" action="/${boardId}/post">
                 <input type="hidden" name="search" value="${page.search}">
@@ -317,7 +354,6 @@
                 </form>
             </c:if>
         </div>
-
     </div>
 </div>
 

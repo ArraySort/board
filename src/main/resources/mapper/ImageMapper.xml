@@ -154,4 +154,13 @@
         where temp_post_id = #{tempPostId}
     </select>
 
+    <!-- 댓글 이미지 관계 추가 -->
+    <insert id="insertCommentImage" parameterType="arraysort.project.board.app.image.domain.CommentImageVO">
+        insert into comment_image (comment_id, image_id)
+        values
+        <foreach collection="commentImages" item="commentImage" separator=",">
+            (#{commentImage.commentId}, #{commentImage.imageId})
+        </foreach>
+    </insert>
+
 </mapper>

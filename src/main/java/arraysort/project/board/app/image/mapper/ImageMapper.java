@@ -1,5 +1,6 @@
 package arraysort.project.board.app.image.mapper;
 
+import arraysort.project.board.app.image.domain.CommentImageVO;
 import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.domain.PostImageVO;
 import arraysort.project.board.app.image.domain.TempPostImageVO;
@@ -55,4 +56,7 @@ public interface ImageMapper {
 
 	// 임시저장 게시글에 존재하는 임시저장 게시글 이미지 개수 조회
 	int selectTempImageCountByTempPostId(long tempPostId);
+
+	// 댓글 이미지 관계 추가
+	void insertCommentImage(List<CommentImageVO> commentImages);
 }

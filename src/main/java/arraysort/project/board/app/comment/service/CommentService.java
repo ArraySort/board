@@ -5,8 +5,10 @@ import arraysort.project.board.app.comment.domain.*;
 import arraysort.project.board.app.comment.mapper.CommentMapper;
 import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.component.PostComponent;
+import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
 import arraysort.project.board.app.exception.CommentNotFoundException;
 import arraysort.project.board.app.exception.InvalidPrincipalException;
+import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.PageDTO;
 import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PageResDTO;
@@ -26,14 +28,20 @@ public class CommentService {
 
 	private final PostComponent postComponent;
 
+	private final ImageService imageService;
+
 	// 댓글 추가
 	@Transactional
 	public void addComment(CommentAddReqDTO dto, long boardId, long postId) {
+		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 		// 추가 전 검증
-		validateAdd(boardId, postId);
+		validateAdd(boardDetail, boardId, postId);
 
 		CommentVO vo = CommentVO.insertOf(dto, postId);
 		commentMapper.insertComment(vo);
+
+		// 이미지 업로드
+		handleCommentImages(dto, boardDetail, vo);
 	}
 
 	// 댓글 수정
@@ -90,29 +98,26 @@ public class CommentService {
 
 	/**
 	 * 댓글 추가 전 검증
-	 * 1. 게시판 존재, 상태 검증
-	 * 2. 게시판 댓글 허용 여부 검증
-	 * 3. 로그인하지 않은 사용자에 대한 검증
+	 * 1. 게시판 댓글 허용 여부 검증
+	 * 2. 로그인하지 않은 사용자에 대한 검증
+	 * 3. 게시글 검증(존재, 상태)
 	 * (댓글은 UserAccessLevel = 1 부터 가능, 비로그인은 0)
 	 *
 	 * @param boardId 현재 댓글을 작성하려는 게시판 ID
 	 * @param postId  현재 댓글을 작성하려는 게시글 ID
 	 */
-	private void validateAdd(long boardId, long postId) {
-		// 1. 게시판 검증(존재, 상태 검증)
-		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
-
-		// 2. 게시판 댓글 허용 여부 검증
+	private void validateAdd(BoardVO boardDetail, long boardId, long postId) {
+		// 1. 게시판 댓글 허용 여부 검증
 		if (boardDetail.getCommentFlag() == Flag.N) {
 			throw new InvalidPrincipalException("현재 게시판은 댓글을 허용하지 않습니다. ");
 		}
 
-		// 3. 로그인하지 않은 사용자에 대한 검증
+		// 2. 로그인하지 않은 사용자에 대한 검증
 		if (!UserUtil.isAuthenticatedUser()) {
 			throw new InvalidPrincipalException("로그인이 필요합니다.");
 		}
 
-		// 4. 게시글 검증(존재, 상태 검증)
+		// 3. 게시글 검증(존재, 상태 검증)
 		postComponent.getValidatedPost(postId, boardId);
 	}
 
@@ -167,5 +172,26 @@ public class CommentService {
 		if (!Objects.equals(commentDetail.getUserId(), UserUtil.getCurrentLoginUserId())) {
 			throw new InvalidPrincipalException("본인이 작성한 댓글만 수정/삭제가 가능합니다.");
 		}
+	}
+
+	/**
+	 * [댓글 이미지 처리(추가)]
+	 * 게시판 이미지 허용 여부가 Y 일 때만 실행
+	 * 댓글 이미지는 최대 2개까지만 업로드 가능
+	 *
+	 * @param dto         추가하려는 댓글 정보
+	 * @param boardDetail 검증된 게시판 세부정보
+	 * @param vo          추가된 댓글
+	 */
+	private void handleCommentImages(CommentAddReqDTO dto, BoardVO boardDetail, CommentVO vo) {
+		if (boardDetail.getImageFlag() == Flag.N) {
+			return;
+		}
+
+		if (dto.getCommentImages().size() > 2) {
+			throw new BoardImageOutOfRangeException("댓글은 최대 2개까지 업로드 가능합니다.");
+		}
+
+		imageService.addCommentImages(dto.getCommentImages(), vo.getCommentId());
 	}
 }
