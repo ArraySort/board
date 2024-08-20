@@ -95,13 +95,16 @@ public class CommentService {
 	@Transactional
 	public void removeComment(CommentDeleteReqDTO dto, long boardId, long postId) {
 		// 게시판 검증(존재, 상태 검증)
-		postComponent.getValidatedBoard(boardId);
+		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 
 		// 게시글 검증(존재, 상태 검증)
 		postComponent.getValidatedPost(postId, boardId);
 
 		// 댓글 검증(존재, 상태 검증)
 		validateComment(dto);
+
+		// 댓글 이미지 삭제 처리
+		handleCommentImageRemove(dto.getCommentId(), boardDetail);
 
 		commentMapper.deleteComment(dto.getCommentId());
 	}
@@ -229,5 +232,28 @@ public class CommentService {
 		}
 
 		imageService.addCommentImages(dto.getAddedCommentImages(), dto.getCommentId());
+	}
+
+	/**
+	 * [댓글 삭제 시 이미지 삭제 처리]
+	 * 게시판의 이미지 허용 여부가 Y 일 때만 실행
+	 * 댓글 이미지 삭제처리 'Y' 업데이트, 댓글 이미지 관계 삭제
+	 *
+	 * @param commentId   삭제하려는 댓글 ID
+	 * @param boardDetail 검증된 게시판 세부정보
+	 */
+	private void handleCommentImageRemove(long commentId, BoardVO boardDetail) {
+		if (boardDetail.getImageFlag() == Flag.N) {
+			return;
+		}
+
+		List<Long> deleteCommentImageIds = imageService.findCommentImagesByCommentId(commentId)
+				.stream()
+				.map(ImageVO::getImageId)
+				.toList();
+
+		if (!deleteCommentImageIds.isEmpty()) {
+			imageService.removeCommentImages(deleteCommentImageIds);
+		}
 	}
 }
