@@ -8,6 +8,7 @@ import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
 import arraysort.project.board.app.exception.CommentNotFoundException;
 import arraysort.project.board.app.exception.InvalidPrincipalException;
+import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.PageDTO;
 import arraysort.project.board.app.post.domain.PageReqDTO;
@@ -87,9 +88,15 @@ public class CommentService {
 		int totalCommentCount = commentMapper.selectTotalCommentCount(dto, postId);
 		PageDTO pageDTO = new PageDTO(totalCommentCount, dto, boardId, postId);
 
+		// 댓글 리스트 조회 : 이미지 포함
 		List<CommentListResDTO> commentList = commentMapper.selectCommentListWithPaging(pageDTO)
 				.stream()
-				.map(CommentListResDTO::of)
+				.map(vo -> {
+					CommentListResDTO commentListResDTO = CommentListResDTO.of(vo);
+					List<ImageVO> commentImages = imageService.findCommentImagesByCommentId(vo.getCommentId());
+					commentListResDTO.updateCommentImages(commentImages);
+					return commentListResDTO;
+				})
 				.toList();
 
 		return new PageResDTO<>(totalCommentCount, dto.getCommentPage(), commentList);

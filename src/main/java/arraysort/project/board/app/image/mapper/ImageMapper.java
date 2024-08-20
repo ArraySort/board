@@ -59,4 +59,7 @@ public interface ImageMapper {
 
 	// 댓글 이미지 관계 추가
 	void insertCommentImage(List<CommentImageVO> commentImages);
+
+	// 댓글 이미지 리스트 조회
+	List<ImageVO> selectCommentImagesByCommentId(long postId);
 }

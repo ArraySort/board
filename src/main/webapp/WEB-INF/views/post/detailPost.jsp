@@ -71,14 +71,14 @@
             });
 
             // 댓글 수정 버튼 클릭 시
-            $('#commentEditButton').click(function () {
+            $(document).on('click', '.commentEditButton', function () {
                 const commentId = $(this).data('id');
                 $('#commentContent-' + commentId).hide();
                 $('#editForm-' + commentId).show();
             });
 
             // 댓글 수정 취소 버튼 클릭 시
-            $('#commentEditCancelButton').click(function () {
+            $(document).on('click', '.commentEditCancelButton', function () {
                 const commentId = $(this).data('id');
                 $('#editForm-' + commentId).hide();
                 $('#commentContent-' + commentId).show();
@@ -229,30 +229,24 @@
             <ul class="list-group">
                 <c:forEach var="comment" items="${commentPagination.postList}">
                     <li class="list-group-item">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <strong>작성자:</strong> ${comment.userName}
-                                <br/>
-                                <strong>내용:</strong>
-                                <span id="commentContent-${comment.commentId}">${comment.commentContent}</span>
-                                <div class="text-end">
-                                    <small class="text-muted">작성시간:
-                                        <fmt:formatDate value="${comment.createdAt}" pattern="yyyy-MM-dd HH:mm"/>
-                                    </small>
-                                    <br/>
-                                    <small class="text-muted">수정시간:
-                                        <fmt:formatDate value="${comment.updatedAt}" pattern="yyyy-MM-dd HH:mm"/>
-                                    </small>
-                                </div>
+                        <!-- 댓글 상단: 작성자, 내용, 수정/삭제 버튼 -->
+                        <div class="d-flex justify-content-between">
+                            <!-- 작성자 -->
+                            <div class="comment-author">
+                                <strong>${comment.userName}</strong>
                             </div>
+
+                            <!-- 내용 -->
+                            <div class="flex-grow-1 text-center">
+                                    ${comment.commentContent}
+                            </div>
+
+                            <!-- 수정/삭제 버튼 -->
                             <c:if test="${currentUserId == comment.userId}">
                                 <div class="ms-3 d-flex align-items-center">
-                                    <!-- 수정 버튼 -->
-                                    <button class="btn btn-sm btn-outline-primary me-2"
-                                            id="commentEditButton"
+                                    <button class="btn btn-sm btn-outline-primary me-2 commentEditButton"
                                             data-id="${comment.commentId}">수정
                                     </button>
-                                    <!-- 삭제 버튼 -->
                                     <form method="post" action="/${boardId}/post/detail/${postId}/comment/delete"
                                           class="m-0">
                                         <sec:csrfInput/>
@@ -261,6 +255,30 @@
                                     </form>
                                 </div>
                             </c:if>
+                        </div>
+
+                        <!-- 댓글 하단: 첨부 이미지, 작성 시간, 수정 시간 -->
+                        <div class="d-flex justify-content-between mt-2">
+                            <!-- 첨부 이미지 -->
+                            <div class="comment-images">
+                                <c:if test="${not empty comment.commentImages}">
+                                    <strong>첨부 이미지:</strong>
+                                    <c:forEach var="image" items="${comment.commentImages}">
+                                        <a href="javascript:showImage('/image/${image.imageId}')">
+                                            [${image.originalName}]
+                                        </a>
+                                    </c:forEach>
+                                </c:if>
+                            </div>
+
+                            <!-- 작성 시간 및 수정 시간 -->
+                            <div class="text-end text-muted">
+                                <small>작성시간:
+                                    <fmt:formatDate value="${comment.createdAt}" pattern="yyyy-MM-dd HH:mm"/></small>
+                                <br/>
+                                <small>수정시간:
+                                    <fmt:formatDate value="${comment.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></small>
+                            </div>
                         </div>
 
                         <!-- 댓글 수정 폼 (초기에는 숨김) -->
@@ -272,8 +290,7 @@
                                     <input type="text" class="form-control" name="commentContent"
                                            value="${comment.commentContent}">
                                     <button type="submit" class="btn btn-success">저장</button>
-                                    <button type="button" class="btn btn-secondary"
-                                            id="commentEditCancelButton"
+                                    <button type="button" class="btn btn-secondary commentEditCancelButton"
                                             data-id="${comment.commentId}">취소
                                     </button>
                                 </div>
