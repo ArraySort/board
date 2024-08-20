@@ -178,4 +178,21 @@
         where ci.comment_id = #{commentId}
     </select>
 
+    <!-- 댓글 이미지 개수 조회 -->
+    <select id="selectCommentImageCountByCommentId" parameterType="long" resultType="int">
+        select count(*)
+        from comment_image
+        where comment_id = #{commentId}
+    </select>
+
+    <!-- 댓글 이미지 관계 삭제 -->
+    <delete id="deleteCommentImageByCommentId" parameterType="long">
+        delete
+        from comment_image
+        where image_id in
+        <foreach collection="imageIds" item="imageId" open="(" separator="," close=")">
+            #{imageId}
+        </foreach>
+    </delete>
+
 </mapper>

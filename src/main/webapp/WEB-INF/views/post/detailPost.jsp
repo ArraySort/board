@@ -15,6 +15,8 @@
         $(() => {
 
             let commentImages = [];
+            const addedCommentImages = {};
+            const removedCommentImageIds = {};
 
             // 새로운 댓글 이미지 추가
             $('#commentImageInput').on('change', function () {
@@ -42,7 +44,7 @@
             });
 
             // 추가된 이미지 삭제
-            $(document).on('click', '.remove-added-image-btn', function () {
+            $('.remove-added-image-btn').on('click', function () {
                 const index = $(this).closest('li').index();
 
                 commentImages.splice(index, 1);
@@ -51,14 +53,14 @@
                 updateAddedImagesInput();
             });
 
-            // 이미지 업로드 버튼 (+) 버튼 클릭 시 input 활성화
+            // 이미지 업로드 버튼 (+) 클릭 시 input 활성화
             $('#uploadCommentImageButton').click(function () {
                 $('#commentImageInput').click();
             });
 
 
             // 댓글 추가 버튼 클릭 시 댓글 내용 검증
-            $('#addCommentButton').on('click', function (e) {
+            $('#addCommentButton').click(function (e) {
                 const commentContent = $('#commentContent').val();
 
                 if (!commentContent) {
@@ -71,23 +73,94 @@
             });
 
             // 댓글 수정 버튼 클릭 시
-            $(document).on('click', '.commentEditButton', function () {
+            $('.commentEditButton').on('click', function () {
                 const commentId = $(this).data('id');
+
                 $('#commentContent-' + commentId).hide();
                 $('#editForm-' + commentId).show();
+                $('#addedCommentImageInput-' + commentId).val('');
+
+                addedCommentImages[commentId] = [];
+                removedCommentImageIds[commentId] = [];
             });
 
             // 댓글 수정 취소 버튼 클릭 시
-            $(document).on('click', '.commentEditCancelButton', function () {
+            $('.commentEditCancelButton').on('click', function () {
                 const commentId = $(this).data('id');
+
                 $('#editForm-' + commentId).hide();
                 $('#commentContent-' + commentId).show();
+                $('#addedCommentImageInput-' + commentId).val('');
+
+                addedCommentImages[commentId] = [];
+                removedCommentImageIds[commentId] = [];
+            });
+
+            // 댓글 이미지 추가 버튼 클릭 시
+            $('.addCommentImageButton').click(function () {
+                const commentId = $(this).data('comment-id');
+                $('#addedCommentImageInput-' + commentId).click();
+            });
+
+            // 댓글 이미지 파일 선택 시 처리
+            $('input[id^="addedCommentImageInput-"]').on('change', function () {
+                const commentId = $(this).attr('id').split('-')[1];
+                const files = Array.from(this.files);
+
+                addedCommentImages[commentId] = files;
+
+                files.forEach(file => {
+                    const imageUrl = URL.createObjectURL(file);
+
+                    $('#addedCommentImagesList-' + commentId).append(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="javascript:showImage('\${imageUrl}')" class="text-center mx-auto">
+                                \${file.name}
+                            </a>
+                            <button type="button" class="btn btn-danger btn-sm remove-edit-added-image-btn ml-auto" data-comment-id="\${commentId}">X</button>
+                        </li>
+                    `);
+                });
+
+                updateEditAddedImagesInput(commentId);
+            });
+
+            // 댓글 기존 이미지 삭제 버튼 시
+            $('.remove-existing-comment-image-btn').on('click', function () {
+                const imageId = $(this).data('id');
+                const commentId = $(this).data('comment-id');
+
+                removedCommentImageIds[commentId].push(imageId);
+
+                $(this).closest('li').remove();
+                $('#removedCommentImagesInput-' + commentId).val(removedCommentImageIds[commentId].join(','));
+            });
+
+            // 추가된 이미지 삭제 버튼 클릭 시 처리
+            $('.remove-edit-added-image-btn').on('click', function () {
+                const commentId = $(this).data('comment-id');
+                const index = $(this).closest('li').index();
+
+                if (index >= 0 && index < addedCommentImages[commentId].length) {
+                    addedCommentImages[commentId].splice(index, 1);
+                    $(this).closest('li').remove();
+                    updateEditAddedImagesInput(commentId);
+                }
             });
 
             // 메세지 출력
             function alertMessage(e, message) {
                 e.preventDefault();
                 alert(message);
+            }
+
+            // 추가된 이미지 input 업데이트
+            function updateEditAddedImagesInput(commentId) {
+                let dataTransfer = new DataTransfer();
+                addedCommentImages[commentId].forEach(file => {
+                    dataTransfer.items.add(file);
+                });
+                $('#addedCommentImageInput-' + commentId)[0].files = dataTransfer.files;
             }
 
             // 추가 이미지 업데이트
@@ -283,10 +356,22 @@
 
                         <!-- 댓글 수정 폼 (초기에는 숨김) -->
                         <div id="editForm-${comment.commentId}" class="mt-3" style="display:none;">
-                            <form method="post" action="/${boardId}/post/detail/${postId}/comment/edit">
+                            <form method="post" action="/${boardId}/post/detail/${postId}/comment/edit"
+                                  enctype="multipart/form-data">
                                 <sec:csrfInput/>
                                 <input type="hidden" name="commentId" value="${comment.commentId}"/>
+                                <input type="hidden" id="removedCommentImagesInput-${comment.commentId}"
+                                       name="removedCommentImageIds"
+                                       value="">
                                 <div class="input-group">
+                                    <!-- 이미지 업로드 버튼 -->
+                                    <button type="button" class="btn btn-outline-secondary addCommentImageButton"
+                                            data-comment-id="${comment.commentId}">
+                                        +
+                                    </button>
+                                    <input type="file" name="addedCommentImages"
+                                           id="addedCommentImageInput-${comment.commentId}" class="d-none"
+                                           multiple>
                                     <input type="text" class="form-control" name="commentContent"
                                            value="${comment.commentContent}">
                                     <button type="submit" class="btn btn-success">저장</button>
@@ -294,13 +379,39 @@
                                             data-id="${comment.commentId}">취소
                                     </button>
                                 </div>
+
+                                <!-- 기존 이미지 목록 -->
+                                <div class="mt-2">
+                                    <strong>기존 첨부 이미지:</strong>
+                                    <ul id="existingCommentImagesList-${comment.commentId}" class="list-group">
+                                        <c:forEach var="image" items="${comment.commentImages}">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <a href="javascript:showImage('/image/${image.imageId}')"
+                                                   class="text-center mx-auto">
+                                                        ${image.originalName}
+                                                </a>
+                                                <button type="button"
+                                                        class="btn btn-danger btn-sm remove-existing-comment-image-btn"
+                                                        data-comment-id="${comment.commentId}"
+                                                        data-id="${image.imageId}">
+                                                    X
+                                                </button>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+
+                                <!-- 추가된 이미지 목록 -->
+                                <div class="mt-2">
+                                    <strong>추가된 첨부 이미지:</strong>
+                                    <ul id="addedCommentImagesList-${comment.commentId}" class="list-group"></ul>
+                                </div>
                             </form>
                         </div>
                     </li>
                 </c:forEach>
             </ul>
         </div>
-        <!-- 댓글 리스트 끝 -->
 
         <!-- 페이지 버튼 시작-->
         <nav>

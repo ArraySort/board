@@ -17,6 +17,7 @@ import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -45,37 +46,6 @@ public class CommentService {
 		handleCommentImages(dto, boardDetail, vo);
 	}
 
-	// 댓글 수정
-	@Transactional
-	public void modifyComment(CommentEditReqDTO dto, long boardId, long postId) {
-		// 게시판 검증(존재, 상태 검증)
-		postComponent.getValidatedBoard(boardId);
-
-		// 게시글 검증(존재, 상태 검증)
-		postComponent.getValidatedPost(postId, boardId);
-
-		// 댓글 검증(존재, 상태 검증)
-		validateComment(dto);
-
-		CommentVO vo = CommentVO.updateOf(dto, postId);
-		commentMapper.updateComment(vo);
-	}
-
-	// 댓글 삭제
-	@Transactional
-	public void removeComment(CommentDeleteReqDTO dto, long boardId, long postId) {
-		// 게시판 검증(존재, 상태 검증)
-		postComponent.getValidatedBoard(boardId);
-
-		// 게시글 검증(존재, 상태 검증)
-		postComponent.getValidatedPost(postId, boardId);
-
-		// 댓글 검증(존재, 상태 검증)
-		validateComment(dto);
-
-		commentMapper.deleteComment(dto.getCommentId());
-	}
-
 	// 댓글 리스트 조회(페이징)
 	@Transactional(readOnly = true)
 	public PageResDTO<CommentListResDTO> findCommentListWithPaging(PageReqDTO dto, long boardId, long postId) {
@@ -100,6 +70,40 @@ public class CommentService {
 				.toList();
 
 		return new PageResDTO<>(totalCommentCount, dto.getCommentPage(), commentList);
+	}
+
+	// 댓글 수정
+	@Transactional
+	public void modifyComment(CommentEditReqDTO dto, long boardId, long postId) {
+		// 게시판 검증(존재, 상태 검증)
+		postComponent.getValidatedBoard(boardId);
+
+		// 게시글 검증(존재, 상태 검증)
+		postComponent.getValidatedPost(postId, boardId);
+
+		// 댓글 검증(존재, 상태 검증)
+		validateComment(dto);
+
+		// 댓글 이미지 업데이트
+		handleCommentImages(dto);
+
+		CommentVO vo = CommentVO.updateOf(dto, postId);
+		commentMapper.updateComment(vo);
+	}
+
+	// 댓글 삭제
+	@Transactional
+	public void removeComment(CommentDeleteReqDTO dto, long boardId, long postId) {
+		// 게시판 검증(존재, 상태 검증)
+		postComponent.getValidatedBoard(boardId);
+
+		// 게시글 검증(존재, 상태 검증)
+		postComponent.getValidatedPost(postId, boardId);
+
+		// 댓글 검증(존재, 상태 검증)
+		validateComment(dto);
+
+		commentMapper.deleteComment(dto.getCommentId());
 	}
 
 
@@ -200,5 +204,30 @@ public class CommentService {
 		}
 
 		imageService.addCommentImages(dto.getCommentImages(), vo.getCommentId());
+	}
+
+	/**
+	 * [댓글 이미지 처리(수정)]
+	 * 게시판의 이미지 허용 여부가 Y 일 때만 실행
+	 * 댓글 최대 업로드 개수 2에 대한 검증 실행
+	 *
+	 * @param dto 수정되는 게시글 정보(사용자 입력)
+	 */
+	private void handleCommentImages(CommentEditReqDTO dto) {
+		boolean addedCommentImageCheck = dto.getAddedCommentImages().stream().anyMatch(MultipartFile::isEmpty);
+
+		int addedCommentImageCount = addedCommentImageCheck ? 0 : dto.getAddedCommentImages().size();
+
+		int commentImageCount = imageService.findCommentImageCountByCommentId(dto.getCommentId()) + addedCommentImageCount - dto.getRemovedCommentImageIds().size();
+
+		if (commentImageCount > 2) {
+			throw new BoardImageOutOfRangeException("댓글은 최대 2개까지 업로드 가능합니다.");
+		}
+
+		if (!dto.getRemovedCommentImageIds().isEmpty()) {
+			imageService.removeCommentImages(dto.getRemovedCommentImageIds());
+		}
+
+		imageService.addCommentImages(dto.getAddedCommentImages(), dto.getCommentId());
 	}
 }

@@ -169,6 +169,7 @@ public class ImageService {
 	}
 
 	// 댓글 아이디로 이미지 리스트 조회
+	@Transactional(readOnly = true)
 	public List<ImageVO> findCommentImagesByCommentId(long commentId) {
 		return imageMapper.selectCommentImagesByCommentId(commentId);
 	}
@@ -199,10 +200,23 @@ public class ImageService {
 		imageMapper.deleteTempImages(imageIds);
 	}
 
+	// 댓글 이미지 삭제
+	@Transactional
+	public void removeCommentImages(List<Long> imageIds) {
+		imageMapper.deleteImages(imageIds);
+		imageMapper.deleteCommentImageByCommentId(imageIds);
+	}
+
 	// 게시글에 존재하는 이미지 개수 조회
 	@Transactional(readOnly = true)
 	public int findImageCountByPostId(long postId) {
 		return imageMapper.selectImageCountByPostId(postId);
+	}
+
+	// 댓글에 존재하는 이미지 개수 조회
+	@Transactional(readOnly = true)
+	public int findCommentImageCountByCommentId(Long commentId) {
+		return imageMapper.selectCommentImageCountByCommentId(commentId);
 	}
 
 	// 임시저장 게시글에 존재하는 이미지 개수 조회
