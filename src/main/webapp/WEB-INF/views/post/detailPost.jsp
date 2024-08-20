@@ -103,6 +103,11 @@
 </head>
 <body>
 
+<%
+    // 현재 로그인 한 유저의 값
+    String currentUserId = UserUtil.getCurrentLoginUserId();
+    pageContext.setAttribute("currentUserId", currentUserId);
+%>
 
 <div style="text-align: center">
     <h1>게시글 세부 내용</h1>
@@ -209,19 +214,21 @@
                                     </small>
                                 </div>
                             </div>
-                            <div class="ms-3 d-flex align-items-center">
-                                <!-- 수정 버튼 -->
-                                <button class="btn btn-sm btn-outline-primary me-2 edit-btn"
-                                        data-id="${comment.commentId}">수정
-                                </button>
-                                <!-- 삭제 버튼 -->
-                                <form method="post" action="/${boardId}/post/detail/${postId}/comment/delete"
-                                      class="m-0">
-                                    <sec:csrfInput/>
-                                    <input type="hidden" name="commentId" value="${comment.commentId}"/>
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
-                                </form>
-                            </div>
+                            <c:if test="${currentUserId == comment.userId}">
+                                <div class="ms-3 d-flex align-items-center">
+                                    <!-- 수정 버튼 -->
+                                    <button class="btn btn-sm btn-outline-primary me-2 edit-btn"
+                                            data-id="${comment.commentId}">수정
+                                    </button>
+                                    <!-- 삭제 버튼 -->
+                                    <form method="post" action="/${boardId}/post/detail/${postId}/comment/delete"
+                                          class="m-0">
+                                        <sec:csrfInput/>
+                                        <input type="hidden" name="commentId" value="${comment.commentId}"/>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+                                    </form>
+                                </div>
+                            </c:if>
                         </div>
 
                         <!-- 댓글 수정 폼 (초기에는 숨김) -->
@@ -297,11 +304,6 @@
                 <input type="hidden" name="page" value="${page.page}">
                 <button type="submit">목록</button>
             </form>
-            <%
-                // 현재 로그인 한 유저의 값
-                String currentUserId = UserUtil.getCurrentLoginUserId();
-                pageContext.setAttribute("currentUserId", currentUserId);
-            %>
 
             <c:if test="${postDetail.userId == currentUserId}">
                 <button type="button"

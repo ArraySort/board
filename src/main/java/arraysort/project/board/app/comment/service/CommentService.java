@@ -1,10 +1,7 @@
 package arraysort.project.board.app.comment.service;
 
 import arraysort.project.board.app.board.domain.BoardVO;
-import arraysort.project.board.app.comment.domain.CommentAddReqDTO;
-import arraysort.project.board.app.comment.domain.CommentEditReqDTO;
-import arraysort.project.board.app.comment.domain.CommentListResDTO;
-import arraysort.project.board.app.comment.domain.CommentVO;
+import arraysort.project.board.app.comment.domain.*;
 import arraysort.project.board.app.comment.mapper.CommentMapper;
 import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.component.PostComponent;
@@ -19,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -48,10 +46,25 @@ public class CommentService {
 		postComponent.getValidatedPost(postId, boardId);
 
 		// 댓글 검증(존재, 상태 검증)
-		validateModify(dto);
+		validateComment(dto);
 
 		CommentVO vo = CommentVO.updateOf(dto, postId);
 		commentMapper.updateComment(vo);
+	}
+
+	// 댓글 삭제
+	@Transactional
+	public void removeComment(CommentDeleteReqDTO dto, long boardId, long postId) {
+		// 게시판 검증(존재, 상태 검증)
+		postComponent.getValidatedBoard(boardId);
+
+		// 게시글 검증(존재, 상태 검증)
+		postComponent.getValidatedPost(postId, boardId);
+
+		// 댓글 검증(존재, 상태 검증)
+		validateComment(dto);
+
+		commentMapper.deleteComment(dto.getCommentId());
 	}
 
 	// 댓글 리스트 조회(페이징)
@@ -107,10 +120,11 @@ public class CommentService {
 	 * 댓글 수정 전 검증
 	 * 1. 댓글 존재 검증
 	 * 2. 댓글 상태 검증
+	 * 3. 댓글 소유자 검증
 	 *
 	 * @param dto 수정하려는 댓글 정보
 	 */
-	private void validateModify(CommentEditReqDTO dto) {
+	private void validateComment(CommentEditReqDTO dto) {
 		// 1. 댓글 존재 검증
 		CommentVO commentDetail = commentMapper.selectCommentById(dto.getCommentId())
 				.orElseThrow(CommentNotFoundException::new);
@@ -118,6 +132,40 @@ public class CommentService {
 		// 2. 댓글 상태 검증
 		if (commentDetail.getActivateFlag() == Flag.N || commentDetail.getDeleteFlag() == Flag.Y) {
 			throw new CommentNotFoundException();
+		}
+
+		validateCommentOwnership(commentDetail);
+	}
+
+	/**
+	 * 댓글 삭제 전 검증
+	 * 1. 댓글 존재 검증
+	 * 2. 댓글 상태 검증
+	 * 3. 댓글 소유자 검증
+	 *
+	 * @param dto 삭제하려는 댓글 정보
+	 */
+	private void validateComment(CommentDeleteReqDTO dto) {
+		// 1. 댓글 존재 검증
+		CommentVO commentDetail = commentMapper.selectCommentById(dto.getCommentId())
+				.orElseThrow(CommentNotFoundException::new);
+
+		// 2. 댓글 상태 검증
+		if (commentDetail.getActivateFlag() == Flag.N || commentDetail.getDeleteFlag() == Flag.Y) {
+			throw new CommentNotFoundException();
+		}
+
+		validateCommentOwnership(commentDetail);
+	}
+
+	/**
+	 * 댓글 소유자 검증
+	 *
+	 * @param commentDetail 현재 수정/삭제 하려는 댓글의 세부 정보
+	 */
+	private void validateCommentOwnership(CommentVO commentDetail) {
+		if (!Objects.equals(commentDetail.getUserId(), UserUtil.getCurrentLoginUserId())) {
+			throw new InvalidPrincipalException("본인이 작성한 댓글만 수정/삭제가 가능합니다.");
 		}
 	}
 }

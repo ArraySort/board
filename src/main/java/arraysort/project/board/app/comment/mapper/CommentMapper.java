@@ -26,4 +26,7 @@ public interface CommentMapper {
 	// 댓글 수정
 	void updateComment(CommentVO vo);
 
+	// 댓글 삭제
+	void deleteComment(long commentId);
+
 }

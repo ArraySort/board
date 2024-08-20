@@ -38,6 +38,7 @@
         from comment c
         inner join board.user u on c.user_id = u.user_id
         where post_id = #{postId} and c.delete_flag = 'N'
+        order by c.comment_id desc
         limit #{pageRowCount} offset #{offset}
     </select>
 
@@ -66,10 +67,18 @@
         from comment
         where comment_id = #{commentId}
     </select>
-    
+
+    <!-- 댓글 수정 -->
     <update id="updateComment" parameterType="arraysort.project.board.app.comment.domain.CommentVO">
         update comment
         set comment_content = #{commentContent}
+        where comment_id = #{commentId}
+    </update>
+
+    <!-- 댓글 삭제 -->
+    <update id="deleteComment" parameterType="long">
+        update comment
+        set delete_flag = 'Y'
         where comment_id = #{commentId}
     </update>
 
