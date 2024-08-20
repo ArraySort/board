@@ -41,7 +41,7 @@ public class CommentController {
 
 	// 댓글 삭제 요청
 	@PostMapping("/delete")
-	public String processRemoveComment(@PathVariable long boardId, @PathVariable long postId, @ModelAttribute CommentDeleteReqDTO dto, Model model) {
+	public String processRemoveComment(@PathVariable long boardId, @PathVariable long postId, @Valid @ModelAttribute CommentDeleteReqDTO dto, Model model) {
 		commentService.removeComment(dto, boardId, postId);
 
 		ControllerUtil.addMessageAndRequest(model, "댓글이 삭제 되었습니다.", "DELETE_COMMENT");

@@ -1,6 +1,7 @@
 package arraysort.project.board.app.comment.domain;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.Getter;
 @Builder
 public class CommentEditReqDTO {
 
+	@NotNull(message = "수정하려는 댓글이 존재하지 않습니다.")
 	private Long commentId;
 
 	@NotBlank(message = "댓글을 수정하려면 내용을 입력하세요.")
