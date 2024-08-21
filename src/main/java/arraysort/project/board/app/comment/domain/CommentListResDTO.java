@@ -5,6 +5,7 @@ import arraysort.project.board.app.image.domain.ImageVO;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,8 @@ public class CommentListResDTO {
 	private String userId;
 
 	private long postId;
+
+	private Long parentId;
 
 	private String userName;
 
@@ -36,12 +39,15 @@ public class CommentListResDTO {
 
 	private List<ImageVO> commentImages;
 
+	private List<CommentListResDTO> replies;
+
 	// 댓글 리스트 조회
 	public static CommentListResDTO of(CommentVO vo) {
 		return CommentListResDTO.builder()
 				.commentId(vo.getCommentId())
 				.userId(vo.getUserId())
 				.postId(vo.getPostId())
+				.parentId(vo.getParentId())
 				.userName(vo.getUserName())
 				.commentContent(vo.getCommentContent())
 				.activateFlag(vo.getActivateFlag())
@@ -56,5 +62,13 @@ public class CommentListResDTO {
 	// 댓글 이미지 리스트 업데이트
 	public void updateCommentImages(List<ImageVO> commentImages) {
 		this.commentImages = commentImages;
+	}
+
+	// 자식 댓글 리스트 추가
+	public void addReply(CommentListResDTO reply) {
+		if (this.replies == null) {
+			this.replies = new ArrayList<>();
+		}
+		this.replies.add(reply);
 	}
 }

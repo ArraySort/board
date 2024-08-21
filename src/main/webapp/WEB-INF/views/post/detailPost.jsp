@@ -148,6 +148,13 @@
                 }
             });
 
+            document.querySelectorAll('.showReplyFormButton').forEach(button => {
+                button.addEventListener('click', function () {
+                    const replyForm = document.getElementById('replyForm-' + this.dataset.id);
+                    replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
+                });
+            });
+
             // 메세지 출력
             function alertMessage(e, message) {
                 e.preventDefault();
@@ -301,114 +308,158 @@
         <div class="container mt-4">
             <ul class="list-group">
                 <c:forEach var="comment" items="${commentPagination.postList}">
-                    <li class="list-group-item">
-                        <!-- 댓글 상단: 작성자, 내용, 수정/삭제 버튼 -->
-                        <div class="d-flex justify-content-between">
-                            <!-- 작성자 -->
-                            <div class="comment-author">
-                                <strong>${comment.userName}</strong>
-                            </div>
-
-                            <!-- 내용 -->
-                            <div class="flex-grow-1 text-center">
-                                    ${comment.commentContent}
-                            </div>
-
-                            <!-- 수정/삭제 버튼 -->
-                            <c:if test="${currentUserId == comment.userId}">
-                                <div class="ms-3 d-flex align-items-center">
-                                    <button class="btn btn-sm btn-outline-primary me-2 commentEditButton"
-                                            data-id="${comment.commentId}">수정
-                                    </button>
-                                    <form method="post" action="/${boardId}/post/detail/${postId}/comment/delete"
-                                          class="m-0">
-                                        <sec:csrfInput/>
-                                        <input type="hidden" name="commentId" value="${comment.commentId}"/>
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
-                                    </form>
+                    <c:if test="${comment.parentId == null}">
+                        <li class="list-group-item">
+                            <!-- 댓글 상단: 작성자, 내용, 수정/삭제 버튼 -->
+                            <div class="d-flex justify-content-between">
+                                <div class="comment-author">
+                                    <strong>${comment.userName}</strong>
                                 </div>
-                            </c:if>
-                        </div>
+                                <div class="flex-grow-1 text-center">
+                                        ${comment.commentContent}
+                                </div>
 
-                        <!-- 댓글 하단: 첨부 이미지, 작성 시간, 수정 시간 -->
-                        <div class="d-flex justify-content-between mt-2">
-                            <!-- 첨부 이미지 -->
-                            <div class="comment-images">
-                                <c:if test="${not empty comment.commentImages}">
-                                    <strong>첨부 이미지:</strong>
-                                    <c:forEach var="image" items="${comment.commentImages}">
-                                        <a href="javascript:showImage('/image/${image.imageId}')">
-                                            [${image.originalName}]
-                                        </a>
-                                    </c:forEach>
+                                <!-- 수정/삭제 버튼 -->
+                                <c:if test="${currentUserId == comment.userId}">
+                                    <div class="ms-3 d-flex align-items-center">
+                                        <button class="btn btn-sm btn-outline-primary me-2 commentEditButton"
+                                                data-id="${comment.commentId}">수정
+                                        </button>
+                                        <form method="post" action="/${boardId}/post/detail/${postId}/comment/delete"
+                                              class="m-0">
+                                            <sec:csrfInput/>
+                                            <input type="hidden" name="commentId" value="${comment.commentId}"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+                                        </form>
+                                    </div>
                                 </c:if>
                             </div>
 
-                            <!-- 작성 시간 및 수정 시간 -->
-                            <div class="text-end text-muted">
-                                <small>작성시간:
-                                    <fmt:formatDate value="${comment.createdAt}" pattern="yyyy-MM-dd HH:mm"/></small>
-                                <br/>
-                                <small>수정시간:
-                                    <fmt:formatDate value="${comment.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></small>
-                            </div>
-                        </div>
-
-                        <!-- 댓글 수정 폼 (초기에는 숨김) -->
-                        <div id="editForm-${comment.commentId}" class="mt-3" style="display:none;">
-                            <form method="post" action="/${boardId}/post/detail/${postId}/comment/edit"
-                                  enctype="multipart/form-data">
-                                <sec:csrfInput/>
-                                <input type="hidden" name="commentId" value="${comment.commentId}"/>
-                                <input type="hidden" id="removedCommentImagesInput-${comment.commentId}"
-                                       name="removedCommentImageIds"
-                                       value="">
-                                <div class="input-group">
-                                    <!-- 이미지 업로드 버튼 -->
-                                    <button type="button" class="btn btn-outline-secondary addCommentImageButton"
-                                            data-comment-id="${comment.commentId}">
-                                        +
-                                    </button>
-                                    <input type="file" name="addedCommentImages"
-                                           id="addedCommentImageInput-${comment.commentId}" class="d-none"
-                                           multiple>
-                                    <input type="text" class="form-control" name="commentContent"
-                                           value="${comment.commentContent}">
-                                    <button type="submit" class="btn btn-success">저장</button>
-                                    <button type="button" class="btn btn-secondary commentEditCancelButton"
-                                            data-id="${comment.commentId}">취소
-                                    </button>
-                                </div>
-
-                                <!-- 기존 이미지 목록 -->
-                                <div class="mt-2">
-                                    <strong>기존 첨부 이미지:</strong>
-                                    <ul id="existingCommentImagesList-${comment.commentId}" class="list-group">
+                            <!-- 댓글 하단: 첨부 이미지, 작성 시간, 수정 시간 -->
+                            <div class="d-flex justify-content-between mt-2">
+                                <!-- 첨부 이미지 -->
+                                <div class="comment-images">
+                                    <c:if test="${not empty comment.commentImages}">
+                                        <strong>첨부 이미지:</strong>
                                         <c:forEach var="image" items="${comment.commentImages}">
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <a href="javascript:showImage('/image/${image.imageId}')"
-                                                   class="text-center mx-auto">
-                                                        ${image.originalName}
-                                                </a>
-                                                <button type="button"
-                                                        class="btn btn-danger btn-sm remove-existing-comment-image-btn"
-                                                        data-comment-id="${comment.commentId}"
-                                                        data-id="${image.imageId}">
-                                                    X
-                                                </button>
-                                            </li>
+                                            <a href="javascript:showImage('/image/${image.imageId}')">
+                                                [${image.originalName}]
+                                            </a>
                                         </c:forEach>
-                                    </ul>
+                                    </c:if>
                                 </div>
 
-                                <!-- 추가된 이미지 목록 -->
-                                <div class="mt-2">
-                                    <strong>추가된 첨부 이미지:</strong>
-                                    <ul id="addedCommentImagesList-${comment.commentId}" class="list-group"></ul>
+                                <!-- 작성 시간 및 수정 시간 -->
+                                <div class="text-end text-muted">
+                                    <small>작성시간:
+                                        <fmt:formatDate value="${comment.createdAt}"
+                                                        pattern="yyyy-MM-dd HH:mm"/></small>
+                                    <br/>
+                                    <small>수정시간:
+                                        <fmt:formatDate value="${comment.updatedAt}"
+                                                        pattern="yyyy-MM-dd HH:mm"/></small>
                                 </div>
-                            </form>
-                        </div>
-                    </li>
+                            </div>
+
+                            <!-- 대댓글 렌더링 -->
+                            <ul class="list-group mt-3">
+                                <c:forEach var="reply" items="${comment.replies}">
+                                    <c:set var="comment" value="${reply}" scope="request"/>
+                                    <c:set var="currentUserId" value="${currentUserId}" scope="request"/>
+                                    <c:set var="boardId" value="${boardId}" scope="request"/>
+                                    <c:set var="postId" value="${postId}" scope="request"/>
+                                    <jsp:include page="commentReply.jsp"/>
+                                </c:forEach>
+                            </ul>
+
+                            <!-- 대댓글 작성 폼 -->
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-secondary showReplyFormButton"
+                                        data-id="${comment.commentId}">
+                                    답글 달기
+                                </button>
+                                <form method="post" action="/${boardId}/post/detail/${postId}/comment/add"
+                                      enctype="multipart/form-data"
+                                      id="replyForm-${comment.commentId}"
+                                      class="mt-2 replyForm" style="display:none;">
+                                    <sec:csrfInput/>
+                                    <input type="hidden" name="parentId" value="${comment.commentId}"/>
+                                    <div class="input-group">
+                                        <!-- 이미지 업로드 버튼 -->
+                                        <button type="button" class="btn btn-outline-secondary addReplyImageButton"
+                                                data-reply-id="${comment.commentId}">+
+                                        </button>
+                                        <input type="file" name="replyImages"
+                                               id="replyImageInput-${comment.commentId}"
+                                               class="d-none"
+                                               multiple>
+                                        <input type="text" class="form-control"
+                                               name="commentContent"
+                                               placeholder="답글 입력 . . .">
+                                        <button type="submit" class="btn btn-outline-dark">입력</button>
+                                    </div>
+                                    <!-- 추가된 이미지 리스트 -->
+                                    <ul id="addedReplyImagesList-${comment.commentId}"
+                                        class="d-flex flex-column align-items-center"></ul>
+                                </form>
+                            </div>
+
+                            <!-- 댓글 수정 폼 (초기에는 숨김) -->
+                            <div id="editForm-${comment.commentId}" class="mt-3" style="display:none;">
+                                <form method="post" action="/${boardId}/post/detail/${postId}/comment/edit"
+                                      enctype="multipart/form-data">
+                                    <sec:csrfInput/>
+                                    <input type="hidden" name="commentId" value="${comment.commentId}"/>
+                                    <input type="hidden" id="removedCommentImagesInput-${comment.commentId}"
+                                           name="removedCommentImageIds"
+                                           value="">
+                                    <div class="input-group">
+                                        <!-- 이미지 업로드 버튼 -->
+                                        <button type="button" class="btn btn-outline-secondary addCommentImageButton"
+                                                data-comment-id="${comment.commentId}">
+                                            +
+                                        </button>
+                                        <input type="file" name="addedCommentImages"
+                                               id="addedCommentImageInput-${comment.commentId}" class="d-none"
+                                               multiple>
+                                        <input type="text" class="form-control" name="commentContent"
+                                               value="${comment.commentContent}">
+                                        <button type="submit" class="btn btn-success">저장</button>
+                                        <button type="button" class="btn btn-secondary commentEditCancelButton"
+                                                data-id="${comment.commentId}">취소
+                                        </button>
+                                    </div>
+
+                                    <!-- 기존 이미지 목록 -->
+                                    <div class="mt-2">
+                                        <strong>기존 첨부 이미지:</strong>
+                                        <ul id="existingCommentImagesList-${comment.commentId}" class="list-group">
+                                            <c:forEach var="image" items="${comment.commentImages}">
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <a href="javascript:showImage('/image/${image.imageId}')"
+                                                       class="text-center mx-auto">
+                                                            ${image.originalName}
+                                                    </a>
+                                                    <button type="button"
+                                                            class="btn btn-danger btn-sm remove-existing-comment-image-btn"
+                                                            data-comment-id="${comment.commentId}"
+                                                            data-id="${image.imageId}">
+                                                        X
+                                                    </button>
+                                                </li>
+                                            </c:forEach>
+                                        </ul>
+                                    </div>
+
+                                    <!-- 추가된 이미지 목록 -->
+                                    <div class="mt-2">
+                                        <strong>추가된 첨부 이미지:</strong>
+                                        <ul id="addedCommentImagesList-${comment.commentId}" class="list-group"></ul>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+                    </c:if>
                 </c:forEach>
             </ul>
         </div>

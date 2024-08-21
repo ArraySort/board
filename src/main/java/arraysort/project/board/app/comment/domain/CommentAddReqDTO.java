@@ -18,4 +18,6 @@ public class CommentAddReqDTO {
 
 	private List<MultipartFile> commentImages;
 
+	private Long parentId;
+
 }

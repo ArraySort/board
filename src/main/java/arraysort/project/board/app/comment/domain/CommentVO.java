@@ -48,6 +48,7 @@ public class CommentVO {
 		return CommentVO.builder()
 				.userId(UserUtil.getCurrentLoginUserId())
 				.postId(postId)
+				.parentId(dto.getParentId())
 				.commentContent(dto.getCommentContent())
 				.createdBy(UserUtil.getCurrentLoginUserId())
 				.updatedBy(UserUtil.getCurrentLoginUserId())

@@ -15,14 +15,19 @@ import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PageResDTO;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CommentService {
 
@@ -69,7 +74,36 @@ public class CommentService {
 				})
 				.toList();
 
-		return new PageResDTO<>(totalCommentCount, dto.getCommentPage(), commentList);
+		List<CommentListResDTO> commentTree = buildCommentTree(commentList);
+
+		return new PageResDTO<>(totalCommentCount, dto.getCommentPage(), commentTree);
+	}
+
+	/**
+	 * 댓글 트리구조 생성
+	 *
+	 * @param comments 현재 게시글 댓글 리스트
+	 * @return 트리구조로 완성된 부모 댓글 리스트
+	 */
+	private List<CommentListResDTO> buildCommentTree(List<CommentListResDTO> comments) {
+		Map<Long, CommentListResDTO> commentMap = comments.stream()
+				.collect(Collectors.toMap(CommentListResDTO::getCommentId, comment -> comment));
+
+		List<CommentListResDTO> rootComments = new ArrayList<>();
+
+		// 부모 댓글 추가, 자식 댓글 리스트 추가
+		commentMap.values().forEach(comment -> {
+			if (comment.getParentId() == null) {
+				rootComments.add(comment);
+			} else {
+				CommentListResDTO parent = commentMap.get(comment.getParentId());
+				if (parent != null) {
+					parent.addReply(comment);
+				}
+			}
+		});
+
+		return rootComments;
 	}
 
 	// 댓글 수정
@@ -199,6 +233,10 @@ public class CommentService {
 	 */
 	private void handleCommentImages(CommentAddReqDTO dto, BoardVO boardDetail, CommentVO vo) {
 		if (boardDetail.getImageFlag() == Flag.N) {
+			return;
+		}
+
+		if (dto.getCommentImages() == null || dto.getCommentImages().isEmpty()) {
 			return;
 		}
 

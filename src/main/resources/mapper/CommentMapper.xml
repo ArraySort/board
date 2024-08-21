@@ -9,11 +9,13 @@
         insert into comment(
                             user_id,
                             post_id,
+                            parent_id,
                             comment_content,
                             created_by,
                             updated_by)
         values (#{userId},
                 #{postId},
+                #{parentId},
                 #{commentContent},
                 #{createdBy},
                 #{updatedBy})
@@ -38,7 +40,7 @@
         from comment c
         inner join board.user u on c.user_id = u.user_id
         where post_id = #{postId} and c.delete_flag = 'N'
-        order by c.comment_id desc
+        order by c.parent_id, c.created_at
         limit #{pageRowCount} offset #{offset}
     </select>
 
