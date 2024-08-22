@@ -281,7 +281,11 @@ public class CommentService {
 
 		// 최상위 부모 댓글 ID와 depth 계산
 		Long topParentId = dto.getParentId() == null ? null : findCommentTopParentId(commentMap, dto.getParentId());
-		Long depth = dto.getParentId() == null ? 0L : findCommentDepth(commentMap, dto.getParentId()) + 1;
+		long depth = dto.getParentId() == null ? 0L : findCommentDepth(commentMap, dto.getParentId()) + 1;
+
+		if (depth > 6) {
+			throw new InvalidPrincipalException("대댓글은 최대 5개까지 작성 가능합니다.");
+		}
 
 		dto.setCommentInfo(topParentId, depth);
 	}
