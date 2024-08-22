@@ -44,7 +44,8 @@
         from comment c
         inner join board.user u on c.user_id = u.user_id
         where c.post_id = #{postId} and c.delete_flag = 'N' and c.parent_id is null
-        order by c.created_at
+        order by c.adopted_flag desc,
+                 c.created_at desc
         limit #{pageRowCount} offset #{offset}
     </select>
 
@@ -72,7 +73,7 @@
             <foreach item="id" collection="topParentIds" open="(" separator="," close=")">
                 #{id}
             </foreach>
-        order by c.top_parent_id, c.depth, c.created_at
+        order by c.top_parent_id, c.depth, c.created_at desc
     </select>
 
     <!-- 댓글 리스트 조회(대댓글) -->
@@ -143,4 +144,17 @@
         where comment_id = #{commentId}
     </update>
 
+    <!-- 댓글 채택 여부 업데이트 -->
+    <update id="updateIsAdopted">
+        update comment
+        set adopted_flag = #{dto.adoptedFlag}
+        where comment_id = #{dto.commentId} and post_id = #{postId}
+    </update>
+
+    <!-- 댓글 채택 여부 초기화 -->
+    <update id="resetAdoptedComment" parameterType="long">
+        update comment
+        set adopted_flag = 'N'
+        where post_id = #{postId} and adopted_flag = 'Y'
+    </update>
 </mapper>

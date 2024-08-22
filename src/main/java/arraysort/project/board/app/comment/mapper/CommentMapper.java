@@ -1,5 +1,6 @@
 package arraysort.project.board.app.comment.mapper;
 
+import arraysort.project.board.app.comment.domain.CommentAdoptReqDTO;
 import arraysort.project.board.app.comment.domain.CommentVO;
 import arraysort.project.board.app.post.domain.PageDTO;
 import arraysort.project.board.app.post.domain.PageReqDTO;
@@ -37,5 +38,11 @@ public interface CommentMapper {
 
 	// 댓글 삭제
 	void deleteComment(long commentId);
+
+	// 댓글 채택 여부 업데이트
+	void updateIsAdopted(CommentAdoptReqDTO dto, long postId);
+
+	// 댓글 채택 여부 초기화
+	void resetAdoptedComment(long postId);
 
 }

@@ -13,16 +13,14 @@ import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.PageDTO;
 import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PageResDTO;
+import arraysort.project.board.app.post.domain.PostDetailResDTO;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -113,6 +111,22 @@ public class CommentService {
 		commentMapper.deleteComment(dto.getCommentId());
 	}
 
+	// 댓글 채택
+	@Transactional
+	public void adoptComment(CommentAdoptReqDTO dto, long boardId, long postId) {
+
+		// 게시판 검증(존재, 상태 검증)
+		postComponent.getValidatedBoard(boardId);
+
+		// 게시글, 채택 댓글 검증(존재, 상태, 채택 사용자 검증)
+		validateAdoptComment(dto, postComponent.getValidatedPost(postId, boardId));
+
+		// 기존 댓글 채택 초기화(게시글 내부)
+		commentMapper.resetAdoptedComment(postId);
+
+		// 댓글 채택
+		commentMapper.updateIsAdopted(dto, postId);
+	}
 
 	/**
 	 * 댓글 추가 전 검증
@@ -364,6 +378,7 @@ public class CommentService {
 			List<ImageVO> commentImages = imageService.findCommentImagesByCommentId(comment.getCommentId());
 			comment.updateCommentImages(commentImages);
 		});
+
 		return allComments;
 	}
 
@@ -374,8 +389,13 @@ public class CommentService {
 	 * @return 트리구조로 완성된 부모 댓글 리스트
 	 */
 	private List<CommentListResDTO> buildCommentTree(List<CommentListResDTO> comments) {
+		// 쿼리 순서 보장
 		Map<Long, CommentListResDTO> commentMap = comments.stream()
-				.collect(Collectors.toMap(CommentListResDTO::getCommentId, comment -> comment));
+				.collect(Collectors.toMap(CommentListResDTO::getCommentId,
+						comment -> comment,
+						(existing, replacement) -> existing,
+						LinkedHashMap::new
+				));
 
 		List<CommentListResDTO> rootComments = new ArrayList<>();
 
@@ -414,4 +434,30 @@ public class CommentService {
 		commentMapper.deleteComment(commentId);
 	}
 
+	/**
+	 * 댓글 채택 전 검증
+	 * 1. 댓글 존재 검증
+	 * 2. 댓글 상태 검증
+	 * 3. 채택 댓글 사용자 검증
+	 * (채택당하는 댓글의 소유자 == 게시글 소유자, 채택하려는 사용자 != 게시글 소유자, 비로그인 경우 제한)
+	 *
+	 * @param dto        채택당하는 댓글의 정보
+	 * @param postDetail 검증된 게시글 세부정보
+	 */
+	private void validateAdoptComment(CommentAdoptReqDTO dto, PostDetailResDTO postDetail) {
+		// 1. 댓글 존재 검증
+		CommentVO commentDetail = commentMapper.selectCommentById(dto.getCommentId())
+				.orElseThrow(CommentNotFoundException::new);
+
+		// 2. 댓글 상태 검증
+		if (commentDetail.getActivateFlag() == Flag.N || commentDetail.getDeleteFlag() == Flag.Y) {
+			throw new CommentNotFoundException();
+		}
+
+		// 3. 채택하려는 댓글이 게시글 소유자거나 인증되지 않은 사용자 인 경우, 채택하려는 사용자가 게시글 소유자가 아닌 경우
+		if (Objects.equals(commentDetail.getUserId(), UserUtil.getCurrentLoginUserId())
+				|| !UserUtil.isAuthenticatedUser() || !Objects.equals(postDetail.getUserId(), UserUtil.getCurrentLoginUserId())) {
+			throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
+		}
+	}
 }

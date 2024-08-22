@@ -31,6 +31,8 @@ public class CommentListResDTO {
 
 	private Flag activateFlag;
 
+	private Flag adoptedFlag;
+
 	private String createdBy;
 
 	private String updatedBy;
@@ -57,6 +59,7 @@ public class CommentListResDTO {
 				.userName(vo.getUserName())
 				.commentContent(vo.getCommentContent())
 				.activateFlag(vo.getActivateFlag())
+				.adoptedFlag(vo.getAdoptedFlag())
 				.createdBy(vo.getCreatedBy())
 				.updatedBy(vo.getUpdatedBy())
 				.createdAt(vo.getCreatedAt())

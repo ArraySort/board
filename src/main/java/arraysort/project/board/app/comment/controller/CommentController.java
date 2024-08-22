@@ -1,6 +1,7 @@
 package arraysort.project.board.app.comment.controller;
 
 import arraysort.project.board.app.comment.domain.CommentAddReqDTO;
+import arraysort.project.board.app.comment.domain.CommentAdoptReqDTO;
 import arraysort.project.board.app.comment.domain.CommentDeleteReqDTO;
 import arraysort.project.board.app.comment.domain.CommentEditReqDTO;
 import arraysort.project.board.app.comment.service.CommentService;
@@ -45,6 +46,15 @@ public class CommentController {
 		commentService.removeComment(dto, boardId, postId);
 
 		ControllerUtil.addMessageAndRequest(model, "댓글이 삭제 되었습니다.", "DELETE_COMMENT");
+		return "common/alert";
+	}
+
+	// 댓글 채택 요청
+	@PostMapping("/adopt")
+	public String processAdoptComment(@PathVariable long boardId, @PathVariable long postId, @Valid @ModelAttribute CommentAdoptReqDTO dto, Model model) {
+		commentService.adoptComment(dto, boardId, postId);
+
+		ControllerUtil.addMessageAndRequest(model, "댓글이 채택되었습니다.", "ADOPT_COMMENT");
 		return "common/alert";
 	}
 }

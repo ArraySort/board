@@ -368,6 +368,9 @@
                 <c:forEach var="comment" items="${commentPagination.postList}">
                     <c:if test="${comment.parentId == null}">
                         <li class="list-group-item">
+                            <c:if test="${comment.adoptedFlag == 'Y'}">
+                                채택 댓글
+                            </c:if>
                             <!-- 댓글 상단: 작성자, 내용, 수정/삭제 버튼 -->
                             <div class="d-flex justify-content-between">
                                 <div class="comment-author">
@@ -378,8 +381,9 @@
                                 </div>
 
                                 <!-- 수정/삭제 버튼 -->
-                                <c:if test="${currentUserId == comment.userId}">
-                                    <div class="ms-3 d-flex align-items-center">
+
+                                <div class="ms-3 d-flex align-items-center">
+                                    <c:if test="${currentUserId == comment.userId}">
                                         <button class="btn btn-sm btn-outline-primary me-2 commentEditButton"
                                                 data-id="${comment.commentId}">수정
                                         </button>
@@ -389,8 +393,17 @@
                                             <input type="hidden" name="commentId" value="${comment.commentId}"/>
                                             <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
                                         </form>
-                                    </div>
-                                </c:if>
+                                    </c:if>
+                                    <c:if test="${currentUserId != comment.userId && comment.parentId == null}">
+                                        <form method="post" action="/${boardId}/post/detail/${postId}/comment/adopt"
+                                              class="m-0">
+                                            <sec:csrfInput/>
+                                            <input type="hidden" name="commentId" value="${comment.commentId}"/>
+                                            <input type="hidden" name="adoptedFlag" value="Y"/>
+                                            <button type="submit" class="btn btn-sm btn-outline-dark me-2">채택</button>
+                                        </form>
+                                    </c:if>
+                                </div>
                             </div>
 
                             <!-- 댓글 하단: 첨부 이미지, 작성 시간, 수정 시간 -->
