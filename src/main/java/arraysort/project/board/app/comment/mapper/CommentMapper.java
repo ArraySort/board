@@ -17,14 +17,17 @@ public interface CommentMapper {
 	// 댓글 리스트 조회(최상위 댓글, 페이징)
 	List<CommentVO> selectTopLevelCommentListWithPaging(PageDTO dto);
 
-	// 댓글 리스트 조회(대댓글)
+	// 댓글 리스트 조회(모든 대댓글)
 	List<CommentVO> selectRepliesForTopLevelComments(long postId, List<Long> topParentIds);
 
-	// 댓글 리스트 조회(게시글 내부 전체)
-	List<CommentVO> selectCommentListByPostId(long postId);
+	// 댓글 리스트 조회(대댓글)
+	List<Long> selectRepliesIdByParentCommentId(long parentId);
 
 	// 최상위 댓글 총 개수 조회(페이징)
 	int selectTotalTopLevelCommentCount(PageReqDTO dto, long postId);
+
+	// 댓글 리스트 조회(게시글 내부 전체)
+	List<CommentVO> selectCommentListByPostId(long postId);
 
 	// 댓글 조회
 	Optional<CommentVO> selectCommentById(long commentId);

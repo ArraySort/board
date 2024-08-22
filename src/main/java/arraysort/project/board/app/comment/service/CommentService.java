@@ -104,6 +104,9 @@ public class CommentService {
 		// 댓글 검증(존재, 상태 검증)
 		validateComment(dto);
 
+		// 하위 댓글 삭제
+		removeRelies(dto.getCommentId(), boardDetail);
+
 		// 댓글 이미지 삭제 처리
 		handleCommentImageRemove(dto.getCommentId(), boardDetail);
 
@@ -390,4 +393,25 @@ public class CommentService {
 
 		return rootComments;
 	}
+
+	/**
+	 * 댓글 하위 대댓글 삭제
+	 *
+	 * @param commentId   삭제하려는 댓글 ID
+	 * @param boardDetail 검증된 게시판 정보
+	 */
+	private void removeRelies(Long commentId, BoardVO boardDetail) {
+		List<Long> childCommentsIds = commentMapper.selectRepliesIdByParentCommentId(commentId);
+
+		if (childCommentsIds == null || childCommentsIds.isEmpty()) {
+			return;
+		}
+
+		childCommentsIds.forEach(childCommentId -> removeRelies(childCommentId, boardDetail));
+
+		handleCommentImageRemove(commentId, boardDetail);
+
+		commentMapper.deleteComment(commentId);
+	}
+
 }
