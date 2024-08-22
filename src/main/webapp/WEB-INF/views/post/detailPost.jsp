@@ -14,11 +14,22 @@
     <script type="text/javascript">
         $(() => {
 
+            // 최초 작성 댓글 이미지
             let commentImages = [];
+
+            // 최초 작성 대댓글 이미지
+            const replyImages = {};
+
+            // 댓글(대댓글) 추가 및 삭제 이미지
             const addedCommentImages = {};
             const removedCommentImageIds = {};
 
-            // 새로운 댓글 이미지 추가
+            // 이미지 업로드 버튼 (+) 클릭 시 input 활성화
+            $('#uploadCommentImageButton').click(function () {
+                $('#commentImageInput').click();
+            });
+
+            // [댓글 추가] : 최초 작성 댓글 추가 시 리스트 생성, 댓글 이미지 배열에 저장
             $('#commentImageInput').on('change', function () {
                 const files = this.files;
 
@@ -43,36 +54,16 @@
                 updateAddedImagesInput();
             });
 
-            // 추가된 이미지 삭제
+            // [댓글 추가] : 추가된 댓글 이미지 삭제(리스트 삭제, 이미지 배열 삭제)
             $('.remove-added-image-btn').on('click', function () {
                 const index = $(this).closest('li').index();
 
                 commentImages.splice(index, 1);
                 $(this).closest('li').remove();
-
                 updateAddedImagesInput();
             });
 
-            // 이미지 업로드 버튼 (+) 클릭 시 input 활성화
-            $('#uploadCommentImageButton').click(function () {
-                $('#commentImageInput').click();
-            });
-
-
-            // 댓글 추가 버튼 클릭 시 댓글 내용 검증
-            $('#addCommentButton').click(function (e) {
-                const commentContent = $('#commentContent').val();
-
-                if (!commentContent) {
-                    e.preventDefault();
-                    alertMessage(e, "댓글을 등록하려면 내용을 입력하세요.");
-                } else if (commentContent.length < 1 || commentContent.length > 200) {
-                    e.preventDefault();
-                    alertMessage(e, "댓글은 최소 1글자 이상, 200자 미만이어야 합니다.");
-                }
-            });
-
-            // 댓글 수정 버튼 클릭 시
+            // [댓글 수정] 댓글 수정 버튼 클릭 시
             $('.commentEditButton').on('click', function () {
                 const commentId = $(this).data('id');
 
@@ -84,7 +75,7 @@
                 removedCommentImageIds[commentId] = [];
             });
 
-            // 댓글 수정 취소 버튼 클릭 시
+            // [댓글 수정] 댓글 수정 취소 버튼 클릭 시
             $('.commentEditCancelButton').on('click', function () {
                 const commentId = $(this).data('id');
 
@@ -96,13 +87,13 @@
                 removedCommentImageIds[commentId] = [];
             });
 
-            // 댓글 이미지 추가 버튼 클릭 시
+            // [댓글 수정] 댓글 이미지 추가 버튼 클릭 시
             $('.addCommentImageButton').click(function () {
                 const commentId = $(this).data('comment-id');
                 $('#addedCommentImageInput-' + commentId).click();
             });
 
-            // 댓글 이미지 파일 선택 시 처리
+            // [댓글 수정] : 이미 작성된 댓글(대댓글) 이미지 수정 시 리스트 생성, 추가된 이미지 배열 추가
             $('input[id^="addedCommentImageInput-"]').on('change', function () {
                 const commentId = $(this).attr('id').split('-')[1];
                 const files = Array.from(this.files);
@@ -125,18 +116,17 @@
                 updateEditAddedImagesInput(commentId);
             });
 
-            // 댓글 기존 이미지 삭제 버튼 시
+            // [댓글 수정] 댓글(대댓글) 기존 이미지 삭제 버튼 시
             $('.remove-existing-comment-image-btn').on('click', function () {
                 const imageId = $(this).data('id');
                 const commentId = $(this).data('comment-id');
 
                 removedCommentImageIds[commentId].push(imageId);
-
                 $(this).closest('li').remove();
                 $('#removedCommentImagesInput-' + commentId).val(removedCommentImageIds[commentId].join(','));
             });
 
-            // 추가된 이미지 삭제 버튼 클릭 시 처리
+            // [댓글 수정] 수정 시 추가한 이미지 삭제 버튼 클릭 시
             $('.remove-edit-added-image-btn').on('click', function () {
                 const commentId = $(this).data('comment-id');
                 const index = $(this).closest('li').index();
@@ -148,18 +138,70 @@
                 }
             });
 
-            // 대댓글 작성 폼
-            $('.showReplyFormButton').on('click', function () {
-                const replyForm = $('#replyForm-' + $(this).data('id'));
-                replyForm.toggle();
-            });
-
-            // 대댓글 리스트 토글
+            // [대댓글] 대댓글 보기
             $('.toggleReplyButton').on('click', function () {
                 const replyList = $('#replyList-' + $(this).data('id'));
                 const isVisible = replyList.is(':visible');
                 replyList.toggle();
                 $(this).text(isVisible ? '대댓글 보기' : '대댓글 숨기기');
+            });
+
+            // [대댓글 추가] 대댓글 작성 폼
+            $('.showReplyFormButton').on('click', function () {
+                const replyForm = $('#replyForm-' + $(this).data('id'));
+                replyForm.toggle();
+            });
+
+            // [대댓글 추가] 답글 이미지 추가 버튼 클릭 시
+            $('.addReplyImageButton').click(function () {
+                const replyId = $(this).data('reply-id');
+                $('#replyImageInput-' + replyId).click();
+            });
+
+            // [대댓글 추가] 최초 작성 대댓글 추가 시 리스트 생성, 대댓글 이미지 배열에 저장
+            $(document).on('change', 'input[id^="replyImageInput-"]', function () {
+                const replyId = $(this).attr('id').split('-')[1];
+                const files = Array.from(this.files);
+
+                replyImages[replyId] = files;
+
+                files.forEach(file => {
+                    const imageUrl = URL.createObjectURL(file);
+
+                    $('#addedReplyImagesList-' + replyId).append(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="javascript:showImage('\${imageUrl}')" class="text-center mx-auto">
+                                \${file.name}
+                            </a>
+                            <button type="button" class="btn btn-danger btn-sm remove-reply-added-image-btn ml-auto" data-reply-id="\${replyId}">X</button>
+                        </li>
+                    `);
+                });
+                updateReplyAddedImagesInput(replyId);
+            });
+
+            // [대댓글 추가] 추가된 대댓글 이미지 삭제버튼 클릭 시
+            $(document).on('click', '.remove-reply-added-image-btn', function () {
+                const replyId = $(this).data('reply-id');
+                const index = $(this).closest('li').index();
+
+                replyImages[replyId].splice(index, 1);
+                $(this).closest('li').remove();
+
+                updateReplyAddedImagesInput(replyId);
+            });
+
+            // [저장] 댓글(대댓글) 추가 버튼 클릭 시 댓글 내용 검증
+            $('#addCommentButton').click(function (e) {
+                const commentContent = $('#commentContent').val();
+
+                if (!commentContent) {
+                    e.preventDefault();
+                    alertMessage(e, "댓글을 등록하려면 내용을 입력하세요.");
+                } else if (commentContent.length < 1 || commentContent.length > 200) {
+                    e.preventDefault();
+                    alertMessage(e, "댓글은 최소 1글자 이상, 200자 미만이어야 합니다.");
+                }
             });
 
             // 메세지 출력
@@ -168,7 +210,16 @@
                 alert(message);
             }
 
-            // 추가된 이미지 input 업데이트
+            // [댓글 추가] 최초 댓글 추가 시 추가된 댓글 이미지 Input 에 업데이트
+            function updateAddedImagesInput() {
+                let dataTransfer = new DataTransfer();
+                commentImages.forEach(file => {
+                    dataTransfer.items.add(file);
+                });
+                $('#commentImageInput')[0].files = dataTransfer.files;
+            }
+
+            // [댓글(대댓글) 수정] 기존 추가 된 댓글 수정 시 추가된 댓글 이미지 Input 에 업데이트
             function updateEditAddedImagesInput(commentId) {
                 let dataTransfer = new DataTransfer();
                 addedCommentImages[commentId].forEach(file => {
@@ -177,13 +228,13 @@
                 $('#addedCommentImageInput-' + commentId)[0].files = dataTransfer.files;
             }
 
-            // 추가 이미지 업데이트
-            function updateAddedImagesInput() {
+            // [대댓글 추가] 최초 대댓글 추가 시 추가된 대댓글 이미지 Input 에 업데이트
+            function updateReplyAddedImagesInput(replyId) {
                 let dataTransfer = new DataTransfer();
-                commentImages.forEach(file => {
+                replyImages[replyId].forEach(file => {
                     dataTransfer.items.add(file);
                 });
-                $('#commentImageInput')[0].files = dataTransfer.files;
+                $('#replyImageInput-' + replyId)[0].files = dataTransfer.files;
             }
         });
     </script>
@@ -393,7 +444,7 @@
                                         <button type="button" class="btn btn-outline-secondary addReplyImageButton"
                                                 data-reply-id="${comment.commentId}">+
                                         </button>
-                                        <input type="file" name="replyImages"
+                                        <input type="file" name="commentImages"
                                                id="replyImageInput-${comment.commentId}"
                                                class="d-none"
                                                multiple>

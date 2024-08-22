@@ -74,7 +74,7 @@
                 <button type="button" class="btn btn-outline-secondary addReplyImageButton"
                         data-reply-id="${requestScope.comment.commentId}">+
                 </button>
-                <input type="file" name="replyImages"
+                <input type="file" name="commentImages"
                        id="replyImageInput-${requestScope.comment.commentId}"
                        class="d-none"
                        multiple>
@@ -86,6 +86,61 @@
             <!-- 추가된 이미지 리스트 -->
             <ul id="addedReplyImagesList-${requestScope.comment.commentId}"
                 class="d-flex flex-column align-items-center"></ul>
+        </form>
+    </div>
+
+    <!-- 댓글 수정 폼 (초기에는 숨김) -->
+    <div id="editForm-${requestScope.comment.commentId}" class="mt-3" style="display:none;">
+        <form method="post" action="/${requestScope.boardId}/post/detail/${requestScope.postId}/comment/edit"
+              enctype="multipart/form-data">
+            <sec:csrfInput/>
+            <input type="hidden" name="commentId" value="${requestScope.comment.commentId}"/>
+            <input type="hidden" id="removedCommentImagesInput-${requestScope.comment.commentId}"
+                   name="removedCommentImageIds"
+                   value="">
+            <div class="input-group">
+                <!-- 이미지 업로드 버튼 -->
+                <button type="button" class="btn btn-outline-secondary addCommentImageButton"
+                        data-comment-id="${requestScope.comment.commentId}">
+                    +
+                </button>
+                <input type="file" name="addedCommentImages"
+                       id="addedCommentImageInput-${requestScope.comment.commentId}" class="d-none"
+                       multiple>
+                <input type="text" class="form-control" name="commentContent"
+                       value="${requestScope.comment.commentContent}">
+                <button type="submit" class="btn btn-success">저장</button>
+                <button type="button" class="btn btn-secondary commentEditCancelButton"
+                        data-id="${requestScope.comment.commentId}">취소
+                </button>
+            </div>
+
+            <!-- 기존 이미지 목록 -->
+            <div class="mt-2">
+                <strong>기존 첨부 이미지:</strong>
+                <ul id="existingCommentImagesList-${requestScope.comment.commentId}" class="list-group">
+                    <c:forEach var="image" items="${requestScope.comment.commentImages}">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="javascript:showImage('/image/${image.imageId}')"
+                               class="text-center mx-auto">
+                                    ${image.originalName}
+                            </a>
+                            <button type="button"
+                                    class="btn btn-danger btn-sm remove-existing-comment-image-btn"
+                                    data-comment-id="${requestScope.comment.commentId}"
+                                    data-id="${image.imageId}">
+                                X
+                            </button>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </div>
+
+            <!-- 추가된 이미지 목록 -->
+            <div class="mt-2">
+                <strong>추가된 첨부 이미지:</strong>
+                <ul id="addedCommentImagesList-${requestScope.comment.commentId}" class="list-group"></ul>
+            </div>
         </form>
     </div>
 </li>
