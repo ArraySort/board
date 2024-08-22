@@ -23,7 +23,11 @@ public class CommentVO {
 
 	private Long postId;    // 게시글 ID
 
+	private Long topParentId;    // 최상위 부모 댓글 ID
+
 	private Long parentId;    // 댓글 부모 ID
+
+	private Long depth;    // 댓글 깊이
 
 	private String userName;    // 유저 이름
 
@@ -48,7 +52,9 @@ public class CommentVO {
 		return CommentVO.builder()
 				.userId(UserUtil.getCurrentLoginUserId())
 				.postId(postId)
+				.topParentId(dto.getTopParentId())
 				.parentId(dto.getParentId())
+				.depth(dto.getDepth())
 				.commentContent(dto.getCommentContent())
 				.createdBy(UserUtil.getCurrentLoginUserId())
 				.updatedBy(UserUtil.getCurrentLoginUserId())

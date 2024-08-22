@@ -18,6 +18,15 @@ public class CommentAddReqDTO {
 
 	private List<MultipartFile> commentImages;
 
+	private Long topParentId;
+
 	private Long parentId;
 
+	private Long depth;
+
+	// 최상위 댓글 ID, 댓글 depth 설정
+	public void setCommentInfo(Long topParentId, Long depth) {
+		this.topParentId = topParentId;
+		this.depth = depth;
+	}
 }

@@ -10,19 +10,23 @@
                             user_id,
                             post_id,
                             parent_id,
+                            top_parent_id,
+                            depth,
                             comment_content,
                             created_by,
                             updated_by)
         values (#{userId},
                 #{postId},
                 #{parentId},
+                #{topParentId},
+                #{depth},
                 #{commentContent},
                 #{createdBy},
                 #{updatedBy})
     </insert>
 
-    <!-- 댓글 리스트 조회 -->
-    <select id="selectCommentListWithPaging" resultType="arraysort.project.board.app.comment.domain.CommentVO">
+    <!-- 댓글 리스트 조회(최상위 댓글, 페이징) -->
+    <select id="selectTopLevelCommentListWithPaging" resultType="arraysort.project.board.app.comment.domain.CommentVO">
         select c.comment_id,
                c.admin_id,
                c.user_id,
@@ -39,16 +43,43 @@
                c.delete_flag
         from comment c
         inner join board.user u on c.user_id = u.user_id
-        where post_id = #{postId} and c.delete_flag = 'N'
-        order by c.parent_id, c.created_at
+        where c.post_id = #{postId} and c.delete_flag = 'N' and c.parent_id is null
+        order by c.created_at
         limit #{pageRowCount} offset #{offset}
     </select>
 
-    <!-- 댓글 총 개수 조회 -->
-    <select id="selectTotalCommentCount" resultType="int">
+    <!-- 특정 최상위 댓글들에 대한 모든 대댓글 조회 -->
+    <select id="selectRepliesForTopLevelComments" resultType="arraysort.project.board.app.comment.domain.CommentVO">
+        select c.comment_id,
+               c.admin_id,
+               c.user_id,
+               c.post_id,
+               c.parent_id,
+               c.top_parent_id,
+               c.depth,
+               u.user_name,
+               c.comment_content,
+               c.activate_flag,
+               c.adopted_flag,
+               c.created_by,
+               c.updated_by,
+               c.created_at,
+               c.updated_at,
+               c.delete_flag
+        from comment c
+        inner join board.user u on c.user_id = u.user_id
+        where c.post_id = #{postId} and c.delete_flag = 'N' and c.top_parent_id in
+            <foreach item="id" collection="topParentIds" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        order by c.top_parent_id, c.depth, c.created_at
+    </select>
+
+    <!-- 최상위 댓글 총 개수 조회(페이징) -->
+    <select id="selectTotalTopLevelCommentCount" resultType="int">
         select count(*)
         from comment
-        where post_id = #{postId} and delete_flag = 'N'
+        where post_id = #{postId} and delete_flag = 'N' and parent_id is null
     </select>
 
     <!-- 댓글 조회 -->
@@ -83,5 +114,26 @@
         set delete_flag = 'Y'
         where comment_id = #{commentId}
     </update>
+
+    <!-- 댓글 리스트 조회(게시글 내부 전체) -->
+    <select id="selectCommentListByPostId" parameterType="long" resultType="arraysort.project.board.app.comment.domain.CommentVO">
+        select comment_id,
+               admin_id,
+               user_id,
+               post_id,
+               top_parent_id,
+               parent_id,
+               depth,
+               comment_content,
+               activate_flag,
+               adopted_flag,
+               created_by,
+               updated_by,
+               created_at,
+               updated_at,
+               delete_flag
+        from comment
+        where post_id = #{postId}
+    </select>
 
 </mapper>

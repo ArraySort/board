@@ -15,7 +15,6 @@ import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PageResDTO;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +26,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class CommentService {
 
@@ -43,6 +41,9 @@ public class CommentService {
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 		// 추가 전 검증
 		validateAdd(boardDetail, boardId, postId);
+
+		// 댓글 정보 처리(최상위 댓글 ID, 댓글 depth 저장)
+		handleCommentInfo(dto, postId);
 
 		CommentVO vo = CommentVO.insertOf(dto, postId);
 		commentMapper.insertComment(vo);
@@ -60,50 +61,16 @@ public class CommentService {
 		// 게시글 검증(존재, 상태 검증)
 		postComponent.getValidatedPost(postId, boardId);
 
-		int totalCommentCount = commentMapper.selectTotalCommentCount(dto, postId);
-		PageDTO pageDTO = new PageDTO(totalCommentCount, dto, boardId, postId);
+		int totalTopLevelCommentCount = commentMapper.selectTotalTopLevelCommentCount(dto, postId);
+		PageDTO pageDTO = new PageDTO(totalTopLevelCommentCount, dto, boardId, postId);
 
-		// 댓글 리스트 조회 : 이미지 포함
-		List<CommentListResDTO> commentList = commentMapper.selectCommentListWithPaging(pageDTO)
-				.stream()
-				.map(vo -> {
-					CommentListResDTO commentListResDTO = CommentListResDTO.of(vo);
-					List<ImageVO> commentImages = imageService.findCommentImagesByCommentId(vo.getCommentId());
-					commentListResDTO.updateCommentImages(commentImages);
-					return commentListResDTO;
-				})
-				.toList();
+		// 게시글 댓글 한 페이지에 존재하는 댓글 가져오기(이미지 업로드 포함)
+		List<CommentListResDTO> allComments = getAllCommentList(postId, pageDTO);
 
-		List<CommentListResDTO> commentTree = buildCommentTree(commentList);
+		// 대댓글 렌더링을 위한 트리구조 변환
+		List<CommentListResDTO> commentTree = buildCommentTree(allComments);
 
-		return new PageResDTO<>(totalCommentCount, dto.getCommentPage(), commentTree);
-	}
-
-	/**
-	 * 댓글 트리구조 생성
-	 *
-	 * @param comments 현재 게시글 댓글 리스트
-	 * @return 트리구조로 완성된 부모 댓글 리스트
-	 */
-	private List<CommentListResDTO> buildCommentTree(List<CommentListResDTO> comments) {
-		Map<Long, CommentListResDTO> commentMap = comments.stream()
-				.collect(Collectors.toMap(CommentListResDTO::getCommentId, comment -> comment));
-
-		List<CommentListResDTO> rootComments = new ArrayList<>();
-
-		// 부모 댓글 추가, 자식 댓글 리스트 추가
-		commentMap.values().forEach(comment -> {
-			if (comment.getParentId() == null) {
-				rootComments.add(comment);
-			} else {
-				CommentListResDTO parent = commentMap.get(comment.getParentId());
-				if (parent != null) {
-					parent.addReply(comment);
-				}
-			}
-		});
-
-		return rootComments;
+		return new PageResDTO<>(totalTopLevelCommentCount, dto.getCommentPage(), commentTree);
 	}
 
 	// 댓글 수정
@@ -293,5 +260,130 @@ public class CommentService {
 		if (!deleteCommentImageIds.isEmpty()) {
 			imageService.removeCommentImages(deleteCommentImageIds);
 		}
+	}
+
+
+	/**
+	 * 댓글 정보 처리
+	 * 추가되는 댓글에 대한 최상위 부모 댓글 ID, depth 설정
+	 *
+	 * @param dto    추가되는 댓글 정보
+	 * @param postId 댓글이 추가되는 게시글 ID
+	 */
+	private void handleCommentInfo(CommentAddReqDTO dto, long postId) {
+		List<CommentListResDTO> allComments = commentMapper.selectCommentListByPostId(postId)
+				.stream()
+				.map(CommentListResDTO::of)
+				.toList();
+
+		Map<Long, CommentListResDTO> commentMap = allComments.stream()
+				.collect(Collectors.toMap(CommentListResDTO::getCommentId, comment -> comment));
+
+		// 최상위 부모 댓글 ID와 depth 계산
+		Long topParentId = dto.getParentId() == null ? null : findCommentTopParentId(commentMap, dto.getParentId());
+		Long depth = dto.getParentId() == null ? 0L : findCommentDepth(commentMap, dto.getParentId()) + 1;
+
+		dto.setCommentInfo(topParentId, depth);
+	}
+
+	/**
+	 * 최상위 댓글 부모 ID 생성 (재귀)
+	 *
+	 * @param commentMap Map(key : 댓글 부모 ID, value : 댓글 정보)
+	 * @param parentId   댓글 부모 ID
+	 * @return 최상위 댓글 부모 ID
+	 */
+	private Long findCommentTopParentId(Map<Long, CommentListResDTO> commentMap, Long parentId) {
+		CommentListResDTO parentComment = commentMap.get(parentId);
+		if (parentComment == null || parentComment.getParentId() == null) {
+			return parentId;
+		}
+		return findCommentTopParentId(commentMap, parentComment.getParentId());
+	}
+
+	/**
+	 * 댓글 depth 생성
+	 *
+	 * @param commentMap Map(key : 댓글 부모 ID, value : 댓글 정보)
+	 * @param parentId   댓글 부모 ID
+	 * @return 댓글 depth;
+	 */
+	private Long findCommentDepth(Map<Long, CommentListResDTO> commentMap, Long parentId) {
+		Long depth = 0L;
+		while (parentId != null) {
+			CommentListResDTO parentComment = commentMap.get(parentId);
+			if (parentComment == null) {
+				break;
+			}
+			depth++;
+			parentId = parentComment.getParentId();
+		}
+		return depth;
+	}
+
+	/**
+	 * 댓글 페이징을 위한 전체 댓글 조회
+	 * 전체 댓글에 대한 이미지 추가
+	 *
+	 * @param postId  조회하려는 게시글 ID
+	 * @param pageDTO 페이징을 위한 페이지 정보
+	 * @return 해당 댓글 페이지에 있는 최상위 댓글과 대댓글(자식댓글)들이 포함된 전체 댓글 리스트
+	 */
+	private List<CommentListResDTO> getAllCommentList(long postId, PageDTO pageDTO) {
+		// 최상위 댓글 조회
+		List<CommentListResDTO> topLevelComments = commentMapper.selectTopLevelCommentListWithPaging(pageDTO)
+				.stream()
+				.map(CommentListResDTO::of)
+				.toList();
+
+		// 최상위 댓글 ID 저장
+		List<Long> topParentIds = topLevelComments.stream()
+				.map(CommentListResDTO::getCommentId)
+				.toList();
+
+		// 전체 댓글 리스트 생성(최상위 댓글 + 대댓글 리스트)
+		List<CommentListResDTO> allComments = new ArrayList<>(topLevelComments);
+		if (!topParentIds.isEmpty()) {
+			List<CommentListResDTO> childComments = commentMapper.selectRepliesForTopLevelComments(postId, topParentIds)
+					.stream()
+					.map(CommentListResDTO::of)
+					.toList();
+
+			allComments.addAll(childComments);
+		}
+
+		// 이미지가 존재하는 댓글 -> 이미지 업데이트
+		allComments.forEach(comment -> {
+			List<ImageVO> commentImages = imageService.findCommentImagesByCommentId(comment.getCommentId());
+			comment.updateCommentImages(commentImages);
+		});
+		return allComments;
+	}
+
+	/**
+	 * 댓글 트리구조 생성
+	 *
+	 * @param comments 현재 게시글 댓글 리스트
+	 * @return 트리구조로 완성된 부모 댓글 리스트
+	 */
+	private List<CommentListResDTO> buildCommentTree(List<CommentListResDTO> comments) {
+		Map<Long, CommentListResDTO> commentMap = comments.stream()
+				.collect(Collectors.toMap(CommentListResDTO::getCommentId, comment -> comment));
+
+		List<CommentListResDTO> rootComments = new ArrayList<>();
+
+		// 부모 댓글 추가, 자식 댓글 리스트 추가
+		commentMap.values().forEach(comment -> {
+			if (comment.getParentId() == null) {
+				rootComments.add(comment);
+			} else {
+				CommentListResDTO parent = commentMap.get(comment.getParentId());
+				if (parent != null) {
+					parent.addReply(comment);
+				}
+			}
+		});
+
+		return rootComments;
 	}
 }

@@ -3,7 +3,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<li class="list-group-item">
+<li class="list-group-item" style="margin-left: ${requestScope.comment.depth * 20}px">
     <!-- 댓글 상단: 작성자, 내용, 수정/삭제 버튼 -->
     <div class="d-flex justify-content-between">
         <!-- 작성자 -->
@@ -13,7 +13,7 @@
 
         <!-- 내용 -->
         <div class="flex-grow-1 text-center">
-            ${comment.commentContent}
+            ${requestScope.comment.commentContent}
         </div>
 
         <!-- 수정/삭제 버튼 -->
@@ -88,14 +88,12 @@
                 class="d-flex flex-column align-items-center"></ul>
         </form>
     </div>
-
-    <!-- 대댓글 렌더링 -->
-    <c:if test="${not empty requestScope.comment.replies}">
-        <ul class="list-group mt-3">
-            <c:forEach var="reply" items="${requestScope.comment.replies}">
-                <c:set var="comment" value="${reply}" scope="request"/>
-                <jsp:include page="commentReply.jsp"/>
-            </c:forEach>
-        </ul>
-    </c:if>
 </li>
+
+<!-- 대댓글 렌더링 -->
+<c:if test="${not empty requestScope.comment.replies}">
+    <c:forEach var="reply" items="${requestScope.comment.replies}">
+        <c:set var="comment" value="${reply}" scope="request"/>
+        <jsp:include page="commentReply.jsp"/>
+    </c:forEach>
+</c:if>

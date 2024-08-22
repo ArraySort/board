@@ -21,6 +21,10 @@ public class CommentListResDTO {
 
 	private Long parentId;
 
+	private Long topParentId;
+
+	private Long depth;
+
 	private String userName;
 
 	private String commentContent;
@@ -48,6 +52,8 @@ public class CommentListResDTO {
 				.userId(vo.getUserId())
 				.postId(vo.getPostId())
 				.parentId(vo.getParentId())
+				.topParentId(vo.getTopParentId())
+				.depth(vo.getDepth())
 				.userName(vo.getUserName())
 				.commentContent(vo.getCommentContent())
 				.activateFlag(vo.getActivateFlag())

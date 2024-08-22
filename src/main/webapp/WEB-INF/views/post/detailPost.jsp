@@ -148,11 +148,18 @@
                 }
             });
 
-            document.querySelectorAll('.showReplyFormButton').forEach(button => {
-                button.addEventListener('click', function () {
-                    const replyForm = document.getElementById('replyForm-' + this.dataset.id);
-                    replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
-                });
+            // 대댓글 작성 폼
+            $('.showReplyFormButton').on('click', function () {
+                const replyForm = $('#replyForm-' + $(this).data('id'));
+                replyForm.toggle();
+            });
+
+            // 대댓글 리스트 토글
+            $('.toggleReplyButton').on('click', function () {
+                const replyList = $('#replyList-' + $(this).data('id'));
+                const isVisible = replyList.is(':visible');
+                replyList.toggle();
+                $(this).text(isVisible ? '대댓글 보기' : '대댓글 숨기기');
             });
 
             // 메세지 출력
@@ -361,16 +368,13 @@
                                 </div>
                             </div>
 
-                            <!-- 대댓글 렌더링 -->
-                            <ul class="list-group mt-3">
-                                <c:forEach var="reply" items="${comment.replies}">
-                                    <c:set var="comment" value="${reply}" scope="request"/>
-                                    <c:set var="currentUserId" value="${currentUserId}" scope="request"/>
-                                    <c:set var="boardId" value="${boardId}" scope="request"/>
-                                    <c:set var="postId" value="${postId}" scope="request"/>
-                                    <jsp:include page="commentReply.jsp"/>
-                                </c:forEach>
-                            </ul>
+                            <!-- 대댓글 토글 버튼 및 대댓글 리스트 -->
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-secondary toggleReplyButton"
+                                        data-id="${comment.commentId}">
+                                    대댓글 보기
+                                </button>
+                            </div>
 
                             <!-- 대댓글 작성 폼 -->
                             <div class="mt-3">
@@ -460,6 +464,18 @@
                             </div>
                         </li>
                     </c:if>
+
+                    <div id="replyList-${comment.commentId}" style="display: none;">
+                        <ul class="list-group">
+                            <c:forEach var="reply" items="${comment.replies}">
+                                <c:set var="comment" value="${reply}" scope="request"/>
+                                <c:set var="currentUserId" value="${currentUserId}" scope="request"/>
+                                <c:set var="boardId" value="${boardId}" scope="request"/>
+                                <c:set var="postId" value="${postId}" scope="request"/>
+                                <jsp:include page="commentReply.jsp"/>
+                            </c:forEach>
+                        </ul>
+                    </div>
                 </c:forEach>
             </ul>
         </div>
