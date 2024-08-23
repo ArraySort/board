@@ -8,6 +8,7 @@ import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
 import arraysort.project.board.app.exception.CommentNotFoundException;
 import arraysort.project.board.app.exception.InvalidPrincipalException;
+import arraysort.project.board.app.history.service.CommentHistoryService;
 import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.PageDTO;
@@ -37,6 +38,8 @@ public class CommentService {
 
 	private final ImageService imageService;
 
+	private final CommentHistoryService commentHistoryService;
+
 	// 댓글 추가
 	@Transactional
 	public void addComment(CommentAddReqDTO dto, long boardId, long postId) {
@@ -52,6 +55,9 @@ public class CommentService {
 
 		// 이미지 업로드
 		handleCommentImages(dto, boardDetail, vo);
+
+		// 댓글 기록 추가(이미지 포함)
+		commentHistoryService.addCommentHistory(vo);
 	}
 
 	// 댓글 리스트 조회(페이징)
@@ -89,6 +95,9 @@ public class CommentService {
 
 		CommentVO vo = CommentVO.updateOf(dto, postId);
 		commentMapper.updateComment(vo);
+
+		// 댓글 기록 추가(이미지 포함)
+		commentHistoryService.addCommentHistory(vo);
 	}
 
 	// 댓글 삭제
