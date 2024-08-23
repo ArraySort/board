@@ -68,7 +68,7 @@ public class CommentListResDTO {
 				.createdAt(vo.getCreatedAt())
 				.updatedAt(vo.getUpdatedAt())
 				.deleteFlag(vo.getDeleteFlag())
-				.commentImages(vo.getCommentImages() != null ? vo.getCommentImages() : new ArrayList<>())
+				.commentImages(vo.getCommentImages())
 				.build();
 	}
 
