@@ -1,6 +1,7 @@
 package arraysort.project.board.app.comment.domain;
 
 import arraysort.project.board.app.common.enums.Flag;
+import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Builder
@@ -27,7 +29,7 @@ public class CommentVO {
 
 	private Long parentId;    // 댓글 부모 ID
 
-	private Long depth;    // 댓글 깊이
+	private int depth;    // 댓글 깊이
 
 	private String userName;    // 유저 이름
 
@@ -46,6 +48,8 @@ public class CommentVO {
 	private Date updatedAt;    // 최종 수정 날짜
 
 	private Flag deleteFlag;    // 삭제여부
+
+	private List<ImageVO> commentImages;
 
 	// 댓글 추가
 	public static CommentVO insertOf(CommentAddReqDTO dto, long postId) {

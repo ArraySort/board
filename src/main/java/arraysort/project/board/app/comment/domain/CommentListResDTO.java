@@ -15,15 +15,17 @@ public class CommentListResDTO {
 
 	private long commentId;
 
+	private String adminId;
+
 	private String userId;
 
 	private long postId;
 
-	private Long parentId;
-
 	private Long topParentId;
 
-	private Long depth;
+	private Long parentId;
+
+	private int depth;
 
 	private String userName;
 
@@ -51,10 +53,11 @@ public class CommentListResDTO {
 	public static CommentListResDTO of(CommentVO vo) {
 		return CommentListResDTO.builder()
 				.commentId(vo.getCommentId())
+				.adminId(vo.getAdminId())
 				.userId(vo.getUserId())
 				.postId(vo.getPostId())
-				.parentId(vo.getParentId())
 				.topParentId(vo.getTopParentId())
+				.parentId(vo.getParentId())
 				.depth(vo.getDepth())
 				.userName(vo.getUserName())
 				.commentContent(vo.getCommentContent())
@@ -65,12 +68,8 @@ public class CommentListResDTO {
 				.createdAt(vo.getCreatedAt())
 				.updatedAt(vo.getUpdatedAt())
 				.deleteFlag(vo.getDeleteFlag())
+				.commentImages(vo.getCommentImages() != null ? vo.getCommentImages() : new ArrayList<>())
 				.build();
-	}
-
-	// 댓글 이미지 리스트 업데이트
-	public void updateCommentImages(List<ImageVO> commentImages) {
-		this.commentImages = commentImages;
 	}
 
 	// 자식 댓글 리스트 추가

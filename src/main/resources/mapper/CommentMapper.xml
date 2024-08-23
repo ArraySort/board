@@ -26,37 +26,13 @@
     </insert>
 
     <!-- 댓글 리스트 조회(최상위 댓글, 페이징) -->
-    <select id="selectTopLevelCommentListWithPaging" resultType="arraysort.project.board.app.comment.domain.CommentVO">
+    <select id="selectTopLevelCommentListWithPaging" resultMap="commentWithImagesResultMap">
         select c.comment_id,
                c.admin_id,
                c.user_id,
                c.post_id,
-               c.parent_id,
-               u.user_name,
-               c.comment_content,
-               c.activate_flag,
-               c.adopted_flag,
-               c.created_by,
-               c.updated_by,
-               c.created_at,
-               c.updated_at,
-               c.delete_flag
-        from comment c
-        inner join board.user u on c.user_id = u.user_id
-        where c.post_id = #{postId} and c.delete_flag = 'N' and c.parent_id is null
-        order by c.adopted_flag desc,
-                 c.created_at desc
-        limit #{pageRowCount} offset #{offset}
-    </select>
-
-    <!-- 댓글 리스트 조회(모든 대댓글) -->
-    <select id="selectRepliesForTopLevelComments" resultType="arraysort.project.board.app.comment.domain.CommentVO">
-        select c.comment_id,
-               c.admin_id,
-               c.user_id,
-               c.post_id,
-               c.parent_id,
                c.top_parent_id,
+               c.parent_id,
                c.depth,
                u.user_name,
                c.comment_content,
@@ -66,9 +42,61 @@
                c.updated_by,
                c.created_at,
                c.updated_at,
-               c.delete_flag
+               c.delete_flag,
+               i.image_id,
+               i.original_name,
+               i.saved_name,
+               i.size,
+               i.image_path,
+               i.created_by,
+               i.created_at,
+               i.delete_flag,
+               i.created_by as image_created_by,
+               i.created_at as image_created_at,
+               i.delete_flag as image_delete_flag
         from comment c
-        inner join board.user u on c.user_id = u.user_id
+        inner join user u on c.user_id = u.user_id
+        left join comment_image ci on c.comment_id = ci.comment_id
+        left join image i on ci.image_id = i.image_id
+        where c.post_id = #{postId} and c.delete_flag = 'N' and c.parent_id is null
+        order by c.adopted_flag desc,
+                 c.created_at desc
+        limit #{pageRowCount} offset #{offset}
+    </select>
+
+    <!-- 댓글 리스트 조회(모든 대댓글) -->
+    <select id="selectRepliesForTopLevelComments" resultMap="commentWithImagesResultMap">
+        select c.comment_id,
+               c.admin_id,
+               c.user_id,
+               c.post_id,
+               c.top_parent_id,
+               c.parent_id,
+               c.depth,
+               u.user_name,
+               c.comment_content,
+               c.activate_flag,
+               c.adopted_flag,
+               c.created_by,
+               c.updated_by,
+               c.created_at,
+               c.updated_at,
+               c.delete_flag,
+               i.image_id,
+               i.original_name,
+               i.saved_name,
+               i.size,
+               i.image_path,
+               i.created_by,
+               i.created_at,
+               i.delete_flag,
+               i.created_by as image_created_by,
+               i.created_at as image_created_at,
+               i.delete_flag as image_delete_flag
+        from comment c
+        inner join user u on c.user_id = u.user_id
+        left join comment_image ci on c.comment_id = ci.comment_id
+        left join image i on ci.image_id = i.image_id
         where c.post_id = #{postId} and c.delete_flag = 'N' and c.top_parent_id in
             <foreach item="id" collection="topParentIds" open="(" separator="," close=")">
                 #{id}
@@ -147,7 +175,7 @@
     <!-- 댓글 채택 여부 업데이트 -->
     <update id="updateIsAdopted">
         update comment
-        set adopted_flag = #{dto.adoptedFlag}
+        set adopted_flag = 'Y'
         where comment_id = #{dto.commentId} and post_id = #{postId}
     </update>
 
@@ -157,4 +185,38 @@
         set adopted_flag = 'N'
         where post_id = #{postId} and adopted_flag = 'Y'
     </update>
+
+
+    <!-- 댓글과 이미지 매핑 정의 -->
+    <resultMap id="commentWithImagesResultMap" type="arraysort.project.board.app.comment.domain.CommentVO">
+        <id property="commentId" column="comment_id"/>
+        <result property="adminId" column="admin_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="postId" column="post_id"/>
+        <result property="topParentId" column="top_parent_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="depth" column="depth"/>
+        <result property="userName" column="user_name"/>
+        <result property="commentContent" column="comment_content"/>
+        <result property="activateFlag" column="activate_flag"/>
+        <result property="adoptedFlag" column="adopted_flag"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="updatedBy" column="updated_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="deleteFlag" column="delete_flag"/>
+
+        <!-- 이미지 리스트 매핑 -->
+        <collection property="commentImages" ofType="arraysort.project.board.app.image.domain.ImageVO">
+            <id property="imageId" column="image_id"/>
+            <result property="originalName" column="original_name"/>
+            <result property="savedName" column="saved_name"/>
+            <result property="size" column="size"/>
+            <result property="imagePath" column="image_path"/>
+            <result property="createdBy" column="image_created_by"/>
+            <result property="createdAt" column="image_created_at"/>
+            <result property="deleteFlag" column="image_delete_flag"/>
+        </collection>
+    </resultMap>
+
 </mapper>

@@ -2,13 +2,17 @@ package arraysort.project.board.app.image.domain;
 
 import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.utils.UserUtil;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ImageVO {
 
 	private Long imageId;       // 이미지 ID

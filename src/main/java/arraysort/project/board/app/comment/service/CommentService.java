@@ -20,7 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,11 +66,8 @@ public class CommentService {
 		int totalTopLevelCommentCount = commentMapper.selectTotalTopLevelCommentCount(dto, postId);
 		PageDTO pageDTO = new PageDTO(totalTopLevelCommentCount, dto, boardId, postId);
 
-		// 게시글 댓글 한 페이지에 존재하는 댓글 가져오기(이미지 업로드 포함)
-		List<CommentListResDTO> allComments = getAllCommentList(postId, pageDTO);
-
 		// 대댓글 렌더링을 위한 트리구조 변환
-		List<CommentListResDTO> commentTree = buildCommentTree(allComments);
+		List<CommentListResDTO> commentTree = buildCommentTree(getAllCommentList(postId, pageDTO));
 
 		return new PageResDTO<>(totalTopLevelCommentCount, dto.getCommentPage(), commentTree);
 	}
@@ -81,7 +82,7 @@ public class CommentService {
 		postComponent.getValidatedPost(postId, boardId);
 
 		// 댓글 검증(존재, 상태 검증)
-		validateComment(dto);
+		validateComment(dto.getCommentId());
 
 		// 댓글 이미지 업데이트
 		handleCommentImages(dto);
@@ -100,7 +101,7 @@ public class CommentService {
 		postComponent.getValidatedPost(postId, boardId);
 
 		// 댓글 검증(존재, 상태 검증)
-		validateComment(dto);
+		validateComment(dto.getCommentId());
 
 		// 하위 댓글 삭제
 		removeRelies(dto.getCommentId(), boardDetail);
@@ -154,37 +155,16 @@ public class CommentService {
 	}
 
 	/**
-	 * 댓글 수정 전 검증
+	 * 댓글 검증
 	 * 1. 댓글 존재 검증
 	 * 2. 댓글 상태 검증
 	 * 3. 댓글 소유자 검증
 	 *
-	 * @param dto 수정하려는 댓글 정보
+	 * @param commentId 수정하려는 댓글 ID
 	 */
-	private void validateComment(CommentEditReqDTO dto) {
+	private void validateComment(long commentId) {
 		// 1. 댓글 존재 검증
-		CommentVO commentDetail = commentMapper.selectCommentById(dto.getCommentId())
-				.orElseThrow(CommentNotFoundException::new);
-
-		// 2. 댓글 상태 검증
-		if (commentDetail.getActivateFlag() == Flag.N || commentDetail.getDeleteFlag() == Flag.Y) {
-			throw new CommentNotFoundException();
-		}
-
-		validateCommentOwnership(commentDetail);
-	}
-
-	/**
-	 * 댓글 삭제 전 검증
-	 * 1. 댓글 존재 검증
-	 * 2. 댓글 상태 검증
-	 * 3. 댓글 소유자 검증
-	 *
-	 * @param dto 삭제하려는 댓글 정보
-	 */
-	private void validateComment(CommentDeleteReqDTO dto) {
-		// 1. 댓글 존재 검증
-		CommentVO commentDetail = commentMapper.selectCommentById(dto.getCommentId())
+		CommentVO commentDetail = commentMapper.selectCommentById(commentId)
 				.orElseThrow(CommentNotFoundException::new);
 
 		// 2. 댓글 상태 검증
@@ -201,7 +181,7 @@ public class CommentService {
 	 * @param commentDetail 현재 수정/삭제 하려는 댓글의 세부 정보
 	 */
 	private void validateCommentOwnership(CommentVO commentDetail) {
-		if (!Objects.equals(commentDetail.getUserId(), UserUtil.getCurrentLoginUserId())) {
+		if (UserUtil.isNotCurrentUserOwner(commentDetail.getUserId())) {
 			throw new InvalidPrincipalException("본인이 작성한 댓글만 수정/삭제가 가능합니다.");
 		}
 	}
@@ -239,7 +219,9 @@ public class CommentService {
 	 * @param dto 수정되는 게시글 정보(사용자 입력)
 	 */
 	private void handleCommentImages(CommentEditReqDTO dto) {
-		boolean addedCommentImageCheck = dto.getAddedCommentImages().stream().anyMatch(MultipartFile::isEmpty);
+		boolean addedCommentImageCheck = dto.getAddedCommentImages()
+				.stream()
+				.anyMatch(MultipartFile::isEmpty);
 
 		int addedCommentImageCount = addedCommentImageCheck ? 0 : dto.getAddedCommentImages().size();
 
@@ -293,12 +275,13 @@ public class CommentService {
 				.map(CommentListResDTO::of)
 				.toList();
 
-		Map<Long, CommentListResDTO> commentMap = allComments.stream()
-				.collect(Collectors.toMap(CommentListResDTO::getCommentId, comment -> comment));
+		Map<Long, CommentListResDTO> commentMap = allComments
+				.stream()
+				.collect(Collectors.toMap(CommentListResDTO::getCommentId, Function.identity()));
 
 		// 최상위 부모 댓글 ID와 depth 계산
 		Long topParentId = dto.getParentId() == null ? null : findCommentTopParentId(commentMap, dto.getParentId());
-		long depth = dto.getParentId() == null ? 0L : findCommentDepth(commentMap, dto.getParentId()) + 1;
+		int depth = dto.getParentId() == null ? 1 : findCommentDepth(commentMap, dto.getParentId());
 
 		if (depth > 6) {
 			throw new InvalidPrincipalException("대댓글은 최대 5개까지 작성 가능합니다.");
@@ -329,8 +312,8 @@ public class CommentService {
 	 * @param parentId   댓글 부모 ID
 	 * @return 댓글 depth;
 	 */
-	private Long findCommentDepth(Map<Long, CommentListResDTO> commentMap, Long parentId) {
-		Long depth = 0L;
+	private int findCommentDepth(Map<Long, CommentListResDTO> commentMap, Long parentId) {
+		int depth = 1;
 		while (parentId != null) {
 			CommentListResDTO parentComment = commentMap.get(parentId);
 			if (parentComment == null) {
@@ -351,19 +334,22 @@ public class CommentService {
 	 * @return 해당 댓글 페이지에 있는 최상위 댓글과 대댓글(자식댓글)들이 포함된 전체 댓글 리스트
 	 */
 	private List<CommentListResDTO> getAllCommentList(long postId, PageDTO pageDTO) {
-		// 최상위 댓글 조회
+		// 최상위 댓글 조회(이미지 포함)
 		List<CommentListResDTO> topLevelComments = commentMapper.selectTopLevelCommentListWithPaging(pageDTO)
 				.stream()
 				.map(CommentListResDTO::of)
 				.toList();
 
 		// 최상위 댓글 ID 저장
-		List<Long> topParentIds = topLevelComments.stream()
+		List<Long> topParentIds = topLevelComments
+				.stream()
 				.map(CommentListResDTO::getCommentId)
 				.toList();
 
 		// 전체 댓글 리스트 생성(최상위 댓글 + 대댓글 리스트)
 		List<CommentListResDTO> allComments = new ArrayList<>(topLevelComments);
+
+		// 최상위 댓글 + 대댓글 리스트 추가(이미지 포함)
 		if (!topParentIds.isEmpty()) {
 			List<CommentListResDTO> childComments = commentMapper.selectRepliesForTopLevelComments(postId, topParentIds)
 					.stream()
@@ -372,12 +358,6 @@ public class CommentService {
 
 			allComments.addAll(childComments);
 		}
-
-		// 이미지가 존재하는 댓글 -> 이미지 업데이트
-		allComments.forEach(comment -> {
-			List<ImageVO> commentImages = imageService.findCommentImagesByCommentId(comment.getCommentId());
-			comment.updateCommentImages(commentImages);
-		});
 
 		return allComments;
 	}
@@ -390,7 +370,8 @@ public class CommentService {
 	 */
 	private List<CommentListResDTO> buildCommentTree(List<CommentListResDTO> comments) {
 		// 쿼리 순서 보장
-		Map<Long, CommentListResDTO> commentMap = comments.stream()
+		Map<Long, CommentListResDTO> commentMap = comments
+				.stream()
 				.collect(Collectors.toMap(CommentListResDTO::getCommentId,
 						comment -> comment,
 						(existing, replacement) -> existing,
@@ -455,8 +436,7 @@ public class CommentService {
 		}
 
 		// 3. 채택하려는 댓글이 게시글 소유자거나 인증되지 않은 사용자 인 경우, 채택하려는 사용자가 게시글 소유자가 아닌 경우
-		if (Objects.equals(commentDetail.getUserId(), UserUtil.getCurrentLoginUserId())
-				|| !UserUtil.isAuthenticatedUser() || !Objects.equals(postDetail.getUserId(), UserUtil.getCurrentLoginUserId())) {
+		if (UserUtil.isCurrentUserOwner(commentDetail.getUserId()) || UserUtil.isNotAuthenticatedUser() || UserUtil.isNotCurrentUserOwner(postDetail.getUserId())) {
 			throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
 		}
 	}

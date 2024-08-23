@@ -22,10 +22,10 @@ public class CommentAddReqDTO {
 
 	private Long parentId;
 
-	private Long depth;
+	private Integer depth;
 
 	// 최상위 댓글 ID, 댓글 depth 설정
-	public void setCommentInfo(Long topParentId, Long depth) {
+	public void setCommentInfo(Long topParentId, int depth) {
 		this.topParentId = topParentId;
 		this.depth = depth;
 	}

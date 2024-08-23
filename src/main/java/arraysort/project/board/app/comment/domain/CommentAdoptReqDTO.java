@@ -1,6 +1,6 @@
 package arraysort.project.board.app.comment.domain;
 
-import arraysort.project.board.app.common.enums.Flag;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,8 +8,6 @@ import lombok.Getter;
 @Builder
 public class CommentAdoptReqDTO {
 
+	@NotNull(message = "채택하려는 댓글이 존재하지 않습니다.")
 	private Long commentId;
-
-	private Flag adoptedFlag;
-
 }

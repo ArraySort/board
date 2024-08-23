@@ -23,5 +23,4 @@ public class CommentEditReqDTO {
 	private List<MultipartFile> addedCommentImages;
 
 	private List<Long> removedCommentImageIds;
-
 }

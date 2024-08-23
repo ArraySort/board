@@ -381,7 +381,6 @@
                                 </div>
 
                                 <!-- 수정/삭제 버튼 -->
-
                                 <div class="ms-3 d-flex align-items-center">
                                     <c:if test="${currentUserId == comment.userId}">
                                         <button class="btn btn-sm btn-outline-primary me-2 commentEditButton"
@@ -394,12 +393,11 @@
                                             <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
                                         </form>
                                     </c:if>
-                                    <c:if test="${currentUserId != comment.userId && comment.parentId == null}">
+                                    <c:if test="${currentUserId != comment.userId && comment.parentId == null && currentUserId == postDetail.userId}">
                                         <form method="post" action="/${boardId}/post/detail/${postId}/comment/adopt"
                                               class="m-0">
                                             <sec:csrfInput/>
                                             <input type="hidden" name="commentId" value="${comment.commentId}"/>
-                                            <input type="hidden" name="adoptedFlag" value="Y"/>
                                             <button type="submit" class="btn btn-sm btn-outline-dark me-2">채택</button>
                                         </form>
                                     </c:if>
