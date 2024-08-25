@@ -40,7 +40,10 @@
                p.views,
                p.private_flag,
                p.created_at,
-               p.updated_at
+               p.updated_at,
+               (select count(*)
+                from comment cmt
+                where cmt.post_id = p.post_id and cmt.delete_flag ='N') as comment_count
         from post p
         inner join user u on p.user_id = u.user_id
         inner join category c on p.category_id = c.category_id
@@ -120,7 +123,10 @@
                p.delete_flag,
                p.created_at,
                p.updated_at,
-               p.views
+               p.views,
+               (select count(*)
+                from comment cmt
+                where cmt.post_id = p.post_id and cmt.delete_flag ='N') as comment_count
         from post p
         inner join user u on p.user_id = u.user_id
         inner join category c on p.category_id = c.category_id

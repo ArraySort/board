@@ -40,6 +40,8 @@ public class PostDetailResDTO {
 
 	private long views;
 
+	private long commentCount;
+
 	// 게시글 세부 조회
 	public static PostDetailResDTO of(PostVO vo) {
 		return builder()
@@ -58,6 +60,7 @@ public class PostDetailResDTO {
 				.createdAt(vo.getCreatedAt())
 				.updatedAt(vo.getUpdatedAt())
 				.views(vo.getViews())
+				.commentCount(vo.getCommentCount())
 				.build();
 	}
 }

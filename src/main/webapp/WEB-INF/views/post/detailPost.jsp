@@ -337,6 +337,7 @@
         <h3>작성 시간 : <fmt:formatDate value="${postDetail.createdAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
         <h3>수정 시간 : <fmt:formatDate value="${postDetail.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
         <h3>조회수 : ${postDetail.views}</h3>
+        <h3>댓글수 : ${postDetail.commentCount}</h3>
 
         <!-- 댓글 추가 폼 시작 -->
         <div class="d-flex justify-content-center m-5">
