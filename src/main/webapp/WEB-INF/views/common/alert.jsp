@@ -10,20 +10,23 @@
             alert(message);
         }
 
-        if (request === "SIGNUP") {
-            window.location.href = "/home";
-        } else if (request === "ADD_POST") {
-            window.location.href = "/${boardId}/post";
-        } else if (request === "MODIFY_POST") {
-            window.location.href = "/${boardId}/post/detail/${postId}";
-        } else if (request === "DELETE_POST") {
-            window.location.href = "/${boardId}/post";
-        } else if (request === "ADD_TEMP") {
-            window.location.href = "/${boardId}/post";
-        } else if (request === "PUBLISH_POST") {
-            window.location.href = "/${boardId}/post/temp";
-        } else if (request === "DELETE_TEMP") {
-            window.location.href = "/${boardId}/post/temp";
+        // POST 요청 경로
+        const requestRoutes = {
+            "SIGNUP": "/home",
+            "ADD_POST": "/${boardId}/post",
+            "MODIFY_POST": "/${boardId}/post/detail/${postId}",
+            "DELETE_POST": "/${boardId}/post",
+            "ADD_TEMP": "/${boardId}/post",
+            "PUBLISH_POST": "/${boardId}/post/temp",
+            "DELETE_TEMP": "/${boardId}/post/temp",
+            "ADD_COMMENT": "/${boardId}/post/detail/${postId}",
+            "MODIFY_COMMENT": "/${boardId}/post/detail/${postId}",
+            "DELETE_COMMENT": "/${boardId}/post/detail/${postId}",
+            "ADOPT_COMMENT": "/${boardId}/post/detail/${postId}"
+        }
+
+        if (requestRoutes[request]) {
+            window.location.href = requestRoutes[request];
         } else {
             window.history.back();
         }

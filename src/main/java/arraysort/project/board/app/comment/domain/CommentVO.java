@@ -49,7 +49,7 @@ public class CommentVO {
 
 	private Flag deleteFlag;    // 삭제여부
 
-	private List<ImageVO> commentImages;
+	private List<ImageVO> commentImages;    // 댓글 이미지
 
 	// 댓글 추가
 	public static CommentVO insertOf(CommentAddReqDTO dto, long postId) {
@@ -68,6 +68,7 @@ public class CommentVO {
 	// 댓글 수정
 	public static CommentVO updateOf(CommentEditReqDTO dto, long postId) {
 		return CommentVO.builder()
+				.userId(UserUtil.getCurrentLoginUserId())
 				.commentId(dto.getCommentId())
 				.postId(postId)
 				.commentContent(dto.getCommentContent())
