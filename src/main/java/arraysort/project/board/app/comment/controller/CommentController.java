@@ -2,7 +2,6 @@ package arraysort.project.board.app.comment.controller;
 
 import arraysort.project.board.app.comment.domain.CommentAddReqDTO;
 import arraysort.project.board.app.comment.domain.CommentAdoptReqDTO;
-import arraysort.project.board.app.comment.domain.CommentDeleteReqDTO;
 import arraysort.project.board.app.comment.domain.CommentEditReqDTO;
 import arraysort.project.board.app.comment.service.CommentService;
 import arraysort.project.board.app.utils.ControllerUtil;
@@ -10,10 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/{boardId}/post/detail/{postId}/comment")
@@ -42,8 +38,8 @@ public class CommentController {
 
 	// 댓글 삭제 요청
 	@PostMapping("/delete")
-	public String processRemoveComment(@PathVariable long boardId, @PathVariable long postId, @Valid @ModelAttribute CommentDeleteReqDTO dto, Model model) {
-		commentService.removeComment(dto, boardId, postId);
+	public String processRemoveComment(@PathVariable long boardId, @PathVariable long postId, @RequestParam long commentId, Model model) {
+		commentService.removeComment(boardId, postId, commentId);
 
 		ControllerUtil.addMessageAndRequest(model, "댓글이 삭제 되었습니다.", "DELETE_COMMENT");
 		return "common/alert";

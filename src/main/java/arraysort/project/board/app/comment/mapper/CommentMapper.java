@@ -39,6 +39,9 @@ public interface CommentMapper {
 	// 댓글 삭제
 	void deleteComment(long commentId);
 
+	// 댓글 삭제(게시글 ID)
+	void deleteCommentsByPostId(long postId);
+
 	// 댓글 채택 여부 업데이트
 	void updateIsAdopted(CommentAdoptReqDTO dto, long postId);
 

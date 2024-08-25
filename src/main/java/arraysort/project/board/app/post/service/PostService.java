@@ -2,6 +2,7 @@ package arraysort.project.board.app.post.service;
 
 import arraysort.project.board.app.board.domain.BoardVO;
 import arraysort.project.board.app.category.domain.CategoryVO;
+import arraysort.project.board.app.comment.service.CommentService;
 import arraysort.project.board.app.common.enums.BoardType;
 import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.component.PostComponent;
@@ -37,6 +38,8 @@ public class PostService {
 	private final PostHistoryService postHistoryService;
 
 	private final PostComponent postComponent;
+
+	private final CommentService commentService;
 
 	// 게시글 추가
 	@Transactional
@@ -132,6 +135,9 @@ public class PostService {
 		if (boardDetail.getBoardType() == BoardType.GALLERY) {
 			imageService.removeThumbnailImage(postId);
 		}
+
+		// 댓글 삭제(이미지 포함)
+		commentService.removeCommentByPostRemove(boardDetail, boardId, postId);
 
 		// 게시물 삭제
 		postMapper.deletePost(postId);

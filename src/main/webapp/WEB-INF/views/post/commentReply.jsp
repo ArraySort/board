@@ -68,6 +68,7 @@
               id="replyForm-${requestScope.comment.commentId}"
               class="mt-2 replyForm" style="display:none;">
             <sec:csrfInput/>
+            <input name="depth" type="hidden" value="0"/>
             <input type="hidden" name="parentId" value="${requestScope.comment.commentId}"/>
             <div class="input-group">
                 <!-- 이미지 업로드 버튼 -->

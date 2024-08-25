@@ -102,7 +102,7 @@ public class CommentService {
 
 	// 댓글 삭제
 	@Transactional
-	public void removeComment(CommentDeleteReqDTO dto, long boardId, long postId) {
+	public void removeComment(long boardId, long postId, long commentId) {
 		// 게시판 검증(존재, 상태 검증)
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 
@@ -110,15 +110,29 @@ public class CommentService {
 		postComponent.getValidatedPost(postId, boardId);
 
 		// 댓글 검증(존재, 상태 검증)
-		validateComment(dto.getCommentId());
+		validateComment(commentId);
 
 		// 하위 댓글 삭제
-		removeRelies(dto.getCommentId(), boardDetail);
+		removeRelies(commentId, boardDetail);
 
 		// 댓글 이미지 삭제 처리
-		handleCommentImageRemove(dto.getCommentId(), boardDetail);
+		handleCommentImageRemove(commentId, boardDetail);
 
-		commentMapper.deleteComment(dto.getCommentId());
+		commentMapper.deleteComment(commentId);
+	}
+
+	// 게시글 삭제 시 게시글 내부 댓글 삭제(이미지 포함)
+	@Transactional
+	public void removeCommentByPostRemove(BoardVO boardDetail, long boardId, long postId) {
+		postComponent.getValidatedPost(postId, boardId);
+
+		// 게시글 내부 댓글 전부 삭제
+		commentMapper.deleteCommentsByPostId(postId);
+
+		// 게시글 내부 댓글 이미지 삭제
+		commentMapper.selectCommentListByPostId(postId).stream()
+				.map(CommentVO::getCommentId)
+				.forEach(commentId -> handleCommentImageRemove(commentId, boardDetail));
 	}
 
 	// 댓글 채택
@@ -413,7 +427,7 @@ public class CommentService {
 	private void removeRelies(Long commentId, BoardVO boardDetail) {
 		List<Long> childCommentsIds = commentMapper.selectRepliesIdByParentCommentId(commentId);
 
-		if (childCommentsIds == null || childCommentsIds.isEmpty()) {
+		if (childCommentsIds == null) {
 			return;
 		}
 
