@@ -161,35 +161,40 @@
     <!-- 댓글 수정 -->
     <update id="updateComment" parameterType="arraysort.project.board.app.comment.domain.CommentVO">
         update comment
-        set comment_content = #{commentContent}
+        set comment_content = #{commentContent},
+            updated_by = #{updatedBy}
         where comment_id = #{commentId}
     </update>
 
     <!-- 댓글 삭제 -->
-    <update id="deleteComment" parameterType="long">
+    <update id="deleteComment">
         update comment
-        set delete_flag = 'Y'
+        set delete_flag = 'Y',
+            updated_by = #{userId}
         where comment_id = #{commentId}
     </update>
 
     <!-- 댓글 삭제(게시글 ID) -->
-    <update id="deleteCommentsByPostId" parameterType="long">
+    <update id="deleteCommentsByPostId">
         update comment
-        set delete_flag = 'Y'
+        set delete_flag = 'Y',
+            updated_by = #{userId}
         where post_id = #{postId}
     </update>
 
     <!-- 댓글 채택 여부 업데이트 -->
     <update id="updateIsAdopted">
         update comment
-        set adopted_flag = 'Y'
-        where comment_id = #{dto.commentId} and post_id = #{postId}
+        set adopted_flag = 'Y',
+            updated_by = #{userId}
+        where comment_id = #{commentId} and post_id = #{postId}
     </update>
 
     <!-- 댓글 채택 여부 초기화 -->
-    <update id="resetAdoptedComment" parameterType="long">
+    <update id="resetAdoptedComment">
         update comment
-        set adopted_flag = 'N'
+        set adopted_flag = 'N',
+            updated_by = #{userId}
         where post_id = #{postId} and adopted_flag = 'Y'
     </update>
 

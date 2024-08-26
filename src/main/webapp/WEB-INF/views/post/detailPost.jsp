@@ -343,7 +343,6 @@
         <div class="d-flex justify-content-center m-5">
             <form method="post" action="/${boardId}/post/detail/${postId}/comment/add" enctype="multipart/form-data">
                 <sec:csrfInput/>
-                <input name="depth" type="hidden" value="0"/>
 
                 <div class="input-group">
                     <!-- 이미지 업로드 버튼 -->

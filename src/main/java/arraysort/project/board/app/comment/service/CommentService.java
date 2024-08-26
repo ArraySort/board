@@ -47,10 +47,12 @@ public class CommentService {
 		// 추가 전 검증
 		validateAdd(boardDetail, boardId, postId);
 
-		// 댓글 정보 처리(최상위 댓글 ID, 댓글 depth 저장)
-		handleCommentInfo(dto, postId);
-
 		CommentVO vo = CommentVO.insertOf(dto, postId);
+
+		// 댓글 정보 처리(최상위 댓글 ID, 댓글 depth 저장)
+		handleCommentInfo(vo, postId);
+
+		// 댓글 추가
 		commentMapper.insertComment(vo);
 
 		// 이미지 업로드
@@ -93,6 +95,7 @@ public class CommentService {
 		// 댓글 이미지 업데이트
 		handleCommentImages(dto);
 
+		// 댓글 수정
 		CommentVO vo = CommentVO.updateOf(dto, postId);
 		commentMapper.updateComment(vo);
 
@@ -118,7 +121,8 @@ public class CommentService {
 		// 댓글 이미지 삭제 처리
 		handleCommentImageRemove(commentId, boardDetail);
 
-		commentMapper.deleteComment(commentId);
+		// 댓글 삭제
+		commentMapper.deleteComment(commentId, UserUtil.getCurrentLoginUserId());
 	}
 
 	// 게시글 삭제 시 게시글 내부 댓글 삭제(이미지 포함)
@@ -127,7 +131,7 @@ public class CommentService {
 		postComponent.getValidatedPost(postId, boardId);
 
 		// 게시글 내부 댓글 전부 삭제
-		commentMapper.deleteCommentsByPostId(postId);
+		commentMapper.deleteCommentsByPostId(postId, UserUtil.getCurrentLoginUserId());
 
 		// 게시글 내부 댓글 이미지 삭제
 		commentMapper.selectCommentListByPostId(postId).stream()
@@ -146,10 +150,11 @@ public class CommentService {
 		validateAdoptComment(dto, postComponent.getValidatedPost(postId, boardId));
 
 		// 기존 댓글 채택 초기화(게시글 내부)
-		commentMapper.resetAdoptedComment(postId);
+		commentMapper.resetAdoptedComment(postId, UserUtil.getCurrentLoginUserId());
 
 		// 댓글 채택
-		commentMapper.updateIsAdopted(dto, postId);
+		CommentVO vo = CommentVO.adoptOf(dto, postId);
+		commentMapper.updateIsAdopted(vo);
 	}
 
 	/**
@@ -289,10 +294,10 @@ public class CommentService {
 	 * 댓글 정보 처리
 	 * 추가되는 댓글에 대한 최상위 부모 댓글 ID, depth 설정
 	 *
-	 * @param dto    추가되는 댓글 정보
+	 * @param vo     추가되는 댓글 VO 객체
 	 * @param postId 댓글이 추가되는 게시글 ID
 	 */
-	private void handleCommentInfo(CommentAddReqDTO dto, long postId) {
+	private void handleCommentInfo(CommentVO vo, long postId) {
 		List<CommentListResDTO> allComments = commentMapper.selectCommentListByPostId(postId)
 				.stream()
 				.map(CommentListResDTO::of)
@@ -303,14 +308,14 @@ public class CommentService {
 				.collect(Collectors.toMap(CommentListResDTO::getCommentId, Function.identity()));
 
 		// 최상위 부모 댓글 ID와 depth 계산
-		Long topParentId = dto.getParentId() == null ? null : findCommentTopParentId(commentMap, dto.getParentId());
-		int depth = dto.getParentId() == null ? 1 : findCommentDepth(commentMap, dto.getParentId());
+		Long topParentId = vo.getParentId() == null ? null : findCommentTopParentId(commentMap, vo.getParentId());
+		int depth = vo.getParentId() == null ? 1 : findCommentDepth(commentMap, vo.getParentId());
 
 		if (depth > 6) {
 			throw new InvalidPrincipalException("대댓글은 최대 5개까지 작성 가능합니다.");
 		}
 
-		dto.setCommentInfo(topParentId, depth);
+		vo.setCommentInfo(topParentId, depth);
 	}
 
 	/**
@@ -435,7 +440,7 @@ public class CommentService {
 
 		handleCommentImageRemove(commentId, boardDetail);
 
-		commentMapper.deleteComment(commentId);
+		commentMapper.deleteComment(commentId, UserUtil.getCurrentLoginUserId());
 	}
 
 	/**

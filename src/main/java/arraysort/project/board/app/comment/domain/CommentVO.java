@@ -56,9 +56,7 @@ public class CommentVO {
 		return CommentVO.builder()
 				.userId(UserUtil.getCurrentLoginUserId())
 				.postId(postId)
-				.topParentId(dto.getTopParentId())
 				.parentId(dto.getParentId())
-				.depth(dto.getDepth())
 				.commentContent(dto.getCommentContent())
 				.createdBy(UserUtil.getCurrentLoginUserId())
 				.updatedBy(UserUtil.getCurrentLoginUserId())
@@ -72,6 +70,23 @@ public class CommentVO {
 				.commentId(dto.getCommentId())
 				.postId(postId)
 				.commentContent(dto.getCommentContent())
+				.updatedBy(UserUtil.getCurrentLoginUserId())
 				.build();
+	}
+
+	// 댓글 채택
+	public static CommentVO adoptOf(CommentAdoptReqDTO dto, long postId) {
+		return CommentVO.builder()
+				.userId(UserUtil.getCurrentLoginUserId())
+				.commentId(dto.getCommentId())
+				.postId(postId)
+				.updatedBy(UserUtil.getCurrentLoginUserId())
+				.build();
+	}
+
+	// 최상위 댓글 ID, 댓글 depth 설정
+	public void setCommentInfo(Long topParentId, int depth) {
+		this.topParentId = topParentId;
+		this.depth = depth;
 	}
 }
