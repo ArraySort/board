@@ -21,7 +21,7 @@ public interface PostMapper {
 	int selectTotalPostCount(PageReqDTO dto, long boardId);
 
 	// 게시글 세부내용 조회
-	Optional<PostVO> selectPostDetailByPostId(long postId, long boardId);
+	Optional<PostVO> selectPostDetailByPostId(long postId, long boardId, String userId);
 
 	// 게시글 수정
 	void updatePost(PostVO vo, long postId);

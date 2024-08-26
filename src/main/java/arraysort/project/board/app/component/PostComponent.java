@@ -119,7 +119,7 @@ public class PostComponent {
 	@Transactional(readOnly = true)
 	public PostDetailResDTO getValidatedPost(long postId, long boardId) {
 		// 1. 게시글이 존재 검증
-		PostDetailResDTO postDetail = PostDetailResDTO.of(postMapper.selectPostDetailByPostId(postId, boardId)
+		PostDetailResDTO postDetail = PostDetailResDTO.of(postMapper.selectPostDetailByPostId(postId, boardId, UserUtil.getCurrentLoginUserId())
 				.orElseThrow(DetailNotFoundException::new));
 
 		// 2. 게시글 상태 검증(삭제, 비활성화 상태)

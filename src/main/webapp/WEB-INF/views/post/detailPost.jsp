@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/popup.css">
 
+    <meta name="_csrf" content="${_csrf.token}">
+    <meta name="_csrf_header" content="${_csrf.headerName}">
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript">
         $(() => {
@@ -239,7 +242,7 @@
         });
     </script>
 
-    <script>
+    <script type="text/javascript">
         // 이미지 팝업
         function showImage(imageUrl) {
             const popupOverlay = document.getElementById('popupOverlay');
@@ -256,6 +259,52 @@
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
                 closePopup();
+            }
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript">
+        $(() => {
+            $('#postLikeButton').click(function () {
+                handleLikeDislike($(this).data('post-id'), 'like');
+            });
+
+            $('#postDislikeButton').click(function () {
+                handleLikeDislike($(this).data('post-id'), 'dislike');
+            });
+
+            $.ajaxSetup({
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader($('meta[name="_csrf_header"]').attr('content'), $('meta[name="_csrf"]').attr('content'));
+                }
+            });
+
+            function handleLikeDislike(postId, action) {
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/${boardDetail.boardId}/post/detail/${postDetail.postId}' + '/' + action,
+                    method: 'POST',
+                    success: function (response) {
+                        updateButtonState(response);
+                    },
+                    error: function (error) {
+                        console.error('AJAX 요청 실패:', error);
+                    }
+                });
+            }
+
+            function updateButtonState(response) {
+                // 좋아요 버튼 상태 업데이트
+                $('#postLikeButton').toggleClass('btn-primary', response.hasLiked)
+                    .toggleClass('btn-outline-primary', !response.hasLiked);
+
+                // 싫어요 버튼 상태 업데이트
+                $('#postDislikeButton').toggleClass('btn-secondary', response.hasDisliked)
+                    .toggleClass('btn-outline-secondary', !response.hasDisliked);
+
+                // 좋아요, 싫어요 수 업데이트
+                $('#likeCount').text(response.likeCount);
+                $('#dislikeCount').text(response.dislikeCount);
             }
         });
     </script>
@@ -334,10 +383,21 @@
             ${postDetail.privateFlag == 'Y' ? 'checked' : ''} disabled/>
         </div>
 
-        <h3>작성 시간 : <fmt:formatDate value="${postDetail.createdAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
-        <h3>수정 시간 : <fmt:formatDate value="${postDetail.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></h3>
-        <h3>조회수 : ${postDetail.views}</h3>
-        <h3>댓글수 : ${postDetail.commentCount}</h3>
+        <div>작성 시간 : <fmt:formatDate value="${postDetail.createdAt}" pattern="yyyy-MM-dd HH:mm"/></div>
+        <div>수정 시간 : <fmt:formatDate value="${postDetail.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></div>
+        <div>조회수 : ${postDetail.views}</div>
+        <div>댓글수 : ${postDetail.commentCount}</div>
+
+        <button class="btn ${postDetail.hasLiked ? 'btn-primary' : 'btn-outline-primary'}"
+                type="button" id="postLikeButton"
+                data-post-id="${postDetail.postId}">좋아요 <span id="likeCount">${postDetail.likeCount}</span>
+        </button>
+
+        <button class="btn ${postDetail.hasDisliked ? 'btn-secondary' : 'btn-outline-secondary'}"
+                type="button" id="postDislikeButton"
+                data-post-id="${postDetail.postId}">
+            싫어요 <span id="dislikeCount">${postDetail.dislikeCount}</span>
+        </button>
 
         <!-- 댓글 추가 폼 시작 -->
         <div class="d-flex justify-content-center m-5">

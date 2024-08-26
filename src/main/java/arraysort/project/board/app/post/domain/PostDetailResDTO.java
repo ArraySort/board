@@ -42,6 +42,14 @@ public class PostDetailResDTO {
 
 	private long commentCount;
 
+	private long likeCount;
+
+	private long dislikeCount;
+
+	private boolean hasLiked;
+
+	private boolean hasDisliked;
+
 	// 게시글 세부 조회
 	public static PostDetailResDTO of(PostVO vo) {
 		return builder()
@@ -61,6 +69,10 @@ public class PostDetailResDTO {
 				.updatedAt(vo.getUpdatedAt())
 				.views(vo.getViews())
 				.commentCount(vo.getCommentCount())
+				.likeCount(vo.getLikeCount())
+				.dislikeCount(vo.getDislikeCount())
+				.hasLiked(vo.isHasLiked())
+				.hasDisliked(vo.isHasDisliked())
 				.build();
 	}
 }

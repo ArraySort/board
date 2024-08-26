@@ -60,6 +60,14 @@ public class PostVO {
 
 	private long commentCount;    // 댓글 개수
 
+	private long likeCount;    // 좋아요 개수
+
+	private long dislikeCount;    // 싫어요 개수
+
+	private boolean hasLiked;    // 좋아요 여부
+
+	private boolean hasDisliked;    // 싫어요 여부
+
 	// 게시물 추가
 	public static PostVO insertOf(PostAddReqDTO dto, long boardId) {
 		return PostVO.builder()

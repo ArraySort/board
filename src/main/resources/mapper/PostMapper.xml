@@ -44,11 +44,14 @@
                (select count(*)
                     from comment cmt
                     where cmt.post_id = p.post_id and cmt.delete_flag ='N') as comment_count,
-                (select IF(count(*) > 0, 'Y', 'N')
+               (select IF(count(*) > 0, 'Y', 'N')
                     from comment cmt
                     where cmt.post_id = p.post_id
                     and cmt.adopted_flag = 'Y'
-                    and cmt.delete_flag ='N') as adopted_comment_flag
+                    and cmt.delete_flag ='N') as adopted_comment_flag,
+               (select count(*)
+                    from post_like
+                    where post_id = p.post_id) as like_count
         from post p
         inner join user u on p.user_id = u.user_id
         inner join category c on p.category_id = c.category_id
@@ -113,7 +116,7 @@
     </select>
 
     <!-- 게시글 세부내용 조회 -->
-    <select id="selectPostDetailByPostId" parameterType="long" resultType="arraysort.project.board.app.post.domain.PostVO">
+    <select id="selectPostDetailByPostId" resultType="arraysort.project.board.app.post.domain.PostVO">
         select p.post_id,
                p.user_id,
                p.board_id,
@@ -131,7 +134,18 @@
                p.views,
                (select count(*)
                 from comment cmt
-                where cmt.post_id = p.post_id and cmt.delete_flag ='N') as comment_count
+                where cmt.post_id = p.post_id and cmt.delete_flag ='N') as comment_count,
+               (select count(*)
+                from post_like
+                where post_id = p.post_id) as like_count,
+               (select count(*)
+                from post_dislike
+                where post_id = p.post_id) as dislike_count,
+               (select count(*) > 0
+                from post_like
+                where user_id = #{userId} and post_id = p.post_id) as has_liked,
+               (select count(*) > 0
+                from post_dislike where user_id = #{userId} and post_id = p.post_id) as has_disliked
         from post p
         inner join user u on p.user_id = u.user_id
         inner join category c on p.category_id = c.category_id

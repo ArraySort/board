@@ -34,6 +34,8 @@ public class PostListResDTO {
 
 	private long commentCount;
 
+	private long likeCount;
+
 	// 게시글 리스트 조회
 	public static PostListResDTO of(PostVO vo) {
 		return PostListResDTO.builder()
@@ -48,6 +50,7 @@ public class PostListResDTO {
 				.privateFlag(vo.getPrivateFlag())
 				.adoptedCommentFlag(vo.getAdoptedCommentFlag())
 				.commentCount(vo.getCommentCount())
+				.likeCount(vo.getLikeCount())
 				.build();
 	}
 }
