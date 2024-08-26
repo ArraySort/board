@@ -87,6 +87,7 @@
                     <th>카테고리</th>
                     <th>조회수</th>
                     <th>댓글수</th>
+                    <th>채택댓글</th>
                     <th>비공개</th>
                 </tr>
                 </thead>
@@ -106,6 +107,7 @@
                         <td>${post.categoryName}</td>
                         <td>${post.views}</td>
                         <td>${post.commentCount}</td>
+                        <td>${post.adoptedCommentFlag}</td>
                         <td>${post.privateFlag}</td>
                     </tr>
                 </c:forEach>

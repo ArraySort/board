@@ -28,6 +28,8 @@ public class PostListResDTO {
 
 	private Flag privateFlag;
 
+	private Flag adoptedCommentFlag;
+
 	private long postNumber;
 
 	private long commentCount;
@@ -44,6 +46,7 @@ public class PostListResDTO {
 				.categoryName(vo.getCategoryName())
 				.views(vo.getViews())
 				.privateFlag(vo.getPrivateFlag())
+				.adoptedCommentFlag(vo.getAdoptedCommentFlag())
 				.commentCount(vo.getCommentCount())
 				.build();
 	}
