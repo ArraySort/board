@@ -19,6 +19,9 @@ public class Constants {
 	public static final int MAX_ATTEMPTS_COUNT = 3;    // 로그인 시도 최대 횟수
 	public static final int LOGIN_LOCK_SEC = 30;    // 로그인 잠금 시간
 
+	// Max Comment SIZE
+	public static final int MAX_COMMENT_IMAGE_LIMIT = 2;    // 댓글 이미지 최대 개수
+
 
 	private Constants() {
 	}

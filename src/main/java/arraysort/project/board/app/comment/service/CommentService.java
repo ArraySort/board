@@ -3,10 +3,10 @@ package arraysort.project.board.app.comment.service;
 import arraysort.project.board.app.board.domain.BoardVO;
 import arraysort.project.board.app.comment.domain.*;
 import arraysort.project.board.app.comment.mapper.CommentMapper;
-import arraysort.project.board.app.common.enums.Flag;
+import arraysort.project.board.app.common.Constants;
+import arraysort.project.board.app.component.CommentComponent;
 import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
-import arraysort.project.board.app.exception.CommentNotFoundException;
 import arraysort.project.board.app.exception.InvalidPrincipalException;
 import arraysort.project.board.app.history.service.CommentHistoryService;
 import arraysort.project.board.app.image.domain.ImageVO;
@@ -14,7 +14,6 @@ import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.PageDTO;
 import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.domain.PageResDTO;
-import arraysort.project.board.app.post.domain.PostDetailResDTO;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,23 +39,25 @@ public class CommentService {
 
 	private final CommentHistoryService commentHistoryService;
 
+	private final CommentComponent commentComponent;
+
 	// 댓글 추가
 	@Transactional
 	public void addComment(CommentAddReqDTO dto, long boardId, long postId) {
 		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 		// 추가 전 검증
-		validateAdd(boardDetail, boardId, postId);
+		commentComponent.validateAdd(boardDetail, boardId, postId);
 
 		CommentVO vo = CommentVO.insertOf(dto, postId);
 
 		// 댓글 정보 처리(최상위 댓글 ID, 댓글 depth 저장)
-		handleCommentInfo(vo, postId);
+		handleSetCommentInfo(vo, postId);
 
 		// 댓글 추가
 		commentMapper.insertComment(vo);
 
 		// 이미지 업로드
-		handleCommentImages(dto, boardDetail, vo);
+		handleAddCommentImages(dto, vo);
 
 		// 댓글 기록 추가(이미지 포함)
 		commentHistoryService.addCommentHistory(vo);
@@ -65,12 +66,10 @@ public class CommentService {
 	// 댓글 리스트 조회(페이징)
 	@Transactional(readOnly = true)
 	public PageResDTO<CommentListResDTO> findCommentListWithPaging(PageReqDTO dto, long boardId, long postId) {
-		// 게시판 검증(존재, 상태 검증)
-		postComponent.getValidatedBoard(boardId);
+		// 게시판, 게시글 검증(존재, 상태)
+		commentComponent.validateBoardAndPost(boardId, postId);
 
-		// 게시글 검증(존재, 상태 검증)
-		postComponent.getValidatedPost(postId, boardId);
-
+		// 최상위 댓글 개수, Page 정보 생성
 		int totalTopLevelCommentCount = commentMapper.selectTotalTopLevelCommentCount(dto, postId);
 		PageDTO pageDTO = new PageDTO(totalTopLevelCommentCount, dto, boardId, postId);
 
@@ -83,17 +82,14 @@ public class CommentService {
 	// 댓글 수정
 	@Transactional
 	public void modifyComment(CommentEditReqDTO dto, long boardId, long postId) {
-		// 게시판 검증(존재, 상태 검증)
-		postComponent.getValidatedBoard(boardId);
-
-		// 게시글 검증(존재, 상태 검증)
-		postComponent.getValidatedPost(postId, boardId);
+		// 게시판, 게시글 검증(존재, 상태)
+		commentComponent.validateBoardAndPost(boardId, postId);
 
 		// 댓글 검증(존재, 상태 검증)
-		validateComment(dto.getCommentId());
+		commentComponent.validateComment(dto.getCommentId());
 
 		// 댓글 이미지 업데이트
-		handleCommentImages(dto);
+		handleModifyCommentImages(dto);
 
 		// 댓글 수정
 		CommentVO vo = CommentVO.updateOf(dto, postId);
@@ -106,20 +102,17 @@ public class CommentService {
 	// 댓글 삭제
 	@Transactional
 	public void removeComment(long boardId, long postId, long commentId) {
-		// 게시판 검증(존재, 상태 검증)
-		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
-
-		// 게시글 검증(존재, 상태 검증)
-		postComponent.getValidatedPost(postId, boardId);
+		// 게시판, 게시글 검증(존재, 상태)
+		commentComponent.validateBoardAndPost(boardId, postId);
 
 		// 댓글 검증(존재, 상태 검증)
-		validateComment(commentId);
+		commentComponent.validateComment(commentId);
 
 		// 하위 댓글 삭제
-		removeRelies(commentId, boardDetail);
+		handleRemoveRelies(commentId);
 
 		// 댓글 이미지 삭제 처리
-		handleCommentImageRemove(commentId, boardDetail);
+		handleRemoveCommentImage(commentId);
 
 		// 댓글 삭제
 		commentMapper.deleteComment(commentId, UserUtil.getCurrentLoginUserId());
@@ -127,31 +120,31 @@ public class CommentService {
 
 	// 게시글 삭제 시 게시글 내부 댓글 삭제(이미지 포함)
 	@Transactional
-	public void removeCommentByPostRemove(BoardVO boardDetail, long boardId, long postId) {
-		// 게시글 검증(존재, 상태 검증)
-		postComponent.getValidatedPost(postId, boardId);
+	public void removeCommentByPostRemove(long boardId, long postId) {
+		// 게시판, 게시글 검증(존재, 상태)
+		commentComponent.validateBoardAndPost(boardId, postId);
 
 		// 게시글 내부 댓글 전부 삭제
 		commentMapper.deleteCommentsByPostId(postId, UserUtil.getCurrentLoginUserId());
 
 		// 게시글 내부 댓글 이미지 삭제 -> 댓글 내부 이미지 조회 쿼리 한번 실행(in 절 활용)
-		List<Long> commentIds = commentMapper.selectCommentListByPostId(postId).stream()
+		List<Long> commentIds = commentMapper.selectCommentListByPostId(postId)
+				.stream()
 				.map(CommentVO::getCommentId)
 				.toList();
 
 		// 댓글 이미지 삭제 처리(댓글 ID 리스트)
-		handleCommentImagesRemove(commentIds, boardDetail);
+		handleRemoveCommentImages(commentIds);
 	}
 
 	// 댓글 채택
 	@Transactional
 	public void adoptComment(CommentAdoptReqDTO dto, long boardId, long postId) {
-
-		// 게시판 검증(존재, 상태 검증)
-		postComponent.getValidatedBoard(boardId);
+		// 게시판, 게시글 검증(존재, 상태)
+		commentComponent.validateBoardAndPost(boardId, postId);
 
 		// 게시글, 채택 댓글 검증(존재, 상태, 채택 사용자 검증)
-		validateAdoptComment(dto, postComponent.getValidatedPost(postId, boardId));
+		commentComponent.validateAdoptComment(dto, postComponent.getValidatedPost(postId, boardId));
 
 		// 기존 댓글 채택 초기화(게시글 내부)
 		commentMapper.resetAdoptedComment(postId, UserUtil.getCurrentLoginUserId());
@@ -162,82 +155,20 @@ public class CommentService {
 	}
 
 	/**
-	 * 댓글 추가 전 검증
-	 * 1. 게시판 댓글 허용 여부 검증
-	 * 2. 로그인하지 않은 사용자에 대한 검증
-	 * 3. 게시글 검증(존재, 상태)
-	 * (댓글은 UserAccessLevel = 1 부터 가능, 비로그인은 0)
-	 *
-	 * @param boardId 현재 댓글을 작성하려는 게시판 ID
-	 * @param postId  현재 댓글을 작성하려는 게시글 ID
-	 */
-	private void validateAdd(BoardVO boardDetail, long boardId, long postId) {
-		// 1. 게시판 댓글 허용 여부 검증
-		if (boardDetail.getCommentFlag() == Flag.N) {
-			throw new InvalidPrincipalException("현재 게시판은 댓글을 허용하지 않습니다. ");
-		}
-
-		// 2. 로그인하지 않은 사용자에 대한 검증
-		if (!UserUtil.isAuthenticatedUser()) {
-			throw new InvalidPrincipalException("로그인이 필요합니다.");
-		}
-
-		// 3. 게시글 검증(존재, 상태 검증)
-		postComponent.getValidatedPost(postId, boardId);
-	}
-
-	/**
-	 * 댓글 검증
-	 * 1. 댓글 존재 검증
-	 * 2. 댓글 상태 검증
-	 * 3. 댓글 소유자 검증
-	 *
-	 * @param commentId 수정하려는 댓글 ID
-	 */
-	private void validateComment(long commentId) {
-		// 1. 댓글 존재 검증
-		CommentVO commentDetail = commentMapper.selectCommentById(commentId)
-				.orElseThrow(CommentNotFoundException::new);
-
-		// 2. 댓글 상태 검증
-		if (commentDetail.getActivateFlag() == Flag.N || commentDetail.getDeleteFlag() == Flag.Y) {
-			throw new CommentNotFoundException();
-		}
-
-		validateCommentOwnership(commentDetail);
-	}
-
-	/**
-	 * 댓글 소유자 검증
-	 *
-	 * @param commentDetail 현재 수정/삭제 하려는 댓글의 세부 정보
-	 */
-	private void validateCommentOwnership(CommentVO commentDetail) {
-		if (UserUtil.isNotCurrentUserOwner(commentDetail.getUserId())) {
-			throw new InvalidPrincipalException("본인이 작성한 댓글만 수정/삭제가 가능합니다.");
-		}
-	}
-
-	/**
 	 * [댓글 이미지 처리(추가)]
 	 * 게시판 이미지 허용 여부가 Y 일 때만 실행
 	 * 댓글 이미지는 최대 2개까지만 업로드 가능
 	 *
-	 * @param dto         추가하려는 댓글 정보
-	 * @param boardDetail 검증된 게시판 세부정보
-	 * @param vo          추가된 댓글
+	 * @param dto 추가하려는 댓글 정보
+	 * @param vo  추가된 댓글
 	 */
-	private void handleCommentImages(CommentAddReqDTO dto, BoardVO boardDetail, CommentVO vo) {
-		if (boardDetail.getImageFlag() == Flag.N) {
-			return;
-		}
-
+	private void handleAddCommentImages(CommentAddReqDTO dto, CommentVO vo) {
 		if (dto.getCommentImages() == null || dto.getCommentImages().isEmpty()) {
 			return;
 		}
 
-		if (dto.getCommentImages().size() > 2) {
-			throw new BoardImageOutOfRangeException("댓글은 최대 2개까지 업로드 가능합니다.");
+		if (dto.getCommentImages().size() > Constants.MAX_COMMENT_IMAGE_LIMIT) {
+			throw new BoardImageOutOfRangeException("댓글은 최대 " + Constants.MAX_COMMENT_IMAGE_LIMIT + " 개까지 업로드 가능합니다.");
 		}
 
 		imageService.addCommentImages(dto.getCommentImages(), vo.getCommentId());
@@ -250,7 +181,7 @@ public class CommentService {
 	 *
 	 * @param dto 수정되는 게시글 정보(사용자 입력)
 	 */
-	private void handleCommentImages(CommentEditReqDTO dto) {
+	private void handleModifyCommentImages(CommentEditReqDTO dto) {
 		boolean addedCommentImageCheck = dto.getAddedCommentImages()
 				.stream()
 				.anyMatch(MultipartFile::isEmpty);
@@ -272,17 +203,11 @@ public class CommentService {
 
 	/**
 	 * [댓글 삭제 시 이미지 삭제 처리]
-	 * 게시판의 이미지 허용 여부가 Y 일 때만 실행
 	 * 댓글 이미지 삭제처리 'Y' 업데이트, 댓글 이미지 관계 삭제
 	 *
-	 * @param commentId   삭제하려는 댓글 ID
-	 * @param boardDetail 검증된 게시판 세부정보
+	 * @param commentId 삭제하려는 댓글 ID
 	 */
-	private void handleCommentImageRemove(long commentId, BoardVO boardDetail) {
-		if (boardDetail.getImageFlag() == Flag.N) {
-			return;
-		}
-
+	private void handleRemoveCommentImage(long commentId) {
 		// 댓글 이미지 조회(댓글 ID로 조회)
 		List<Long> deleteCommentImageIds = imageService.findCommentImagesByCommentId(commentId)
 				.stream()
@@ -297,14 +222,12 @@ public class CommentService {
 
 	/**
 	 * [게시글 삭제 시 댓글 이미지 삭제 처리]
-	 * 게시판의 이미지 허용 여부가 Y 일 때만 실행
 	 * 댓글 이미지 삭제처리 'Y' 업데이트, 댓글 이미지 관계 삭제
 	 *
-	 * @param commentIds  게시글 내부 댓글 ID 리스트
-	 * @param boardDetail 검증된 게시판 세부정보
+	 * @param commentIds 게시글 내부 댓글 ID 리스트
 	 */
-	private void handleCommentImagesRemove(List<Long> commentIds, BoardVO boardDetail) {
-		if (boardDetail.getImageFlag() == Flag.N || commentIds.isEmpty()) {
+	private void handleRemoveCommentImages(List<Long> commentIds) {
+		if (commentIds.isEmpty()) {
 			return;
 		}
 
@@ -328,7 +251,7 @@ public class CommentService {
 	 * @param vo     추가되는 댓글 VO 객체
 	 * @param postId 댓글이 추가되는 게시글 ID
 	 */
-	private void handleCommentInfo(CommentVO vo, long postId) {
+	private void handleSetCommentInfo(CommentVO vo, long postId) {
 		List<CommentListResDTO> allComments = commentMapper.selectCommentListByPostId(postId)
 				.stream()
 				.map(CommentListResDTO::of)
@@ -457,46 +380,19 @@ public class CommentService {
 	/**
 	 * 댓글 하위 대댓글 삭제
 	 *
-	 * @param commentId   삭제하려는 댓글 ID
-	 * @param boardDetail 검증된 게시판 정보
+	 * @param commentId 삭제하려는 댓글 ID
 	 */
-	private void removeRelies(Long commentId, BoardVO boardDetail) {
+	private void handleRemoveRelies(Long commentId) {
 		List<Long> childCommentsIds = commentMapper.selectRepliesIdByParentCommentId(commentId);
 
 		if (childCommentsIds == null) {
 			return;
 		}
 
-		childCommentsIds.forEach(childCommentId -> removeRelies(childCommentId, boardDetail));
+		childCommentsIds.forEach(this::handleRemoveRelies);
 
-		handleCommentImageRemove(commentId, boardDetail);
+		handleRemoveCommentImage(commentId);
 
 		commentMapper.deleteComment(commentId, UserUtil.getCurrentLoginUserId());
-	}
-
-	/**
-	 * 댓글 채택 전 검증
-	 * 1. 댓글 존재 검증
-	 * 2. 댓글 상태 검증
-	 * 3. 채택 댓글 사용자 검증
-	 * (채택당하는 댓글의 소유자 == 게시글 소유자, 채택하려는 사용자 != 게시글 소유자, 비로그인 경우 제한)
-	 *
-	 * @param dto        채택당하는 댓글의 정보
-	 * @param postDetail 검증된 게시글 세부정보
-	 */
-	private void validateAdoptComment(CommentAdoptReqDTO dto, PostDetailResDTO postDetail) {
-		// 1. 댓글 존재 검증
-		CommentVO commentDetail = commentMapper.selectCommentById(dto.getCommentId())
-				.orElseThrow(CommentNotFoundException::new);
-
-		// 2. 댓글 상태 검증
-		if (commentDetail.getActivateFlag() == Flag.N || commentDetail.getDeleteFlag() == Flag.Y) {
-			throw new CommentNotFoundException();
-		}
-
-		// 3. 채택하려는 댓글이 게시글 소유자거나 인증되지 않은 사용자 인 경우, 채택하려는 사용자가 게시글 소유자가 아닌 경우
-		if (UserUtil.isCurrentUserOwner(commentDetail.getUserId()) || UserUtil.isNotAuthenticatedUser() || UserUtil.isNotCurrentUserOwner(postDetail.getUserId())) {
-			throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
-		}
 	}
 }

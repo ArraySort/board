@@ -137,7 +137,7 @@ public class PostService {
 		}
 
 		// 댓글 삭제(이미지 포함)
-		commentService.removeCommentByPostRemove(boardDetail, boardId, postId);
+		commentService.removeCommentByPostRemove(boardId, postId);
 
 		// 게시물 삭제
 		postMapper.deletePost(postId);
