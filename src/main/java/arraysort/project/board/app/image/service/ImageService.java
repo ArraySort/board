@@ -174,6 +174,12 @@ public class ImageService {
 		return imageMapper.selectCommentImagesByCommentId(commentId);
 	}
 
+	// 댓글 아이디 리스트로 이미지 리스트 조회
+	@Transactional(readOnly = true)
+	public List<ImageVO> findCommentImagesByCommentIds(List<Long> commentIds) {
+		return imageMapper.selectCommentImagesByCommentIds(commentIds);
+	}
+
 	// 임시저장 게시글 아이디로 이미지 조회
 	@Transactional(readOnly = true)
 	public List<ImageVO> findImagesByTempPostId(long tempPostId) {

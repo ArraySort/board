@@ -174,8 +174,27 @@
                i.created_at,
                i.delete_flag
         from image i
-                 inner join comment_image ci on i.image_id = ci.image_id
-        where ci.comment_id = #{commentId}
+        inner join comment_image ci on i.image_id = ci.image_id
+        where ci.comment_id = #{commentId} and delete_flag = 'N'
+    </select>
+
+    <!-- 댓글 아이디 리스트로 이미지 리스트 조회 -->
+    <select id="selectCommentImagesByCommentIds" parameterType="java.util.List" resultType="arraysort.project.board.app.image.domain.ImageVO">
+        select i.image_id,
+               i.original_name,
+               i.saved_name,
+               i.size,
+               i.image_path,
+               i.created_by,
+               i.created_at,
+               i.delete_flag
+        from image i
+        inner join comment_image ci on i.image_id = ci.image_id
+        where ci.comment_id in
+        <foreach item="commentId" collection="list" open="(" separator="," close=")">
+            #{commentId}
+        </foreach>
+        and i.delete_flag = 'N'
     </select>
 
     <!-- 댓글 이미지 개수 조회 -->

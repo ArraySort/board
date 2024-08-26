@@ -63,6 +63,9 @@ public interface ImageMapper {
 	// 댓글 이미지 리스트 조회
 	List<ImageVO> selectCommentImagesByCommentId(long commentId);
 
+	// 댓글 아이디 리스트로 이미지 리스트 조회
+	List<ImageVO> selectCommentImagesByCommentIds(List<Long> commentIds);
+
 	// 댓글 이미지 개수 조회
 	int selectCommentImageCountByCommentId(Long commentId);
 

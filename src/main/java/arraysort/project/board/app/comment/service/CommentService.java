@@ -128,15 +128,19 @@ public class CommentService {
 	// 게시글 삭제 시 게시글 내부 댓글 삭제(이미지 포함)
 	@Transactional
 	public void removeCommentByPostRemove(BoardVO boardDetail, long boardId, long postId) {
+		// 게시글 검증(존재, 상태 검증)
 		postComponent.getValidatedPost(postId, boardId);
 
 		// 게시글 내부 댓글 전부 삭제
 		commentMapper.deleteCommentsByPostId(postId, UserUtil.getCurrentLoginUserId());
 
-		// 게시글 내부 댓글 이미지 삭제
-		commentMapper.selectCommentListByPostId(postId).stream()
+		// 게시글 내부 댓글 이미지 삭제 -> 댓글 내부 이미지 조회 쿼리 한번 실행(in 절 활용)
+		List<Long> commentIds = commentMapper.selectCommentListByPostId(postId).stream()
 				.map(CommentVO::getCommentId)
-				.forEach(commentId -> handleCommentImageRemove(commentId, boardDetail));
+				.toList();
+
+		// 댓글 이미지 삭제 처리(댓글 ID 리스트)
+		handleCommentImagesRemove(commentIds, boardDetail);
 	}
 
 	// 댓글 채택
@@ -279,11 +283,38 @@ public class CommentService {
 			return;
 		}
 
+		// 댓글 이미지 조회(댓글 ID로 조회)
 		List<Long> deleteCommentImageIds = imageService.findCommentImagesByCommentId(commentId)
 				.stream()
 				.map(ImageVO::getImageId)
 				.toList();
 
+		// 댓글에 포함된 이미지 일괄 삭제
+		if (!deleteCommentImageIds.isEmpty()) {
+			imageService.removeCommentImages(deleteCommentImageIds);
+		}
+	}
+
+	/**
+	 * [게시글 삭제 시 댓글 이미지 삭제 처리]
+	 * 게시판의 이미지 허용 여부가 Y 일 때만 실행
+	 * 댓글 이미지 삭제처리 'Y' 업데이트, 댓글 이미지 관계 삭제
+	 *
+	 * @param commentIds  게시글 내부 댓글 ID 리스트
+	 * @param boardDetail 검증된 게시판 세부정보
+	 */
+	private void handleCommentImagesRemove(List<Long> commentIds, BoardVO boardDetail) {
+		if (boardDetail.getImageFlag() == Flag.N || commentIds.isEmpty()) {
+			return;
+		}
+
+		// 댓글 이미지 조회(삭제 댓글 ID 리스트로 조회 in 절 활용)
+		List<Long> deleteCommentImageIds = imageService.findCommentImagesByCommentIds(commentIds)
+				.stream()
+				.map(ImageVO::getImageId)
+				.toList();
+
+		// 댓글에 포함된 이미지 일괄 삭제
 		if (!deleteCommentImageIds.isEmpty()) {
 			imageService.removeCommentImages(deleteCommentImageIds);
 		}
