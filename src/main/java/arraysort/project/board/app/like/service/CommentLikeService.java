@@ -27,8 +27,8 @@ public class CommentLikeService {
 		// 게시판, 게시글 검증(존재, 상태)
 		commentComponent.validateBoardAndPost(boardId, postId);
 
-		CommentLikeVO likeVO = CommentLikeVO.of(UserUtil.getCurrentLoginUserId(), commentId);
-		CommentDisLikeVO dislikeVO = CommentDisLikeVO.of(UserUtil.getCurrentLoginUserId(), commentId);
+		CommentLikeVO likeVO = CommentLikeVO.of(commentId);
+		CommentDisLikeVO dislikeVO = CommentDisLikeVO.of(commentId);
 
 		// 인증된 사용자만 좋아요 싫어요 가능
 		if (UserUtil.isAuthenticatedUser()) {
@@ -126,6 +126,10 @@ public class CommentLikeService {
 			}
 		}
 
+		if (hasLiked) {
+			return new CommentLikeDislikeResDTO(likeCount, dislikeCount, true, false);
+		}
+
 		for (CommentDisLikeVO dislike : dislikeVO) {
 			if (UserUtil.isCurrentUserOwner(dislike.getUserId())) {
 				hasDisliked = true;
@@ -133,7 +137,7 @@ public class CommentLikeService {
 			}
 		}
 
-		return new CommentLikeDislikeResDTO(likeCount, dislikeCount, hasLiked, hasDisliked);
+		return new CommentLikeDislikeResDTO(likeCount, dislikeCount, false, hasDisliked);
 	}
 
 }

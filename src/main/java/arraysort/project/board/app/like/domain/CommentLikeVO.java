@@ -1,5 +1,6 @@
 package arraysort.project.board.app.like.domain;
 
+import arraysort.project.board.app.utils.UserUtil;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,9 +13,9 @@ public class CommentLikeVO {
 	private Long commentId;    // 댓글 ID
 
 	// 댓글 좋아요
-	public static CommentLikeVO of(String userId, long commentId) {
+	public static CommentLikeVO of(long commentId) {
 		return CommentLikeVO.builder()
-				.userId(userId)
+				.userId(UserUtil.getCurrentLoginUserId())
 				.commentId(commentId)
 				.build();
 	}

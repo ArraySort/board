@@ -21,7 +21,7 @@ public class PostLikeController {
 	@PostMapping("/like")
 	public ResponseEntity<PostLikeDislikeResDTO> processAddPostLike(@PathVariable long boardId, @PathVariable long postId) {
 		try {
-			return ResponseEntity.ok(postLikeService.handlePostLikeDislike(boardId, postId, false));
+			return ResponseEntity.ok(postLikeService.handlePostLikeDislike(boardId, postId, true));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
@@ -30,7 +30,6 @@ public class PostLikeController {
 	// 싫어요 요청
 	@PostMapping("/dislike")
 	public ResponseEntity<PostLikeDislikeResDTO> processAddDisLike(@PathVariable long boardId, @PathVariable long postId) {
-
 		try {
 			return ResponseEntity.ok(postLikeService.handlePostLikeDislike(boardId, postId, false));
 		} catch (Exception e) {
