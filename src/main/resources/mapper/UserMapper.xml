@@ -25,17 +25,21 @@
     </insert>
 
     <!-- 아이디 중복 확인을 위한 카운트 -->
-    <select id="selectUserCountByUserId" parameterType="String" resultType="int">
-        select count(*)
-        from user
-        where user_id = #{userId}
+    <select id="selectIsExistsByUserId" parameterType="String" resultType="boolean">
+        select exists(
+            select 1
+            from user
+            where user_id = #{userId}
+        )
     </select>
 
     <!-- 이름 중복 확인을 위한 카운트 -->
-    <select id="selectUserCountByUserName" parameterType="String" resultType="int">
-        select count(*)
-        from user
-        where user_name = #{userName}
+    <select id="selectIsExistsByUserName" parameterType="String" resultType="boolean">
+        select exists(
+            select 1
+            from user
+            where user_name = #{userName}
+        )
     </select>
 
     <!-- 유저 세부내용 조회 -->

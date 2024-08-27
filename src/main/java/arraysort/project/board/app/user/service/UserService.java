@@ -104,11 +104,11 @@ public class UserService implements UserDetailsService {
 	 * @param dto 회원가입 폼에서 사용자가 입력한 값
 	 */
 	private void validateAdd(UserSignupReqDTO dto) {
-		if (userMapper.selectUserCountByUserId(dto.getUserId()) != 0) {
+		if (userMapper.selectIsExistsByUserId(dto.getUserId())) {
 			throw new DuplicatedUserException("이미 가입된 아이디입니다.");
 		}
 
-		if (userMapper.selectUserCountByUserName(dto.getUserName()) != 0) {
+		if (userMapper.selectIsExistsByUserName(dto.getUserName())) {
 			throw new DuplicatedUserException("중복된 이름입니다.");
 		}
 

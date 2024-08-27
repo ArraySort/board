@@ -5,54 +5,57 @@
 <mapper namespace="arraysort.project.board.app.like.mapper.PostLikeMapper">
 
     <!-- 게시글 좋아요 추가 -->
-    <insert id="insertPostLike">
+    <insert id="insertPostLike" parameterType="arraysort.project.board.app.like.domain.PostLikeVO">
         insert into post_like(user_id, post_id)
         values (#{userId}, #{postId})
     </insert>
 
-    <!-- 게시글 좋아요 개수 조회 -->
-    <select id="selectPostLikeCount" parameterType="long" resultType="long">
-        select count(*)
+    <!-- 게시글 좋아요 리스트 조회 -->
+    <select id="selectPostLikeList" parameterType="long" resultType="arraysort.project.board.app.like.domain.PostLikeVO">
+        select user_id, post_id
         from post_like
         where post_id = #{postId}
     </select>
 
     <!-- 게시글 좋아요 여부 조회(유저 ID) -->
-    <select id="selectPostLikeCountByUserId" resultType="boolean">
-        select count(*) > 0
-        from post_like
-        where user_id = #{userId} and post_id = #{postId}
+    <select id="selectPostLikeCountByUserId" parameterType="arraysort.project.board.app.like.domain.PostLikeVO" resultType="boolean">
+        select exists(
+            select 1
+            from post_like
+            where user_id = #{userId} and post_id = #{postId})
     </select>
 
     <!--  게시글 좋아요 삭제  -->
-    <delete id="deletePostLike">
+    <delete id="deletePostLike" parameterType="arraysort.project.board.app.like.domain.PostLikeVO">
         delete
         from post_like
         where user_id = #{userId} and post_id = #{postId}
     </delete>
 
     <!-- 게시글 싫어요 추가 -->
-    <insert id="insertPostDislike">
+    <insert id="insertPostDislike" parameterType="arraysort.project.board.app.like.domain.PostDislikeVO">
         insert into post_dislike(user_id, post_id)
         values (#{userId}, #{postId})
     </insert>
 
-    <!-- 게시글 싫어요 개수 조회 -->
-    <select id="selectPostDislikeCount" parameterType="long" resultType="long">
-        select count(*)
+    <!-- 게시글 싫어요 리스트 조회 -->
+    <select id="selectPostDislikeList" parameterType="long" resultType="arraysort.project.board.app.like.domain.PostDislikeVO">
+        select user_id, post_id
         from post_dislike
         where post_id = #{postId}
     </select>
 
     <!-- 게시글 싫어요 여부 조회(유저 ID) -->
-    <select id="selectPostDislikeCountByUserId" resultType="boolean">
-        select count(*) > 0
-        from post_dislike
-        where user_id = #{userId} and post_id = #{postId}
+    <select id="selectPostDislikeCountByUserId" parameterType="arraysort.project.board.app.like.domain.PostDislikeVO" resultType="boolean">
+        select exists(
+            select 1
+            from post_dislike
+            where user_id = #{userId} and post_id = #{postId}
+        )
     </select>
 
     <!-- 게시글 싫어요 삭제-->
-    <delete id="deletePostDislike">
+    <delete id="deletePostDislike" parameterType="arraysort.project.board.app.like.domain.PostDislikeVO">
         delete
         from post_dislike
         where user_id = #{userId} and post_id = #{postId}

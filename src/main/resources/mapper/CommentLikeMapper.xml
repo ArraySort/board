@@ -5,54 +5,58 @@
 <mapper namespace="arraysort.project.board.app.like.mapper.CommentLikeMapper">
 
     <!-- 댓글 좋아요 추가 -->
-    <insert id="insertCommentLike">
+    <insert id="insertCommentLike" parameterType="arraysort.project.board.app.like.domain.CommentLikeVO">
         insert into comment_like(user_id, comment_id)
         values (#{userId}, #{commentId})
     </insert>
 
-    <!-- 댓글 좋아요 개수 조회 -->
-    <select id="selectCommentLikeCount" parameterType="long" resultType="long">
-        select count(*)
+    <!-- 게시글 좋아요 리스트 조회 -->
+    <select id="selectCommentLikeList" parameterType="long" resultType="arraysort.project.board.app.like.domain.CommentLikeVO">
+        select user_id, comment_id
         from comment_like
         where comment_id = #{commentId}
     </select>
 
     <!-- 댓글 좋아요 여부 조회(유저 ID) -->
-    <select id="selectCommentLikeCountByUserId" resultType="boolean">
-        select count(*) > 0
-        from comment_like
-        where user_id = #{userId} and comment_id = #{commentId}
+    <select id="selectCommentLikeCountByUserId" parameterType="arraysort.project.board.app.like.domain.CommentLikeVO" resultType="boolean">
+        select exists(
+            select 1
+            from comment_like
+            where user_id = #{userId} and comment_id = #{commentId}
+        )
     </select>
 
     <!-- 댓글 좋아요 삭제 -->
-    <delete id="deleteCommentLike">
+    <delete id="deleteCommentLike" parameterType="arraysort.project.board.app.like.domain.CommentLikeVO">
         delete
         from comment_like
         where user_id = #{userId} and comment_id = #{commentId}
     </delete>
 
     <!-- 댓글 싫어요 추가 -->
-    <insert id="insertCommentDislike">
+    <insert id="insertCommentDislike" parameterType="arraysort.project.board.app.like.domain.CommentDisLikeVO">
         insert into comment_dislike(user_id, comment_id)
         values (#{userId}, #{commentId})
     </insert>
 
-    <!-- 댓글 싫어요 개수 조회 -->
-    <select id="selectCommentDislikeCount" parameterType="long" resultType="long">
-        select count(*)
+    <!-- 게시글 좋아요 리스트 조회 -->
+    <select id="selectCommentDislikeList" parameterType="long" resultType="arraysort.project.board.app.like.domain.CommentDisLikeVO">
+        select user_id, comment_id
         from comment_dislike
         where comment_id = #{commentId}
     </select>
 
     <!-- 댓글 싫어요 여부 조회(유저 ID) -->
-    <select id="selectCommentDislikeCountByUserId" resultType="boolean">
-        select count(*) > 0
-        from comment_dislike
-        where user_id = #{userId} and comment_id = #{commentId}
+    <select id="selectCommentDislikeCountByUserId" parameterType="arraysort.project.board.app.like.domain.CommentDisLikeVO" resultType="boolean">
+        select exists(
+            select 1
+            from comment_dislike
+            where user_id = #{userId} and comment_id = #{commentId}
+        )
     </select>
 
     <!-- 댓글 좋아요 삭제 -->
-    <delete id="deleteCommentDislike">
+    <delete id="deleteCommentDislike" parameterType="arraysort.project.board.app.like.domain.CommentDisLikeVO">
         delete
         from comment_dislike
         where user_id = #{userId} and comment_id = #{commentId}
