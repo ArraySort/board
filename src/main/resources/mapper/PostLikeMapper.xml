@@ -24,6 +24,7 @@
         where user_id = #{userId} and post_id = #{postId}
     </select>
 
+    <!--  게시글 좋아요 삭제  -->
     <delete id="deletePostLike">
         delete
         from post_like
@@ -50,6 +51,7 @@
         where user_id = #{userId} and post_id = #{postId}
     </select>
 
+    <!-- 게시글 싫어요 삭제-->
     <delete id="deletePostDislike">
         delete
         from post_dislike

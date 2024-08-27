@@ -30,6 +30,18 @@
                 </form>
             </div>
         </c:if>
+
+        <button class="btn btn-outline-primary me-2 commentLikeButton"
+                id="commentLikeButton-${requestScope.comment.commentId}"
+                type="button" data-comment-id="${requestScope.comment.commentId}">
+            좋아요 <span id="commentLikeCount-${requestScope.comment.commentId}">0</span>
+        </button>
+        <button class="btn btn-outline-secondary commentDislikeButton"
+                id="commentDislikeButton-${requestScope.comment.commentId}"
+                type="button" data-comment-id="${requestScope.comment.commentId}">
+            싫어요 <span
+                id="commentDislikeCount-${requestScope.comment.commentId}">0</span>
+        </button>
     </div>
 
     <!-- 댓글 하단: 첨부 이미지, 작성 시간, 수정 시간 -->

@@ -274,6 +274,18 @@
                 handleLikeDislike($(this).data('post-id'), 'dislike');
             });
 
+            // 댓글 좋아요 버튼 클릭 시
+            $(document).on('click', '.commentLikeButton', function () {
+                const commentId = $(this).data('comment-id');
+                handleCommentLikeDislike(commentId, 'comment-like');
+            });
+
+            // 댓글 싫어요 버튼 클릭 시
+            $(document).on('click', '.commentDislikeButton', function () {
+                const commentId = $(this).data('comment-id');
+                handleCommentLikeDislike(commentId, 'comment-dislike');
+            });
+
             $.ajaxSetup({
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader($('meta[name="_csrf_header"]').attr('content'), $('meta[name="_csrf"]').attr('content'));
@@ -282,10 +294,10 @@
 
             function handleLikeDislike(postId, action) {
                 $.ajax({
-                    url: '${pageContext.request.contextPath}/${boardDetail.boardId}/post/detail/${postDetail.postId}' + '/' + action,
+                    url: '${pageContext.request.contextPath}/${boardDetail.boardId}/post/detail/${postDetail.postId}/' + action,
                     method: 'POST',
                     success: function (response) {
-                        updateButtonState(response);
+                        updatePostLikeButtonState(response);
                     },
                     error: function (error) {
                         console.error('AJAX 요청 실패:', error);
@@ -293,18 +305,46 @@
                 });
             }
 
-            function updateButtonState(response) {
-                // 좋아요 버튼 상태 업데이트
+            function handleCommentLikeDislike(commentId, action) {
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/${boardDetail.boardId}/post/detail/${postDetail.postId}/' + commentId + '/' + action,
+                    method: 'POST',
+                    success: function (response) {
+                        updateCommentButtonState(commentId, response);
+                    },
+                    error: function (error) {
+                        console.error('AJAX 요청 실패:', error);
+                        alert(error.responseText);
+                    }
+                });
+            }
+
+            function updatePostLikeButtonState(response) {
+                // 게시글 좋아요 버튼 상태 업데이트
                 $('#postLikeButton').toggleClass('btn-primary', response.hasLiked)
                     .toggleClass('btn-outline-primary', !response.hasLiked);
 
-                // 싫어요 버튼 상태 업데이트
+                // 게시글 싫어요 버튼 상태 업데이트
                 $('#postDislikeButton').toggleClass('btn-secondary', response.hasDisliked)
                     .toggleClass('btn-outline-secondary', !response.hasDisliked);
 
-                // 좋아요, 싫어요 수 업데이트
+                // 게시글 좋아요, 싫어요 수 업데이트
                 $('#likeCount').text(response.likeCount);
                 $('#dislikeCount').text(response.dislikeCount);
+            }
+
+            function updateCommentButtonState(commentId, response) {
+                // 댓글 좋아요 버튼 상태 업데이트
+                $('#commentLikeButton-' + commentId).toggleClass('btn-primary', response.commentHasLiked)
+                    .toggleClass('btn-outline-primary', !response.commentHasLiked);
+
+                // 댓글 싫어요 버튼 상태 업데이트
+                $('#commentDislikeButton-' + commentId).toggleClass('btn-secondary', response.commentHasDisliked)
+                    .toggleClass('btn-outline-secondary', !response.commentHasDisliked);
+
+                // 댓글 좋아요, 싫어요 수 업데이트
+                $('#commentLikeCount-' + commentId).text(response.commentLikeCount);
+                $('#commentDislikeCount-' + commentId).text(response.commentDislikeCount);
             }
         });
     </script>
@@ -463,6 +503,18 @@
                                         </form>
                                     </c:if>
                                 </div>
+
+                                <button class="btn btn-outline-primary me-2 commentLikeButton"
+                                        id="commentLikeButton-${comment.commentId}"
+                                        type="button" data-comment-id="${comment.commentId}">
+                                    좋아요 <span id="commentLikeCount-${comment.commentId}">0</span>
+                                </button>
+                                <button class="btn btn-outline-secondary commentDislikeButton"
+                                        id="commentDislikeButton-${comment.commentId}"
+                                        type="button" data-comment-id="${comment.commentId}">
+                                    싫어요 <span
+                                        id="commentDislikeCount-${comment.commentId}">0</span>
+                                </button>
                             </div>
 
                             <!-- 댓글 하단: 첨부 이미지, 작성 시간, 수정 시간 -->
