@@ -14,5 +14,4 @@ public class PostLikeDislikeResDTO {
 	private boolean hasLiked;
 
 	private boolean hasDisliked;
-
 }
