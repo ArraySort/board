@@ -1,6 +1,7 @@
 package arraysort.project.board.app.like.service;
 
 import arraysort.project.board.app.component.PostComponent;
+import arraysort.project.board.app.exception.InvalidPrincipalException;
 import arraysort.project.board.app.like.domain.PostDislikeVO;
 import arraysort.project.board.app.like.domain.PostLikeDislikeResDTO;
 import arraysort.project.board.app.like.domain.PostLikeVO;
@@ -35,6 +36,8 @@ public class PostLikeService {
 		// 인증된 사용자만 좋아요 싫어요 가능
 		if (UserUtil.isAuthenticatedUser()) {
 			processLikeOrDislike(likeVO, dislikeVO, isLike);
+		} else {
+			throw new InvalidPrincipalException("로그인이 필요합니다.");
 		}
 
 		// 좋아요/싫어요 조회 결과 반환

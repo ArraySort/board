@@ -1,11 +1,13 @@
 package arraysort.project.board.app.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionControllerAdvice {
 
@@ -88,6 +90,19 @@ public class GlobalExceptionControllerAdvice {
 		return getModelAndView(String.valueOf(errorMessages));
 	}
 
+	// 커스텀 Exception 이 아닌 경우
+	@ExceptionHandler(Exception.class)
+	public ModelAndView handleException(Exception e) {
+		log.error("[에러 발생 : {} ]", e.getMessage(), e);
+		return getModelAndView(e.getMessage());
+	}
+
+	/**
+	 * ModelAndView 생성
+	 *
+	 * @param message 예외 메세지
+	 * @return 예외메세지가 담긴 ModelAndView 객체
+	 */
 	private ModelAndView getModelAndView(String message) {
 		ModelAndView mav = new ModelAndView("common/alert");
 		mav.addObject("message", message);

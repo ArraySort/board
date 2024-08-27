@@ -16,7 +16,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript">
         $(() => {
-
             // 최초 작성 댓글 이미지
             let commentImages = [];
 
@@ -297,11 +296,13 @@
                     url: '${pageContext.request.contextPath}/${boardDetail.boardId}/post/detail/${postDetail.postId}/' + action,
                     method: 'POST',
                     success: function (response) {
-                        updatePostLikeButtonState(response);
+                        if (response) {
+                            updatePostLikeButtonState(response);
+                        }
                     },
                     error: function (error) {
                         console.error('요청 실패:', error);
-                        alert(error.response);
+                        alert("잘못된 요청입니다.");
                     }
                 });
             }
@@ -315,7 +316,7 @@
                     },
                     error: function (error) {
                         console.error('요청 실패:', error);
-                        alert(error.responseText);
+                        alert("잘못된 요청입니다.");
                     }
                 });
             }
