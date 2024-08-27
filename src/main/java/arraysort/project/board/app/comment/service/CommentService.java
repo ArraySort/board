@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -74,7 +73,7 @@ public class CommentService {
 		PageDTO pageDTO = new PageDTO(totalTopLevelCommentCount, dto, boardId, postId);
 
 		// 대댓글 렌더링을 위한 트리구조 변환
-		List<CommentListResDTO> commentTree = buildCommentTree(getAllCommentList(postId, pageDTO));
+		List<CommentListResDTO> commentTree = commentComponent.buildCommentTree(getAllCommentList(postId, pageDTO));
 
 		return new PageResDTO<>(totalTopLevelCommentCount, dto.getCommentPage(), commentTree);
 	}
@@ -333,7 +332,7 @@ public class CommentService {
 
 		// 최상위 댓글 + 대댓글 리스트 추가(이미지 포함)
 		if (!topParentIds.isEmpty()) {
-			List<CommentListResDTO> childComments = commentMapper.selectRepliesForTopLevelComments(postId, topParentIds)
+			List<CommentListResDTO> childComments = commentMapper.selectRepliesForTopLevelComments(postId, topParentIds, UserUtil.getCurrentLoginUserId())
 					.stream()
 					.map(CommentListResDTO::of)
 					.toList();
@@ -342,39 +341,6 @@ public class CommentService {
 		}
 
 		return allComments;
-	}
-
-	/**
-	 * 댓글 트리구조 생성
-	 *
-	 * @param comments 현재 게시글 댓글 리스트
-	 * @return 트리구조로 완성된 부모 댓글 리스트
-	 */
-	private List<CommentListResDTO> buildCommentTree(List<CommentListResDTO> comments) {
-		// 쿼리 순서 보장
-		Map<Long, CommentListResDTO> commentMap = comments
-				.stream()
-				.collect(Collectors.toMap(CommentListResDTO::getCommentId,
-						comment -> comment,
-						(existing, replacement) -> existing,
-						LinkedHashMap::new
-				));
-
-		List<CommentListResDTO> rootComments = new ArrayList<>();
-
-		// 부모 댓글 추가, 자식 댓글 리스트 추가
-		commentMap.values().forEach(comment -> {
-			if (comment.getParentId() == null) {
-				rootComments.add(comment);
-			} else {
-				CommentListResDTO parent = commentMap.get(comment.getParentId());
-				if (parent != null) {
-					parent.addReply(comment);
-				}
-			}
-		});
-
-		return rootComments;
 	}
 
 	/**

@@ -300,7 +300,8 @@
                         updatePostLikeButtonState(response);
                     },
                     error: function (error) {
-                        console.error('AJAX 요청 실패:', error);
+                        console.error('요청 실패:', error);
+                        alert(error.response);
                     }
                 });
             }
@@ -313,12 +314,13 @@
                         updateCommentButtonState(commentId, response);
                     },
                     error: function (error) {
-                        console.error('AJAX 요청 실패:', error);
+                        console.error('요청 실패:', error);
                         alert(error.responseText);
                     }
                 });
             }
 
+            // 게시글 좋아요/싫어요 버튼 상태 업데이트
             function updatePostLikeButtonState(response) {
                 // 게시글 좋아요 버튼 상태 업데이트
                 $('#postLikeButton').toggleClass('btn-primary', response.hasLiked)
@@ -333,6 +335,7 @@
                 $('#dislikeCount').text(response.dislikeCount);
             }
 
+            // 댓글 좋아요/싫어요 버튼 상태 업데이트
             function updateCommentButtonState(commentId, response) {
                 // 댓글 좋아요 버튼 상태 업데이트
                 $('#commentLikeButton-' + commentId).toggleClass('btn-primary', response.commentHasLiked)
@@ -504,16 +507,17 @@
                                     </c:if>
                                 </div>
 
-                                <button class="btn btn-outline-primary me-2 commentLikeButton"
+                                <button
+                                        class="btn me-2 commentLikeButton ${comment.hasLiked ? 'btn-primary' : 'btn-outline-primary'}"
                                         id="commentLikeButton-${comment.commentId}"
                                         type="button" data-comment-id="${comment.commentId}">
-                                    좋아요 <span id="commentLikeCount-${comment.commentId}">0</span>
+                                    좋아요 <span id="commentLikeCount-${comment.commentId}">${comment.likeCount}</span>
                                 </button>
-                                <button class="btn btn-outline-secondary commentDislikeButton"
+                                <button class="btn commentDislikeButton ${comment.hasDisliked ? 'btn-secondary' : 'btn-outline-secondary'}"
                                         id="commentDislikeButton-${comment.commentId}"
                                         type="button" data-comment-id="${comment.commentId}">
                                     싫어요 <span
-                                        id="commentDislikeCount-${comment.commentId}">0</span>
+                                        id="commentDislikeCount-${comment.commentId}">${comment.dislikeCount}</span>
                                 </button>
                             </div>
 

@@ -18,7 +18,7 @@ public interface CommentMapper {
 	List<CommentVO> selectTopLevelCommentListWithPaging(PageDTO dto);
 
 	// 댓글 리스트 조회(모든 대댓글)
-	List<CommentVO> selectRepliesForTopLevelComments(long postId, List<Long> topParentIds);
+	List<CommentVO> selectRepliesForTopLevelComments(long postId, List<Long> topParentIds, String userId);
 
 	// 댓글 리스트 조회(대댓글)
 	List<Long> selectRepliesIdByParentCommentId(long parentId);

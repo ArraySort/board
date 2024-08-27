@@ -43,6 +43,19 @@
                c.created_at,
                c.updated_at,
                c.delete_flag,
+               (select count(*)
+                from comment_like
+                where comment_id = c.comment_id) as like_count,
+               (select count(*)
+                from comment_dislike
+                where comment_id = c.comment_id) as dislike_count,
+               (select exists(
+                select 1
+                from comment_like
+                where user_id = #{userId} and comment_id = c.comment_id)) as has_liked,
+               (select exists(
+                select 1
+                from comment_dislike where user_id = #{userId} and comment_id = c.comment_id))as has_disliked,
                i.image_id,
                i.original_name,
                i.saved_name,
@@ -82,6 +95,19 @@
                c.created_at,
                c.updated_at,
                c.delete_flag,
+               (select count(*)
+               from comment_like
+               where comment_id = c.comment_id) as like_count,
+               (select count(*)
+               from comment_dislike
+               where comment_id = c.comment_id) as dislike_count,
+               (select exists(
+               select 1
+               from comment_like
+               where user_id = #{userId} and comment_id = c.comment_id)) as has_liked,
+               (select exists(
+               select 1
+               from comment_dislike where user_id = #{userId} and comment_id = c.comment_id))as has_disliked,
                i.image_id,
                i.original_name,
                i.saved_name,
@@ -217,6 +243,10 @@
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
         <result property="deleteFlag" column="delete_flag"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="dislikeCount" column="dislike_count"/>
+        <result property="hasLiked" column="has_liked"/>
+        <result property="hasDisliked" column="has_disliked"/>
 
         <!-- 이미지 리스트 매핑 -->
         <collection property="commentImages" ofType="arraysort.project.board.app.image.domain.ImageVO">

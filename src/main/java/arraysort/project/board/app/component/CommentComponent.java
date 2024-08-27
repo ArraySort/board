@@ -2,6 +2,7 @@ package arraysort.project.board.app.component;
 
 import arraysort.project.board.app.board.domain.BoardVO;
 import arraysort.project.board.app.comment.domain.CommentAdoptReqDTO;
+import arraysort.project.board.app.comment.domain.CommentListResDTO;
 import arraysort.project.board.app.comment.domain.CommentVO;
 import arraysort.project.board.app.comment.mapper.CommentMapper;
 import arraysort.project.board.app.common.enums.Flag;
@@ -11,6 +12,13 @@ import arraysort.project.board.app.post.domain.PostDetailResDTO;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -27,6 +35,7 @@ public class CommentComponent {
 	 * @param boardId 검증하려는 게시판 ID
 	 * @param postId  검증하려는 게시글 ID
 	 */
+	@Transactional(readOnly = true)
 	public void validateBoardAndPost(long boardId, long postId) {
 		// 게시판 상태 검증, 게시판 접근 등급 검증
 		postComponent.getValidatedBoard(boardId);
@@ -45,6 +54,7 @@ public class CommentComponent {
 	 * @param boardId 현재 댓글을 작성하려는 게시판 ID
 	 * @param postId  현재 댓글을 작성하려는 게시글 ID
 	 */
+	@Transactional(readOnly = true)
 	public void validateAdd(BoardVO boardDetail, long boardId, long postId) {
 		// 1. 게시판 댓글 허용 여부 검증
 		if (boardDetail.getCommentFlag() == Flag.N) {
@@ -67,6 +77,7 @@ public class CommentComponent {
 	 *
 	 * @param commentId 수정하려는 댓글 ID
 	 */
+	@Transactional(readOnly = true)
 	public void validateComment(long commentId) {
 		// 1. 댓글 검증(존재, 상태)
 		CommentVO commentDetail = getValidatedComment(commentId);
@@ -84,6 +95,7 @@ public class CommentComponent {
 	 * @param dto        채택당하는 댓글의 정보
 	 * @param postDetail 검증된 게시글 세부정보
 	 */
+	@Transactional(readOnly = true)
 	public void validateAdoptComment(CommentAdoptReqDTO dto, PostDetailResDTO postDetail) {
 		// 1. 댓글 검증(존재, 상태)
 		CommentVO commentDetail = getValidatedComment(dto.getCommentId());
@@ -92,6 +104,39 @@ public class CommentComponent {
 		if (UserUtil.isCurrentUserOwner(commentDetail.getUserId()) || UserUtil.isNotAuthenticatedUser() || UserUtil.isNotCurrentUserOwner(postDetail.getUserId())) {
 			throw new InvalidPrincipalException("올바르지 않은 사용자입니다.");
 		}
+	}
+
+	/**
+	 * 댓글 트리구조 생성
+	 *
+	 * @param comments 현재 게시글 댓글 리스트
+	 * @return 트리구조로 완성된 부모 댓글 리스트
+	 */
+	public List<CommentListResDTO> buildCommentTree(List<CommentListResDTO> comments) {
+		// 쿼리 순서 보장
+		Map<Long, CommentListResDTO> commentMap = comments
+				.stream()
+				.collect(Collectors.toMap(CommentListResDTO::getCommentId,
+						comment -> comment,
+						(existing, replacement) -> existing,
+						LinkedHashMap::new
+				));
+
+		List<CommentListResDTO> rootComments = new ArrayList<>();
+
+		// 부모 댓글 추가, 자식 댓글 리스트 추가
+		commentMap.values().forEach(comment -> {
+			if (comment.getParentId() == null) {
+				rootComments.add(comment);
+			} else {
+				CommentListResDTO parent = commentMap.get(comment.getParentId());
+				if (parent != null) {
+					parent.addReply(comment);
+				}
+			}
+		});
+
+		return rootComments;
 	}
 
 	/**

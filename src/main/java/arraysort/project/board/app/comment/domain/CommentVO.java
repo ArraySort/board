@@ -51,6 +51,14 @@ public class CommentVO {
 
 	private List<ImageVO> commentImages;    // 댓글 이미지
 
+	private long likeCount;    // 좋아요 개수
+
+	private long dislikeCount;    // 싫어요 개수
+
+	private boolean hasLiked;    // 좋아요 여부
+
+	private boolean hasDisliked;    // 싫어요 여부
+
 	// 댓글 추가
 	public static CommentVO insertOf(CommentAddReqDTO dto, long postId) {
 		return CommentVO.builder()

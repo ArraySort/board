@@ -49,6 +49,14 @@ public class CommentListResDTO {
 
 	private List<CommentListResDTO> replies;
 
+	private long likeCount;    // 좋아요 개수
+
+	private long dislikeCount;    // 싫어요 개수
+
+	private boolean hasLiked;    // 좋아요 여부
+
+	private boolean hasDisliked;    // 싫어요 여부
+
 	// 댓글 리스트 조회
 	public static CommentListResDTO of(CommentVO vo) {
 		return CommentListResDTO.builder()
@@ -69,6 +77,10 @@ public class CommentListResDTO {
 				.updatedAt(vo.getUpdatedAt())
 				.deleteFlag(vo.getDeleteFlag())
 				.commentImages(vo.getCommentImages())
+				.likeCount(vo.getLikeCount())
+				.dislikeCount(vo.getDislikeCount())
+				.hasLiked(vo.isHasLiked())
+				.hasDisliked(vo.isHasDisliked())
 				.build();
 	}
 

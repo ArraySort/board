@@ -31,16 +31,17 @@
             </div>
         </c:if>
 
-        <button class="btn btn-outline-primary me-2 commentLikeButton"
+        <button
+                class="btn me-2 commentLikeButton ${requestScope.comment.hasLiked ? 'btn-primary' : 'btn-outline-primary'}"
                 id="commentLikeButton-${requestScope.comment.commentId}"
                 type="button" data-comment-id="${requestScope.comment.commentId}">
-            좋아요 <span id="commentLikeCount-${requestScope.comment.commentId}">0</span>
+            좋아요 <span id="commentLikeCount-${requestScope.comment.commentId}">${requestScope.comment.likeCount}</span>
         </button>
-        <button class="btn btn-outline-secondary commentDislikeButton"
+        <button class="btn commentDislikeButton ${requestScope.comment.hasDisliked ? 'btn-secondary' : 'btn-outline-secondary'}"
                 id="commentDislikeButton-${requestScope.comment.commentId}"
                 type="button" data-comment-id="${requestScope.comment.commentId}">
             싫어요 <span
-                id="commentDislikeCount-${requestScope.comment.commentId}">0</span>
+                id="commentDislikeCount-${requestScope.comment.commentId}">${requestScope.comment.dislikeCount}</span>
         </button>
     </div>
 
