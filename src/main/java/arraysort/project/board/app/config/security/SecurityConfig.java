@@ -14,7 +14,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private final String[] permittedUrls = {"/", "/home", "/user/login", "/user/process-login", "/user/signup", "/user/process-signup", "/user/send-email-verification", "/user/verify-email-code", "/WEB-INF/views/**", "/resources/**"};
+	private final String[] permittedUrls = {
+			"/", "/home",
+			"/user/login", "/user/process-login", "/user/signup", "/user/process-signup",
+			"/user/send-email-verification", "/user/verify-email-code",
+			"/WEB-INF/views/**", "/resources/**",
+			"/admin/login", "/admin/process-add-admin", "/admin/process-login-admin"};
 
 	private final LoginSuccessHandler loginSuccessHandler;
 
@@ -31,6 +36,7 @@ public class SecurityConfig {
 						.requestMatchers(permittedUrls).permitAll()
 						.requestMatchers("/{boardId}/post/**").permitAll()
 						.requestMatchers("/image/{imageId}").permitAll()
+						.requestMatchers("/admin/**").hasRole("ADMIN")
 						.anyRequest()
 						.authenticated()
 				)
@@ -58,6 +64,14 @@ public class SecurityConfig {
 						.logoutSuccessUrl("/home")
 						.invalidateHttpSession(true)
 						.deleteCookies("JSESSIONID", "remember-me")
+						.permitAll()
+				)
+
+				.logout(logout -> logout
+						.logoutUrl("/process-admin-logout")
+						.logoutSuccessUrl("/admin/login")
+						.invalidateHttpSession(true)
+						.deleteCookies("JSESSIONID")
 						.permitAll()
 				)
 

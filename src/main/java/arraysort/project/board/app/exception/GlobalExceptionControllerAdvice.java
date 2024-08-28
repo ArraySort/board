@@ -77,6 +77,18 @@ public class GlobalExceptionControllerAdvice {
 		return getModelAndView(e.getMessage());
 	}
 
+	// 등록된 관리자 아이디가 없을 때
+	@ExceptionHandler(AdminIdNotFoundException.class)
+	public ModelAndView handleAdminIdNotFoundException() {
+		return getModelAndView("등록된 관리자 아이디를 찾을 수 없습니다.");
+	}
+
+	// 관리자 로그인 시 비밀번호 불일치
+	@ExceptionHandler(AdminPasswordNotFoundException.class)
+	public ModelAndView handleAdminPasswordNotFoundException() {
+		return getModelAndView("비밀번호가 일치하지 않습니다.");
+	}
+
 	// ModelAttribute 바인딩 시 Validation 예외
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ModelAndView handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -90,10 +102,10 @@ public class GlobalExceptionControllerAdvice {
 		return getModelAndView(String.valueOf(errorMessages));
 	}
 
-	// 커스텀 Exception 이 아닌 경우
+	// 커스텀 Exception 이 아닌 경우 -> TODO : 커스텀예외 제외 예외처리 변경
 	@ExceptionHandler(Exception.class)
 	public ModelAndView handleException(Exception e) {
-		log.error("[에러 발생 : {} ]", e.getMessage(), e);
+		log.error("[에러 발생 : {} ]", e);
 		return getModelAndView(e.getMessage());
 	}
 
