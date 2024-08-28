@@ -21,6 +21,8 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.Objects;
 
+import static arraysort.project.board.app.common.Constants.ROLE_USER;
+
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -165,7 +167,7 @@ public class UserService implements UserDetailsService {
 		return new User(
 				vo.getUserId(),
 				vo.getUserPassword(),
-				Collections.singleton(new SimpleGrantedAuthority("USER"))
+				Collections.singleton(new SimpleGrantedAuthority(ROLE_USER))
 		);
 	}
 }

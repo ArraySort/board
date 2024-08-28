@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 
+import static arraysort.project.board.app.common.Constants.ROLE_ADMIN;
+
 @Service
 @RequiredArgsConstructor
 public class AdminService {
@@ -47,7 +49,7 @@ public class AdminService {
 
 		// 인증 토큰 생성 : 관리자
 		UsernamePasswordAuthenticationToken authenticationToken =
-				new UsernamePasswordAuthenticationToken(dto.getAdminId(), dto.getAdminPassword(), Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN")));
+				new UsernamePasswordAuthenticationToken(dto.getAdminId(), dto.getAdminPassword(), Collections.singleton(new SimpleGrantedAuthority(ROLE_ADMIN)));
 
 		// 인증 객체 설정
 		SecurityContextHolder.getContext().setAuthentication(authenticationToken);

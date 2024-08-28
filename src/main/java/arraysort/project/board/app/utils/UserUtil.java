@@ -6,6 +6,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Objects;
 
+import static arraysort.project.board.app.common.Constants.ANONYMOUS_USER;
+
 public class UserUtil {
 
 	private UserUtil() {
@@ -53,7 +55,7 @@ public class UserUtil {
 	 */
 	public static boolean isAuthenticatedUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return isValidAuthentication(authentication) && !authentication.getPrincipal().equals("anonymousUser");
+		return isValidAuthentication(authentication) && !authentication.getPrincipal().equals(ANONYMOUS_USER);
 	}
 
 	/**

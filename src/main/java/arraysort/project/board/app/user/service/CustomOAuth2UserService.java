@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static arraysort.project.board.app.common.Constants.ROLE_USER;
+
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -55,7 +57,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 		oAuthAttributes.getAttributes().put("userId", userId);
 
-		GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("USER");
+		GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(ROLE_USER);
 
 		return new DefaultOAuth2User(
 				Collections.singleton(grantedAuthority),

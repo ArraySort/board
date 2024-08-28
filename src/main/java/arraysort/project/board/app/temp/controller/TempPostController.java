@@ -16,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import static arraysort.project.board.app.common.Constants.*;
+
 @Controller
 @RequestMapping("/{boardId}/post")
 @RequiredArgsConstructor
@@ -36,7 +38,7 @@ public class TempPostController {
 	public String showBoardPage(@PathVariable long boardId, @ModelAttribute("page") PageReqDTO dto, Model model) {
 		model.addAttribute("pagination", tempPostService.findTempPostListWithPaging(dto, boardId));
 		model.addAttribute("boardDetail", boardService.findBoardDetailById(boardId));
-		return "post/tempPost";
+		return MAV_TEMP_POST;
 	}
 
 	// 게시글 임시저장 요청
@@ -44,8 +46,8 @@ public class TempPostController {
 	public String processAddTempPost(@PathVariable long boardId, @Valid @ModelAttribute TempPostAddReqDTO dto, Model model) {
 		tempPostService.addTempPost(dto, boardId);
 
-		ControllerUtil.addMessageAndRequest(model, "게시글이 임시저장되었습니다.", "ADD_TEMP");
-		return "common/alert";
+		ControllerUtil.addMessageAndRequest(model, "게시글이 임시저장되었습니다.", MAV_REQUEST_ADD_TEMP);
+		return MAV_ALERT;
 	}
 
 	// 임시저장 게시글 수정 페이지 이동
@@ -57,7 +59,7 @@ public class TempPostController {
 		model.addAttribute("postDetail", tempPostService.findTempPostDetailByPostId(boardId, tempPostId));
 		model.addAttribute("categories", categoryService.findCategoryList(boardId));
 		model.addAttribute("images", imageService.findImagesByTempPostId(tempPostId));
-		return "post/editTempPost";
+		return MAV_EDIT_TEMP_POST;
 	}
 
 	// 임시저장 게시글 수정
@@ -65,8 +67,8 @@ public class TempPostController {
 	public String processEditTempPost(@PathVariable long boardId, @PathVariable long tempPostId, @Valid @ModelAttribute TempPostEditReqDTO dto, Model model) {
 		tempPostService.modifyTempPost(dto, boardId, tempPostId);
 
-		ControllerUtil.addMessageAndRequest(model, "임시저장 게시물이 저장되었습니다.", "MODIFY_TEMP");
-		return "common/alert";
+		ControllerUtil.addMessageAndRequest(model, "임시저장 게시물이 저장되었습니다.", MAV_REQUEST_MODIFY_TEMP);
+		return MAV_ALERT;
 	}
 
 	// 임시저장 게시글 게시 요청
@@ -74,8 +76,8 @@ public class TempPostController {
 	public String processPublishTempPost(@PathVariable long boardId, @PathVariable long tempPostId, @Valid @ModelAttribute TempPostPublishReqDTO dto, Model model) {
 		tempPostService.publishTempPost(dto, boardId, tempPostId);
 
-		ControllerUtil.addMessageAndRequest(model, "임시저장 게시물이 게시 되었습니다.", "PUBLISH_POST");
-		return "common/alert";
+		ControllerUtil.addMessageAndRequest(model, "임시저장 게시물이 게시 되었습니다.", MAV_REQUEST_PUBLISH_POST);
+		return MAV_ALERT;
 	}
 
 	// 임시저장 게시글 삭제 요청
@@ -83,7 +85,7 @@ public class TempPostController {
 	public String processRemovePost(@PathVariable long boardId, @PathVariable long tempPostId, Model model) {
 		tempPostService.removeTempPost(boardId, tempPostId);
 
-		ControllerUtil.addMessageAndRequest(model, "임시저장 게시글이 삭제되었습니다.", "DELETE_TEMP");
-		return "common/alert";
+		ControllerUtil.addMessageAndRequest(model, "임시저장 게시글이 삭제되었습니다.", MAV_REQUEST_DELETE_TEMP);
+		return MAV_ALERT;
 	}
 }

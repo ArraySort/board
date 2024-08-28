@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import static arraysort.project.board.app.common.Constants.*;
+
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
@@ -23,13 +25,13 @@ public class AdminController {
 	// 관리자 메인 페이지
 	@GetMapping
 	public String showMainPage() {
-		return "admin/admin";
+		return MAV_ADMIN;
 	}
 
 	// 관리자 로그인 페이지
 	@GetMapping("/login")
 	public String showLoginPage() {
-		return "admin/adminLogin";
+		return MAV_ADMIN_LOGIN;
 	}
 
 	// 관리자 로그인 요청
@@ -37,8 +39,8 @@ public class AdminController {
 	public String processLoginAdmin(@ModelAttribute AdminLoginDTO dto, Model model, HttpServletRequest request) {
 		adminService.login(dto, request);
 
-		ControllerUtil.addMessageAndRequest(model, "로그인 성공", "LOGIN_ADMIN");
-		return "common/alert";
+		ControllerUtil.addMessageAndRequest(model, "로그인 성공", MAV_REQUEST_LOGIN_ADMIN);
+		return MAV_ALERT;
 	}
 
 	// 관리자 추가 요청
@@ -46,37 +48,37 @@ public class AdminController {
 	public String processAddAdmin(@ModelAttribute AdminAddDTO dto, Model model) {
 		adminService.addAdmin(dto);
 
-		ControllerUtil.addMessageAndRequest(model, "관리자 추가 완료", "ADD_ADMIN");
-		return "common/alert";
+		ControllerUtil.addMessageAndRequest(model, "관리자 추가 완료", MAV_REQUEST_ADD_ADMIN);
+		return MAV_ALERT;
 	}
 
 	// 유저 관리 페이지
 	@GetMapping("/user")
 	public String showUserManagementPage() {
-		return "admin/adminUserManagement";
+		return MAV_ADMIN_USER_MANAGEMENT;
 	}
 
 	// 게시판 관리 페이지
 	@GetMapping("/board")
 	public String showBoardManagementPage() {
-		return "admin/adminBoardManagement";
+		return MAV_ADMIN_BOARD_MANAGEMENT;
 	}
 
 	// 게시판 관리 페이지
 	@GetMapping("/post")
 	public String showPostManagementPage() {
-		return "admin/adminPostManagement";
+		return MAV_ADMIN_POST_MANAGEMENT;
 	}
 
 	// 댓글 관리 페이지
 	@GetMapping("/comment")
 	public String showCommentManagementPage() {
-		return "admin/adminCommentManagement";
+		return MAV_ADMIN_COMMENT_MANAGEMENT;
 	}
 
 	// 신고 관리 페이지
 	@GetMapping("/report")
 	public String showReportManagementPage() {
-		return "admin/adminReportManagement";
+		return MAV_ADMIN_REPORT_MANAGEMENT;
 	}
 }

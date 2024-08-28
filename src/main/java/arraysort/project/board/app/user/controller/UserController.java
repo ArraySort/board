@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import static arraysort.project.board.app.common.Constants.*;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -23,13 +25,13 @@ public class UserController {
 	// 로그인 페이지로 이동
 	@GetMapping("/login")
 	public String showLoginPage() {
-		return "user/login";
+		return MAV_USER_LOGIN;
 	}
 
 	// 회원가입 페이지로 이동
 	@GetMapping("/signup")
 	public String showSignupPage() {
-		return "user/signup";
+		return MAV_USER_SIGNUP;
 	}
 
 	// 회원가입 요청
@@ -37,7 +39,7 @@ public class UserController {
 	public String processSignup(@Valid @ModelAttribute UserSignupReqDTO dto, HttpSession session, Model model) {
 		userService.addUser(dto, session);
 
-		ControllerUtil.addMessageAndRequest(model, "회원가입이 완료되었습니다.", "SIGNUP");
-		return "common/alert";
+		ControllerUtil.addMessageAndRequest(model, "회원가입이 완료되었습니다.", MAV_REQUEST_SIGNUP);
+		return MAV_ALERT;
 	}
 }
