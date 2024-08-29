@@ -1,7 +1,7 @@
 package arraysort.project.board.app.admin.controller;
 
-import arraysort.project.board.app.admin.domain.AdminAddDTO;
-import arraysort.project.board.app.admin.domain.AdminLoginDTO;
+import arraysort.project.board.app.admin.domain.AdminAddReqDTO;
+import arraysort.project.board.app.admin.domain.AdminLoginReqDTO;
 import arraysort.project.board.app.admin.service.AdminService;
 import arraysort.project.board.app.utils.ControllerUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +19,7 @@ import static arraysort.project.board.app.common.Constants.*;
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
-public class AdminController {
+public class AdminLoginController {
 
 	private final AdminService adminService;
 
@@ -37,7 +37,7 @@ public class AdminController {
 
 	// 관리자 로그인 요청
 	@PostMapping("/process-login-admin")
-	public String processLoginAdmin(@Valid @ModelAttribute AdminLoginDTO dto, Model model, HttpServletRequest request) {
+	public String processLoginAdmin(@Valid @ModelAttribute AdminLoginReqDTO dto, Model model, HttpServletRequest request) {
 		adminService.login(dto, request);
 
 		ControllerUtil.addMessageAndRequest(model, "로그인 성공", MAV_REQUEST_LOGIN_ADMIN);
@@ -46,7 +46,7 @@ public class AdminController {
 
 	// 관리자 추가 요청
 	@PostMapping("/process-add-admin")
-	public String processAddAdmin(@Valid @ModelAttribute AdminAddDTO dto, Model model) {
+	public String processAddAdmin(@Valid @ModelAttribute AdminAddReqDTO dto, Model model) {
 		adminService.addAdmin(dto);
 
 		ControllerUtil.addMessageAndRequest(model, "관리자 추가 완료", MAV_REQUEST_ADD_ADMIN);
@@ -57,12 +57,6 @@ public class AdminController {
 	@GetMapping("/user")
 	public String showUserManagementPage() {
 		return MAV_ADMIN_USER_MANAGEMENT;
-	}
-
-	// 게시판 관리 페이지
-	@GetMapping("/board")
-	public String showBoardManagementPage() {
-		return MAV_ADMIN_BOARD_MANAGEMENT;
 	}
 
 	// 게시판 관리 페이지

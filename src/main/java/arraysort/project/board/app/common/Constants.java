@@ -70,6 +70,8 @@ public class Constants {
 	public static final String MAV_USER_SIGNUP = "user/signup";
 
 	public static final String MAV_REQUEST_SIGNUP = "SIGNUP";
+	
+	public static final String MAV_REQUEST_ADD_BOARD = "ADD_BOARD";
 
 	private Constants() {
 	}

@@ -1,6 +1,7 @@
 package arraysort.project.board.app.category.domain;
 
 import arraysort.project.board.app.common.enums.Flag;
+import arraysort.project.board.app.utils.UserUtil;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -24,4 +25,13 @@ public class CategoryVO {
 
 	private Flag deleteFlag;    // 삭제 여부
 
+	// 카테고리 추가
+	public static CategoryVO insertOf(CategoryAddReqDTO dto) {
+		return CategoryVO.builder()
+				.boardId(dto.getBoardId())
+				.categoryName(dto.getCategoryName())
+				.createdBy(UserUtil.getCurrentLoginUserId())
+				.updatedBy(UserUtil.getCurrentLoginUserId())
+				.build();
+	}
 }

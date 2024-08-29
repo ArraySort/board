@@ -14,4 +14,7 @@ public interface CategoryMapper {
 
 	// 카테고리 목록 조회
 	List<CategoryVO> selectCategoryListByBoardId(long boardId);
+
+	// 관리자 : 카테고리 추가
+	void insertCategory(CategoryVO vo);
 }

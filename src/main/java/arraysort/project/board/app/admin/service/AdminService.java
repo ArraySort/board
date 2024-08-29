@@ -1,7 +1,7 @@
 package arraysort.project.board.app.admin.service;
 
-import arraysort.project.board.app.admin.domain.AdminAddDTO;
-import arraysort.project.board.app.admin.domain.AdminLoginDTO;
+import arraysort.project.board.app.admin.domain.AdminAddReqDTO;
+import arraysort.project.board.app.admin.domain.AdminLoginReqDTO;
 import arraysort.project.board.app.admin.domain.AdminVO;
 import arraysort.project.board.app.admin.mapper.AdminMapper;
 import arraysort.project.board.app.exception.AdminIdNotFoundException;
@@ -29,7 +29,7 @@ public class AdminService {
 
 	// 관리자 추가
 	@Transactional
-	public void addAdmin(AdminAddDTO dto) {
+	public void addAdmin(AdminAddReqDTO dto) {
 		dto.encodePassword(passwordEncoder.encode(dto.getAdminPassword()));
 		AdminVO vo = AdminVO.of(dto);
 		adminMapper.insertAdmin(vo);
@@ -37,7 +37,7 @@ public class AdminService {
 
 	// 로그인
 	@Transactional(readOnly = true)
-	public void login(AdminLoginDTO dto, HttpServletRequest request) {
+	public void login(AdminLoginReqDTO dto, HttpServletRequest request) {
 		// ID 조회
 		AdminVO vo = adminMapper.selectAdminByAdminId(dto.getAdminId())
 				.orElseThrow(AdminIdNotFoundException::new);

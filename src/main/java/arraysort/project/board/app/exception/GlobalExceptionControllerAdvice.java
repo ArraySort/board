@@ -38,7 +38,7 @@ public class GlobalExceptionControllerAdvice {
 	// 게시글 추가 시 잘못된 게시판 ID 접근
 	@ExceptionHandler(CategoryNotFoundException.class)
 	public ModelAndView handleCategoryNotFoundException() {
-		return getModelAndView("해당 카테고리를 찾을 수 없습니다.");
+		return getModelAndView("카테고리를 찾을 수 없습니다.");
 	}
 
 	// 게시글 이미지 첨부 시 게시판이 허용한 이미지 개수보다 많을 때
@@ -87,6 +87,12 @@ public class GlobalExceptionControllerAdvice {
 	@ExceptionHandler(AdminPasswordNotFoundException.class)
 	public ModelAndView handleAdminPasswordNotFoundException() {
 		return getModelAndView("비밀번호가 일치하지 않습니다.");
+	}
+
+	// 게시판 중복 예외
+	@ExceptionHandler(DuplicatedBoardException.class)
+	public ModelAndView handleDuplicatedBoardException() {
+		return getModelAndView("이미 존재하는 게시판입니다. 이름을 다시 지정해주세요.");
 	}
 
 	// ModelAttribute 바인딩 시 Validation 예외

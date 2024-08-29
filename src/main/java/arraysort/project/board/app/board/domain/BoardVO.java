@@ -2,6 +2,7 @@ package arraysort.project.board.app.board.domain;
 
 import arraysort.project.board.app.common.enums.BoardType;
 import arraysort.project.board.app.common.enums.Flag;
+import arraysort.project.board.app.utils.UserUtil;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -41,4 +42,19 @@ public class BoardVO {
 
 	private Flag deleteFlag;    // 삭제 여부
 
+	// 게시판 추가
+	public static BoardVO insertOf(BoardAddReqDTO dto) {
+		return BoardVO.builder()
+				.boardName(dto.getBoardName())
+				.boardType(dto.getBoardType())
+				.boardOrder(dto.getBoardOrder())
+				.imageFlag(dto.getImageFlag())
+				.imageLimit(dto.getImageLimit())
+				.noticeCount(dto.getNoticeCount())
+				.commentFlag(dto.getCommentFlag())
+				.accessLevel(dto.getAccessLevel())
+				.createdBy(UserUtil.getCurrentLoginUserId())
+				.updatedBy(UserUtil.getCurrentLoginUserId())
+				.build();
+	}
 }

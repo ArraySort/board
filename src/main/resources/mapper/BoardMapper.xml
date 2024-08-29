@@ -46,4 +46,65 @@
         order by board_order
     </select>
 
+    <!-- 총 게시판 개수 조회 -->
+    <select id="selectTotalBoardCount" resultType="int">
+        select count(*)
+        from board
+    </select>
+
+    <!-- 관리자 : 게시판 추가 -->
+    <insert id="insertBoard" parameterType="arraysort.project.board.app.board.domain.BoardVO" useGeneratedKeys="true" keyProperty="boardId">
+        insert into board(board_name,
+                          board_type,
+                          board_order,
+                          image_flag,
+                          image_limit,
+                          notice_count,
+                          comment_flag,
+                          access_level,
+                          created_by,
+                          updated_by)
+        values (#{boardName},
+                #{boardType},
+                #{boardOrder},
+                #{imageFlag},
+                #{imageLimit},
+                #{noticeCount},
+                #{commentFlag},
+                #{accessLevel},
+                #{createdBy},
+                #{updatedBy})
+
+    </insert>
+
+    <!-- 관리자 : 게시판 리스트 조회 -->
+    <select id="selectBoardListWithPaging" parameterType="arraysort.project.board.app.common.page.PageDTO" resultType="arraysort.project.board.app.board.domain.BoardVO">
+        select board_id,
+               board_name,
+               board_type,
+               board_order,
+               image_flag,
+               image_limit,
+               notice_count,
+               comment_flag,
+               access_level,
+               activate_flag,
+               created_by,
+               updated_by,
+               created_at,
+               updated_at,
+               delete_flag
+        from board
+        limit #{pageRowCount} offset #{offset}
+    </select>
+
+    <!-- 관리자 : 게시판 존재 여부 조회-->
+    <select id="selectIsExistBoardName" parameterType="String">
+        select exists(
+            select 1
+            from board
+            where board_name = #{boardName}
+        )
+    </select>
+
 </mapper>

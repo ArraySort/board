@@ -12,7 +12,7 @@ public class AdminVO {
 	private String adminPassword;    // 관리자 비밀번호
 
 	// 관리자 추가
-	public static AdminVO of(AdminAddDTO dto) {
+	public static AdminVO of(AdminAddReqDTO dto) {
 		return AdminVO.builder()
 				.adminId(dto.getAdminId())
 				.adminPassword(dto.getAdminPassword())

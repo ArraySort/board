@@ -23,7 +23,8 @@
             "MODIFY_COMMENT": "/${boardId}/post/detail/${postId}",
             "DELETE_COMMENT": "/${boardId}/post/detail/${postId}",
             "ADOPT_COMMENT": "/${boardId}/post/detail/${postId}",
-            "LOGIN_ADMIN": "/admin"
+            "LOGIN_ADMIN": "/admin",
+            "ADD_BOARD": "/admin/board"
         }
 
         if (requestRoutes[request]) {
