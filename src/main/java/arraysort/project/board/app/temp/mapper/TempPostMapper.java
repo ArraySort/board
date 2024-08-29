@@ -1,7 +1,7 @@
 package arraysort.project.board.app.temp.mapper;
 
-import arraysort.project.board.app.post.domain.PageDTO;
-import arraysort.project.board.app.post.domain.PageReqDTO;
+import arraysort.project.board.app.common.page.PageDTO;
+import arraysort.project.board.app.common.page.PageReqDTO;
 import arraysort.project.board.app.temp.domain.TempPostVO;
 import org.apache.ibatis.annotations.Mapper;
 

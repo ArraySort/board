@@ -1,5 +1,7 @@
-package arraysort.project.board.app.post.domain;
+package arraysort.project.board.app.common.page;
 
+import arraysort.project.board.app.post.domain.SearchType;
+import arraysort.project.board.app.post.domain.SortType;
 import lombok.Getter;
 import lombok.Setter;
 

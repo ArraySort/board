@@ -1,4 +1,4 @@
-package arraysort.project.board.app.post.domain;
+package arraysort.project.board.app.common.page;
 
 import arraysort.project.board.app.common.Constants;
 import lombok.Getter;

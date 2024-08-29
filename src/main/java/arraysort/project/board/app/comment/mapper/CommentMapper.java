@@ -1,8 +1,8 @@
 package arraysort.project.board.app.comment.mapper;
 
 import arraysort.project.board.app.comment.domain.CommentVO;
-import arraysort.project.board.app.post.domain.PageDTO;
-import arraysort.project.board.app.post.domain.PageReqDTO;
+import arraysort.project.board.app.common.page.PageDTO;
+import arraysort.project.board.app.common.page.PageReqDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

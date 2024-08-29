@@ -2,8 +2,8 @@ package arraysort.project.board.app.temp.controller;
 
 import arraysort.project.board.app.board.service.BoardService;
 import arraysort.project.board.app.category.service.CategoryService;
+import arraysort.project.board.app.common.page.PageReqDTO;
 import arraysort.project.board.app.image.service.ImageService;
-import arraysort.project.board.app.post.domain.PageReqDTO;
 import arraysort.project.board.app.post.service.PostService;
 import arraysort.project.board.app.temp.domain.TempPostAddReqDTO;
 import arraysort.project.board.app.temp.domain.TempPostEditReqDTO;

@@ -1,4 +1,4 @@
-package arraysort.project.board.app.post.domain;
+package arraysort.project.board.app.common.page;
 
 import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.utils.UserUtil;
@@ -42,5 +42,12 @@ public class PageDTO {
 		this.dto = dto;
 		this.userId = UserUtil.getCurrentLoginUserId();
 		offset = (dto.getCommentPage() - 1) * pageRowCount;
+	}
+
+	public PageDTO(long totalBoardCount, PageReqDTO dto) {
+		this.totalPostCount = totalBoardCount;
+		this.pageRowCount = Constants.PAGE_ROW_COUNT;
+		this.dto = dto;
+		offset = (dto.getPage() - 1) * pageRowCount;
 	}
 }
