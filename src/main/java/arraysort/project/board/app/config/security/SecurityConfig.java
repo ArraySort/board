@@ -67,14 +67,6 @@ public class SecurityConfig {
 						.permitAll()
 				)
 
-				.logout(logout -> logout
-						.logoutUrl("/process-admin-logout")
-						.logoutSuccessUrl("/admin/login")
-						.invalidateHttpSession(true)
-						.deleteCookies("JSESSIONID")
-						.permitAll()
-				)
-
 				.sessionManagement(session -> session
 						.maximumSessions(1)
 						.expiredSessionStrategy(customSessionExpiredStrategy)

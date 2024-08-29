@@ -5,6 +5,7 @@ import arraysort.project.board.app.admin.domain.AdminLoginDTO;
 import arraysort.project.board.app.admin.service.AdminService;
 import arraysort.project.board.app.utils.ControllerUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,7 +37,7 @@ public class AdminController {
 
 	// 관리자 로그인 요청
 	@PostMapping("/process-login-admin")
-	public String processLoginAdmin(@ModelAttribute AdminLoginDTO dto, Model model, HttpServletRequest request) {
+	public String processLoginAdmin(@Valid @ModelAttribute AdminLoginDTO dto, Model model, HttpServletRequest request) {
 		adminService.login(dto, request);
 
 		ControllerUtil.addMessageAndRequest(model, "로그인 성공", MAV_REQUEST_LOGIN_ADMIN);
@@ -45,7 +46,7 @@ public class AdminController {
 
 	// 관리자 추가 요청
 	@PostMapping("/process-add-admin")
-	public String processAddAdmin(@ModelAttribute AdminAddDTO dto, Model model) {
+	public String processAddAdmin(@Valid @ModelAttribute AdminAddDTO dto, Model model) {
 		adminService.addAdmin(dto);
 
 		ControllerUtil.addMessageAndRequest(model, "관리자 추가 완료", MAV_REQUEST_ADD_ADMIN);
