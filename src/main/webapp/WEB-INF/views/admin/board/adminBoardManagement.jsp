@@ -24,17 +24,19 @@
             <thead class="thead-light">
             <tr>
                 <th scope="col">번호</th>
-                <th scope="col">게시판 이름</th>
+                <th scope="col">이름</th>
                 <th scope="col">종류</th>
                 <th scope="col">순서</th>
                 <th scope="col">이미지 허용</th>
-                <th scope="col">최대 이미지 수</th>
+                <th scope="col">이미지 수</th>
+                <th scope="col">댓글 허용</th>
                 <th scope="col">공지사항 수</th>
                 <th scope="col">접근 등급</th>
                 <th scope="col">생성날짜</th>
                 <th scope="col">수정날짜</th>
-                <th scope="col">최초 생성자</th>
-                <th scope="col">최종 수정자</th>
+                <th scope="col">생성자</th>
+                <th scope="col">수정자</th>
+                <th scope="col">수정</th>
             </tr>
             </thead>
             <tbody>
@@ -48,6 +50,7 @@
                     <td>${board.boardOrder}</td>
                     <td>${board.imageFlag}</td>
                     <td>${board.imageLimit}</td>
+                    <td>${board.commentFlag}</td>
                     <td>${board.noticeCount}</td>
                     <td>${board.accessLevel}</td>
                     <td class="text-truncate" style="max-width: 150px;">
@@ -56,8 +59,13 @@
                     <td class="text-truncate" style="max-width: 150px;">
                         <fmt:formatDate value="${board.updatedAt}" pattern="yyyy-MM-dd HH:mm"/>
                     </td>
-                    <td class="text-truncate" style="max-width: 150px;">${board.createdBy}</td>
-                    <td class="text-truncate" style="max-width: 150px;">${board.updatedBy}</td>
+                    <td class="text-truncate" style="max-width: 100px;">${board.createdBy}</td>
+                    <td class="text-truncate" style="max-width: 100px;">${board.updatedBy}</td>
+                    <td>
+                        <button class="btn btn-outline-primary" type="button"
+                                onclick="location.href='/admin/board/${board.boardId}/edit'">수정
+                        </button>
+                    </td>
                 </tr>
             </c:forEach>
             </tbody>

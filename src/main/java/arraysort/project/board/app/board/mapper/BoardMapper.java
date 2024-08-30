@@ -27,4 +27,10 @@ public interface BoardMapper {
 
 	// 관리자 : 게시판 존재 여부 조회
 	boolean selectIsExistBoardName(String boardName);
+
+	// 관리자 : 게시판 수정
+	void updateBoard(BoardVO vo, long boardId);
+
+	// 게시판 존재 여부 조회
+	boolean selectIsExistBoard(long boardId);
 }

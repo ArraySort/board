@@ -33,10 +33,11 @@ public class Constants {
 	public static final String MAV_ADMIN = "admin/admin";
 	public static final String MAV_ADMIN_LOGIN = "admin/adminLogin";
 	public static final String MAV_ADMIN_USER_MANAGEMENT = "admin/adminUserManagement";
-	public static final String MAV_ADMIN_BOARD_MANAGEMENT = "admin/adminBoardManagement";
+	public static final String MAV_ADMIN_BOARD_MANAGEMENT = "admin/board/adminBoardManagement";
 	public static final String MAV_ADMIN_POST_MANAGEMENT = "admin/adminPostManagement";
 	public static final String MAV_ADMIN_COMMENT_MANAGEMENT = "admin/adminCommentManagement";
 	public static final String MAV_ADMIN_REPORT_MANAGEMENT = "admin/adminReportManagement";
+	public static final String MAV_ADMIN_BOARD_ADD = "admin/board/adminAddBoard";
 
 	public static final String MAV_REQUEST_LOGIN_ADMIN = "LOGIN_ADMIN";
 	public static final String MAV_REQUEST_ADD_ADMIN = "ADD_ADMIN";
@@ -70,8 +71,9 @@ public class Constants {
 	public static final String MAV_USER_SIGNUP = "user/signup";
 
 	public static final String MAV_REQUEST_SIGNUP = "SIGNUP";
-	
+
 	public static final String MAV_REQUEST_ADD_BOARD = "ADD_BOARD";
+	public static final String MAV_REQUEST_MODIFY_BOARD = "MODIFY_BOARD";
 
 	private Constants() {
 	}

@@ -57,4 +57,19 @@ public class BoardVO {
 				.updatedBy(UserUtil.getCurrentLoginUserId())
 				.build();
 	}
+
+	// 게시판 수정
+	public static BoardVO updateOf(BoardEditReqDTO dto) {
+		return BoardVO.builder()
+				.boardName(dto.getBoardName())
+				.boardType(dto.getBoardType())
+				.boardOrder(dto.getBoardOrder())
+				.imageFlag(dto.getImageFlag())
+				.imageLimit(dto.getImageLimit())
+				.noticeCount(dto.getNoticeCount())
+				.commentFlag(dto.getCommentFlag())
+				.accessLevel(dto.getAccessLevel())
+				.updatedBy(UserUtil.getCurrentLoginUserId())
+				.build();
+	}
 }

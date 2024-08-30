@@ -1,6 +1,7 @@
 package arraysort.project.board.app.board.service;
 
 import arraysort.project.board.app.board.domain.BoardAddReqDTO;
+import arraysort.project.board.app.board.domain.BoardEditReqDTO;
 import arraysort.project.board.app.board.domain.BoardListResDTO;
 import arraysort.project.board.app.board.domain.BoardVO;
 import arraysort.project.board.app.board.mapper.BoardMapper;
@@ -73,5 +74,21 @@ public class BoardService {
 				.toList();
 
 		return new PageResDTO<>(totalBoardCount, dto.getPage(), boardList);
+	}
+
+	// 관리자 : 게시판 수정
+	@Transactional
+	public void modifyBoard(long boardId, BoardEditReqDTO dto) {
+		// 게시판 존재 검증
+		if (!boardMapper.selectIsExistBoard(boardId)) {
+			return;
+		}
+
+		// 게시판 업데이트
+		BoardVO vo = BoardVO.updateOf(dto);
+		boardMapper.updateBoard(vo, boardId);
+		
+		// 카테고리 수정
+		categoryService.modifyCategory(boardId, dto.getAddedCategoryList(), dto.getRemovedCategoryIds());
 	}
 }

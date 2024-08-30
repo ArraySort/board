@@ -4,6 +4,7 @@ import arraysort.project.board.app.category.domain.CategoryAddReqDTO;
 import arraysort.project.board.app.category.domain.CategoryVO;
 import arraysort.project.board.app.category.mapper.CategoryMapper;
 import arraysort.project.board.app.component.AdminComponent;
+import arraysort.project.board.app.exception.CategoryCountException;
 import arraysort.project.board.app.exception.CategoryNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,47 @@ public class CategoryService {
 
 			CategoryVO vo = CategoryVO.insertOf(dto);
 			categoryMapper.insertCategory(vo);
+		}
+	}
+
+	// 카테고리 수정
+	@Transactional
+	public void modifyCategory(long boardId, List<String> addedCategoryList, List<Long> removedCategoryIds) {
+		// 수정되는 카테고리 개수 검증
+		validateCategoryCount(boardId, addedCategoryList, removedCategoryIds);
+
+		if (!addedCategoryList.isEmpty()) {
+			for (String categoryName : addedCategoryList) {
+				CategoryAddReqDTO dto = CategoryAddReqDTO.builder()
+						.boardId(boardId)
+						.categoryName(categoryName)
+						.build();
+
+				CategoryVO vo = CategoryVO.insertOf(dto);
+				categoryMapper.insertCategory(vo);
+			}
+		}
+
+		// 기존 카테고리 삭제
+		if (!removedCategoryIds.isEmpty()) {
+			categoryMapper.deleteCategories(removedCategoryIds);
+		}
+	}
+
+	/**
+	 * 게시판 수정 시 카테고리 개수 검증
+	 * 카테고리 개수는 1개 이상이어야 함
+	 *
+	 * @param boardId            카테고리가 수정되는 게시판 ID
+	 * @param addedCategoryList  추가된 카테고리 리스트
+	 * @param removedCategoryIds 삭제된 케터고리 ID 리스트
+	 */
+	private void validateCategoryCount(long boardId, List<String> addedCategoryList, List<Long> removedCategoryIds) {
+		int categoryCount = categoryMapper.selectCategoryCountByBoardId(boardId);
+		boolean categoryCountCheck = categoryCount + addedCategoryList.size() - removedCategoryIds.size() < 1;
+
+		if (!categoryCountCheck) {
+			throw new CategoryCountException();
 		}
 	}
 }

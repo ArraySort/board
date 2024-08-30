@@ -17,4 +17,10 @@ public interface CategoryMapper {
 
 	// 관리자 : 카테고리 추가
 	void insertCategory(CategoryVO vo);
+
+	// 관리자 : 카테고리 삭제
+	void deleteCategories(List<Long> removedCategoryIds);
+
+	// 카테고리 개수 조회
+	int selectCategoryCountByBoardId(long boardId);
 }

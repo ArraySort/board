@@ -38,4 +38,21 @@
         values (#{boardId}, #{categoryName}, #{createdBy}, #{updatedBy})
     </insert>
 
+    <!-- 관리자 : 카테고리 삭제 -->
+    <update id="deleteCategories" parameterType="long">
+        update category
+        set delete_flag = 'Y'
+        where category_id in
+        <foreach collection="removedCategoryIds" item="categoryId" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </update>
+
+    <!-- 카테고리 개수 조회 -->
+    <select id="selectCategoryCountByBoardId">
+        select count(*)
+        from category
+        where board_id = #{boardId}
+    </select>
+
 </mapper>

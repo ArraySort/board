@@ -1,17 +1,16 @@
 package arraysort.project.board.app.admin.controller;
 
 import arraysort.project.board.app.board.domain.BoardAddReqDTO;
+import arraysort.project.board.app.board.domain.BoardEditReqDTO;
 import arraysort.project.board.app.board.service.BoardService;
+import arraysort.project.board.app.category.service.CategoryService;
 import arraysort.project.board.app.common.page.PageReqDTO;
 import arraysort.project.board.app.utils.ControllerUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import static arraysort.project.board.app.common.Constants.*;
 
@@ -21,6 +20,8 @@ import static arraysort.project.board.app.common.Constants.*;
 public class AdminBoardController {
 
 	private final BoardService boardService;
+
+	private final CategoryService categoryService;
 
 	// 게시판 관리 페이지(게시판 목록)
 	@GetMapping
@@ -32,7 +33,7 @@ public class AdminBoardController {
 	// 게시판 추가 페이지
 	@GetMapping("/add")
 	public String showAddBoardPage() {
-		return "admin/adminAddBoard";
+		return MAV_ADMIN_BOARD_ADD;
 	}
 
 	// 게시판 추가 요청
@@ -41,6 +42,23 @@ public class AdminBoardController {
 		boardService.addBoard(dto);
 
 		ControllerUtil.addMessageAndRequest(model, "게시판 추가가 완료되었습니다.", MAV_REQUEST_ADD_BOARD);
+		return MAV_ALERT;
+	}
+
+	// 게시판 수정 페이지
+	@GetMapping("/{boardId}/edit")
+	public String showEditBoardPage(@PathVariable long boardId, Model model) {
+		model.addAttribute("boardDetail", boardService.findBoardDetailById(boardId));
+		model.addAttribute("categoryList", categoryService.findCategoryList(boardId));
+		return "admin/board/adminEditBoard";
+	}
+
+	// 게시판 수정 요청
+	@PostMapping("/{boardId}/process-edit-board")
+	public String processEditBoard(@PathVariable long boardId, @Valid @ModelAttribute BoardEditReqDTO dto, Model model) {
+		boardService.modifyBoard(boardId, dto);
+
+		ControllerUtil.addMessageAndRequest(model, "게시판 추가가 완료되었습니다.", MAV_REQUEST_MODIFY_BOARD);
 		return MAV_ALERT;
 	}
 }

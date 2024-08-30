@@ -107,4 +107,27 @@
         )
     </select>
 
+    <!-- 관리자 : 게시판 수정 -->
+    <update id="updateBoard">
+        update board
+        set board_name = #{vo.boardName},
+            board_type = #{vo.boardType},
+            board_order = #{vo.boardOrder},
+            image_flag = #{vo.imageFlag},
+            image_limit = #{vo.imageLimit},
+            notice_count = #{vo.noticeCount},
+            comment_flag = #{vo.commentFlag},
+            access_level = #{vo.accessLevel}
+        where board_id = #{boardId}
+    </update>
+
+    <!-- 게시판 존재 여부 조회 -->
+    <select id="selectIsExistBoard" parameterType="long" resultType="boolean">
+        select exists(
+            select 1
+            from board
+            where board_id = #{boardId}
+        )
+    </select>
+
 </mapper>

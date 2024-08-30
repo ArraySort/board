@@ -95,6 +95,11 @@ public class GlobalExceptionControllerAdvice {
 		return getModelAndView("이미 존재하는 게시판입니다. 이름을 다시 지정해주세요.");
 	}
 
+	@ExceptionHandler(CategoryCountException.class)
+	public ModelAndView handleCategoryCountException() {
+		return getModelAndView("카테고리는 1개 이상 입력되어야 합니다.");
+	}
+
 	// ModelAttribute 바인딩 시 Validation 예외
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ModelAndView handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
