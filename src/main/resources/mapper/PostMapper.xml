@@ -189,4 +189,13 @@
         where post_id = #{postId}
     </update>
 
+    <!-- 관리자 : 카테고리 사용 여부 반환 -->
+    <select id="selectIsCategoryInUse" parameterType="long" resultType="boolean">
+        select exists(
+            select 1
+            from post
+            where category_id = #{categoryId} and delete_flag = 'N' and activate_flag = 'Y'
+        )
+    </select>
+
 </mapper>

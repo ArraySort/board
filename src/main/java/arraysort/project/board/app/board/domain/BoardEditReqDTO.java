@@ -43,4 +43,7 @@ public class BoardEditReqDTO {
 
 	@NotNull(message = "접근 허용 등급은 필수로 입력되어야 합니다.")
 	private Integer accessLevel;
+
+	@NotNull(message = "활성화 여부는 필수로 입력되어야 합니다.")
+	private Flag activateFlag;
 }

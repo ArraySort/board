@@ -12,7 +12,6 @@
 <body>
 <h1 class="text-center my-4">게시판 관리 페이지</h1>
 <div class="container">
-
     <div class="d-flex justify-content-between mb-2">
         <h3 class="mb-0">게시판 목록</h3>
         <h4 class="mb-0">총 게시판 개수 : ${boardPagination.totalPostCount}</h4>
@@ -28,17 +27,18 @@
                 <th scope="col">이름</th>
                 <th scope="col">종류</th>
                 <th scope="col">순서</th>
-                <th scope="col">이미지 허용</th>
+                <th scope="col">이미지</th>
                 <th scope="col">이미지 수</th>
-                <th scope="col">댓글 허용</th>
+                <th scope="col">댓글</th>
                 <th scope="col">공지사항 수</th>
-                <th scope="col">접근 등급</th>
+                <th scope="col">접근등급</th>
                 <th scope="col">생성날짜</th>
                 <th scope="col">수정날짜</th>
                 <th scope="col">생성자</th>
                 <th scope="col">수정자</th>
+                <th scope="col">활성화</th>
                 <th scope="col">수정</th>
-                <th scope="col">수정</th>
+                <th scope="col">삭제</th>
             </tr>
             </thead>
             <tbody>
@@ -63,6 +63,7 @@
                     </td>
                     <td class="text-truncate" style="max-width: 100px;">${board.createdBy}</td>
                     <td class="text-truncate" style="max-width: 100px;">${board.updatedBy}</td>
+                    <td>${board.activateFlag}</td>
                     <td>
                         <button class="btn-sm btn-primary" type="button"
                                 onclick="location.href='/admin/board/${board.boardId}/edit'">수정

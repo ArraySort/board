@@ -53,6 +53,7 @@ public class BoardVO {
 				.noticeCount(dto.getNoticeCount())
 				.commentFlag(dto.getCommentFlag())
 				.accessLevel(dto.getAccessLevel())
+				.activateFlag(dto.getActivateFlag())
 				.createdBy(UserUtil.getCurrentLoginUserId())
 				.updatedBy(UserUtil.getCurrentLoginUserId())
 				.build();
@@ -69,6 +70,7 @@ public class BoardVO {
 				.noticeCount(dto.getNoticeCount())
 				.commentFlag(dto.getCommentFlag())
 				.accessLevel(dto.getAccessLevel())
+				.activateFlag(dto.getActivateFlag())
 				.updatedBy(UserUtil.getCurrentLoginUserId())
 				.build();
 	}

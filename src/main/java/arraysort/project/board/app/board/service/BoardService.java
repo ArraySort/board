@@ -50,7 +50,7 @@ public class BoardService {
 		boardMapper.insertBoard(vo);
 
 		// 게시판 순서 업데이트
-		updateBoardOrder(dto.getBoardOrder(), boardMapper.selectTotalBoardCount(), vo.getBoardId());
+		updateBoardOrderInsert(dto.getBoardOrder(), boardMapper.selectTotalBoardCount(), vo.getBoardId());
 
 		// 카테고리 추가
 		categoryService.addCategory(vo.getBoardId(), dto.getCategories());
@@ -99,10 +99,22 @@ public class BoardService {
 		boardMapper.deleteBoard(boardId);
 
 		// 게시판 순서 조정
-		updateBoardOrder(boardMapper.selectTotalBoardCount(), boardDetail.getBoardOrder(), boardId);
+		updateBoardOrderRemove(boardMapper.selectTotalBoardCount() + 1, boardDetail.getBoardOrder(), boardId);
 
 		// 카테고리 삭제
 		categoryService.removeCategoryOnBoardRemoval(boardId);
+	}
+
+	/**
+	 * 게시판 순서 업데이트(추가)
+	 *
+	 * @param order   바꾸려는 순서
+	 * @param boardId 추가하는 게시판 ID
+	 */
+	private void updateBoardOrderInsert(int order, int end, long boardId) {
+		if (order > 0) {
+			boardMapper.shiftBoardOrderForward(order, end, boardId);
+		}
 	}
 
 	/**
@@ -123,14 +135,14 @@ public class BoardService {
 	}
 
 	/**
-	 * 게시판 순서 업데이트(추가, 삭제)
+	 * 게시판 순서 업데이트(삭제)
 	 *
 	 * @param order   바꾸려는 순서
-	 * @param boardId 추가, 삭제당하는 게시판 ID
+	 * @param boardId 삭제당하는 게시판 ID
 	 */
-	private void updateBoardOrder(int order, int end, long boardId) {
+	private void updateBoardOrderRemove(int end, int order, long boardId) {
 		if (order > 0) {
-			boardMapper.shiftBoardOrderForward(order, end, boardId);
+			boardMapper.shiftBoardOrderBackward(end, order, boardId);
 		}
 	}
 }

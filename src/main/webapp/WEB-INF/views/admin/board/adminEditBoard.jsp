@@ -253,6 +253,20 @@
                 </select>
             </div>
 
+            <div class="form-group mb-4">
+                <label>활성화 여부</label>
+                <div class="form-check form-check-inline">
+                    <input type="radio" id="activateFlag-Y" name="activateFlag" value="Y" class="form-check-input"
+                    ${boardDetail.activateFlag == 'Y' ? 'checked' : ''}>
+                    <label for="commentFlag-Y" class="form-check-label">활성화</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" id="activateFlag-N" name="activateFlag" value="N" class="form-check-input"
+                    ${boardDetail.activateFlag == 'N' ? 'checked' : ''}>
+                    <label for="commentFlag-N" class="form-check-label">비활성화</label>
+                </div>
+            </div>
+
             <button type="submit" id="editBoardButton" class="btn btn-primary">수정</button>
             <button type="button" class="btn btn-secondary" onclick="location.href='/admin/board'">취소</button>
         </form>

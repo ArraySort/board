@@ -64,6 +64,7 @@
                           notice_count,
                           comment_flag,
                           access_level,
+                          activate_flag,
                           created_by,
                           updated_by)
         values (#{boardName},
@@ -74,6 +75,7 @@
                 #{noticeCount},
                 #{commentFlag},
                 #{accessLevel},
+                #{activateFlag},
                 #{createdBy},
                 #{updatedBy})
 
@@ -121,7 +123,8 @@
             image_limit = #{vo.imageLimit},
             notice_count = #{vo.noticeCount},
             comment_flag = #{vo.commentFlag},
-            access_level = #{vo.accessLevel}
+            access_level = #{vo.accessLevel},
+            activate_flag = #{vo.activateFlag}
         where board_id = #{boardId}
     </update>
 

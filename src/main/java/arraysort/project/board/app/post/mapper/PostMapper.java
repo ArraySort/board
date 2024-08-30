@@ -34,4 +34,7 @@ public interface PostMapper {
 
 	// 조회수 증가
 	void updateViews(long postId);
+
+	// 관리자 : 카테고리 사용 여부 반환
+	boolean selectIsCategoryInUse(long categoryId);
 }

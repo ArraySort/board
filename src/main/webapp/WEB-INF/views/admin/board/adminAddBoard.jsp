@@ -201,6 +201,19 @@
                 </select>
             </div>
 
+            <div class="form-group mb-4">
+                <label>활성화 여부</label>
+                <div class="form-check form-check-inline">
+                    <input type="radio" id="activateFlag-Y" name="activateFlag" value="Y" class="form-check-input"
+                           checked>
+                    <label for="activateFlag-Y" class="form-check-label">활성화</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input type="radio" id="activateFlag-N" name="activateFlag" value="N" class="form-check-input">
+                    <label for="activateFlag-N" class="form-check-label">비활성화</label>
+                </div>
+            </div>
+
             <button type="submit" id="addBoardButton" class="btn btn-primary">추가</button>
             <button type="button" class="btn btn-secondary" onclick="location.href='/admin/board'">취소</button>
         </form>

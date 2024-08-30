@@ -23,9 +23,11 @@
 
     <div class="d-flex flex-column align-items-center">
         <c:forEach var="board" items="${boards}">
-            <button type="button" class="btn btn-outline-dark mb-2"
-                    onclick="location.href='/${board.boardId}/post'">${board.boardName}으로 이동
-            </button>
+            <c:if test="${board.activateFlag == 'Y'}">
+                <button type="button" class="btn btn-outline-dark mb-2"
+                        onclick="location.href='/${board.boardId}/post'">${board.boardName}으로 이동
+                </button>
+            </c:if>
         </c:forEach>
     </div>
 
