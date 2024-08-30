@@ -152,6 +152,14 @@
     <update id="shiftBoardOrderBackward">
         update board
         set board_order = board_order - 1
-        WHERE board_order &lt;= #{newOrder} and board.board_order > ${currentOrder} and board_id != #{boardId}
+        where board_order &lt;= #{newOrder} and board_order > ${currentOrder} and board_id != #{boardId}
+    </update>
+
+    <!-- 게시판 삭제 -->
+    <update id="deleteBoard" parameterType="long">
+        update board
+        set delete_flag = 'Y',
+            board_order = 0
+        where board_id = #{boardId}
     </update>
 </mapper>

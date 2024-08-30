@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,6 +38,7 @@
                 <th scope="col">생성자</th>
                 <th scope="col">수정자</th>
                 <th scope="col">수정</th>
+                <th scope="col">수정</th>
             </tr>
             </thead>
             <tbody>
@@ -62,9 +64,15 @@
                     <td class="text-truncate" style="max-width: 100px;">${board.createdBy}</td>
                     <td class="text-truncate" style="max-width: 100px;">${board.updatedBy}</td>
                     <td>
-                        <button class="btn btn-outline-primary" type="button"
+                        <button class="btn-sm btn-primary" type="button"
                                 onclick="location.href='/admin/board/${board.boardId}/edit'">수정
                         </button>
+                    </td>
+                    <td>
+                        <form action="/admin/board/${board.boardId}/process-delete-board" method="post">
+                            <sec:csrfInput/>
+                            <button class="btn-sm btn-danger" type="submit">삭제</button>
+                        </form>
                     </td>
                 </tr>
             </c:forEach>

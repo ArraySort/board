@@ -42,4 +42,7 @@ public interface BoardMapper {
 
 	// 게시판 순서 변경(뒤)
 	void shiftBoardOrderBackward(int newOrder, int currentOrder, long boardId);
+
+	// 게시판 삭제
+	void deleteBoard(long boardId);
 }

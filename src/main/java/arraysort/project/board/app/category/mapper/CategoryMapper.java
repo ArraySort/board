@@ -23,4 +23,7 @@ public interface CategoryMapper {
 
 	// 카테고리 개수 조회
 	int selectCategoryCountByBoardId(long boardId);
+
+	// 게시판 삭제 시 카테고리 삭제
+	void deleteCategoriesByBoardId(long boardId);
 }

@@ -74,6 +74,7 @@ public class Constants {
 
 	public static final String MAV_REQUEST_ADD_BOARD = "ADD_BOARD";
 	public static final String MAV_REQUEST_MODIFY_BOARD = "MODIFY_BOARD";
+	public static final String MAV_REQUEST_DELETE_BOARD = "DELETE_BOARD";
 
 	public static final String MAV_ERROR_404 = "error/code404";
 	public static final String MAV_ERROR_500 = "error/code500";

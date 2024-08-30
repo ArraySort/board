@@ -55,6 +55,12 @@ public class CategoryService {
 		}
 	}
 
+	// 게시판 삭제 시 카테고리 삭제
+	@Transactional
+	public void removeCategoryOnBoardRemoval(long boardId) {
+		categoryMapper.deleteCategoriesByBoardId(boardId);
+	}
+
 	/**
 	 * 추가 카테고리 리스트 반환
 	 *

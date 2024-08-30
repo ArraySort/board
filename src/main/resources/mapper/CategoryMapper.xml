@@ -59,4 +59,11 @@
         where board_id = #{boardId} and delete_flag = 'N'
     </select>
 
+    <!-- 게시판 삭제 시 카테고리 삭제 -->
+    <update id="deleteCategoriesByBoardId" parameterType="long">
+        update category
+        set delete_flag = 'Y'
+        where board_id = #{boardId}
+    </update>
+
 </mapper>

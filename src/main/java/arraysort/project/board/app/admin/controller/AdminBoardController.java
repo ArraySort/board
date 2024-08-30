@@ -63,4 +63,13 @@ public class AdminBoardController {
 		ControllerUtil.addMessageAndRequest(model, "게시판 수정이 완료되었습니다.", MAV_REQUEST_MODIFY_BOARD);
 		return MAV_ALERT;
 	}
+
+	// 게시판 삭제 요청
+	@PostMapping("/{boardId}/process-delete-board")
+	public String processDeleteBoard(@PathVariable long boardId, Model model) {
+		boardService.removeBoard(boardId);
+
+		ControllerUtil.addMessageAndRequest(model, "게시판 삭제 완료되었습니다.", MAV_REQUEST_DELETE_BOARD);
+		return MAV_ALERT;
+	}
 }
