@@ -32,7 +32,8 @@ public class AdminBoardController {
 
 	// 게시판 추가 페이지
 	@GetMapping("/add")
-	public String showAddBoardPage() {
+	public String showAddBoardPage(Model model) {
+		model.addAttribute("boardList", boardService.findAllBoards());
 		return MAV_ADMIN_BOARD_ADD;
 	}
 
@@ -48,6 +49,7 @@ public class AdminBoardController {
 	// 게시판 수정 페이지
 	@GetMapping("/{boardId}/edit")
 	public String showEditBoardPage(@PathVariable long boardId, Model model) {
+		model.addAttribute("boardList", boardService.findAllBoards());
 		model.addAttribute("boardDetail", boardService.findBoardDetailById(boardId));
 		model.addAttribute("categoryList", categoryService.findCategoryList(boardId));
 		return "admin/board/adminEditBoard";

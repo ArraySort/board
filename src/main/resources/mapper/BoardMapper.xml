@@ -98,7 +98,7 @@
                delete_flag
         from board
         where delete_flag = 'N'
-        order by updated_at desc
+        order by board_order desc
         limit #{pageRowCount} offset #{offset}
     </select>
 
@@ -134,4 +134,24 @@
         )
     </select>
 
+    <!-- 게시판 순서 조회 -->
+    <select id="selectBoardOrder" parameterType="long">
+        select board_order
+        from board
+        where board_id = #{boardId} and delete_flag = 'N'
+    </select>
+
+    <!-- 게시판 순서 변경(앞) -->
+    <update id="shiftBoardOrderForward">
+        update board
+        set board_order = board_order + 1
+        where board_order >= #{newOrder} and board_order &lt; ${currentOrder} and board_id != #{boardId}
+    </update>
+
+    <!-- 게시판 순서 변경(뒤) -->
+    <update id="shiftBoardOrderBackward">
+        update board
+        set board_order = board_order - 1
+        WHERE board_order &lt;= #{newOrder} and board.board_order > ${currentOrder} and board_id != #{boardId}
+    </update>
 </mapper>

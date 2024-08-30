@@ -33,4 +33,13 @@ public interface BoardMapper {
 
 	// 게시판 존재 여부 조회
 	boolean selectIsExistBoard(long boardId);
+
+	// 게시판 순서 조회
+	int selectBoardOrder(long boardId);
+
+	// 게시판 순서 변경(앞)
+	void shiftBoardOrderForward(int newOrder, int currentOrder, long boardId);
+
+	// 게시판 순서 변경(뒤)
+	void shiftBoardOrderBackward(int newOrder, int currentOrder, long boardId);
 }

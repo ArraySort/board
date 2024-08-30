@@ -159,12 +159,12 @@
             </div>
 
             <div class="form-group mb-4">
-                <label for="boardOrder">메인페이지 게시글 노출 순서</label>
+                <label for="boardOrder">메인페이지 게시판 순서</label>
                 <select id="boardOrder" name="boardOrder" class="form-control">
-                    <option value="">메인페이지 게시글 노출 순서</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
+                    <option value="${boardDetail.boardOrder}">${boardDetail.boardOrder}</option>
+                    <c:forEach var="board" items="${boardList}">
+                        <option value="${board.boardOrder}">${board.boardOrder}</option>
+                    </c:forEach>
                 </select>
             </div>
 
