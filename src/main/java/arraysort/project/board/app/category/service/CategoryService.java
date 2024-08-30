@@ -3,7 +3,6 @@ package arraysort.project.board.app.category.service;
 import arraysort.project.board.app.category.domain.CategoryAddReqDTO;
 import arraysort.project.board.app.category.domain.CategoryVO;
 import arraysort.project.board.app.category.mapper.CategoryMapper;
-import arraysort.project.board.app.component.AdminComponent;
 import arraysort.project.board.app.exception.CategoryCountException;
 import arraysort.project.board.app.exception.CategoryNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +17,6 @@ public class CategoryService {
 
 	private final CategoryMapper categoryMapper;
 
-	private final AdminComponent adminComponent;
-
 	// 카테고리 목록 조회
 	@Transactional(readOnly = true)
 	public List<CategoryVO> findCategoryList(long boardId) {
@@ -29,9 +26,6 @@ public class CategoryService {
 	// 카테고리 추가
 	@Transactional
 	public void addCategory(long boardId, List<String> categories) {
-		// 관리자인지 검증
-		adminComponent.validateAdmin();
-
 		if (categories == null || categories.isEmpty()) {
 			throw new CategoryNotFoundException();
 		}
@@ -81,9 +75,9 @@ public class CategoryService {
 	 */
 	private void validateCategoryCount(long boardId, List<String> addedCategoryList, List<Long> removedCategoryIds) {
 		int categoryCount = categoryMapper.selectCategoryCountByBoardId(boardId);
-		boolean categoryCountCheck = categoryCount + addedCategoryList.size() - removedCategoryIds.size() < 1;
+		boolean isInvalidCategoryCount = categoryCount + addedCategoryList.size() - removedCategoryIds.size() < 1;
 
-		if (!categoryCountCheck) {
+		if (isInvalidCategoryCount) {
 			throw new CategoryCountException();
 		}
 	}

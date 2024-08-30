@@ -58,7 +58,7 @@ public class AdminBoardController {
 	public String processEditBoard(@PathVariable long boardId, @Valid @ModelAttribute BoardEditReqDTO dto, Model model) {
 		boardService.modifyBoard(boardId, dto);
 
-		ControllerUtil.addMessageAndRequest(model, "게시판 추가가 완료되었습니다.", MAV_REQUEST_MODIFY_BOARD);
+		ControllerUtil.addMessageAndRequest(model, "게시판 수정이 완료되었습니다.", MAV_REQUEST_MODIFY_BOARD);
 		return MAV_ALERT;
 	}
 }

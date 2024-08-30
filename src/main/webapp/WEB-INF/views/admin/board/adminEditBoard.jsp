@@ -14,14 +14,16 @@
                 toggleImageLimit();
             });
 
-            // 게시판 추가 버튼 클릭 시
-            $('#addBoardButton').click(function (e) {
+            // 게시판 수정 버튼 클릭 시
+            $('#editBoardButton').click(function (e) {
                 const boardName = $('#boardName').val();
                 const boardType = $('#boardType').val();
                 const boardOrder = $('#boardOrder').val();
                 const categoryCount = $('#categoriesContainer span').length;
                 const noticeCount = $('#noticeCount').val();
                 const accessLevel = $('#accessLevel').val();
+
+                console.log(categoryCount);
 
                 if (!boardName) {
                     alertMessage(e, "게시판 이름을 입력해주세요.")
@@ -241,7 +243,7 @@
                 </select>
             </div>
 
-            <button type="submit" id="addBoardButton" class="btn btn-primary">추가</button>
+            <button type="submit" id="editBoardButton" class="btn btn-primary">수정</button>
             <button type="button" class="btn btn-secondary" onclick="location.href='/admin/board'">취소</button>
         </form>
     </div>

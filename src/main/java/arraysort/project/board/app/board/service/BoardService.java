@@ -9,7 +9,6 @@ import arraysort.project.board.app.category.service.CategoryService;
 import arraysort.project.board.app.common.page.PageDTO;
 import arraysort.project.board.app.common.page.PageReqDTO;
 import arraysort.project.board.app.common.page.PageResDTO;
-import arraysort.project.board.app.component.AdminComponent;
 import arraysort.project.board.app.exception.BoardNotFoundException;
 import arraysort.project.board.app.exception.DuplicatedBoardException;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +24,6 @@ public class BoardService {
 	private final BoardMapper boardMapper;
 
 	private final CategoryService categoryService;
-
-	private final AdminComponent adminComponent;
 
 	// 게시판 전체 조회
 	@Transactional(readOnly = true)
@@ -44,10 +41,7 @@ public class BoardService {
 	// 관리자 : 게시판 추가
 	@Transactional
 	public void addBoard(BoardAddReqDTO dto) {
-		// 관리자인지 검증
-		adminComponent.validateAdmin();
-
-		// 게시판 중복 검사
+		// 게시판 이름 중복 검사
 		if (boardMapper.selectIsExistBoardName(dto.getBoardName())) {
 			throw new DuplicatedBoardException();
 		}
@@ -62,11 +56,8 @@ public class BoardService {
 	// 관리자 : 게시판 조회
 	@Transactional(readOnly = true)
 	public PageResDTO<BoardListResDTO> findBoardListWithPaging(PageReqDTO dto) {
-		// 관리자인지 검증
-		adminComponent.validateAdmin();
-
 		int totalBoardCount = boardMapper.selectTotalBoardCount();
-		PageDTO pageDTO = new PageDTO(totalBoardCount, dto);
+		PageDTO pageDTO = new PageDTO(dto);
 
 		List<BoardListResDTO> boardList = boardMapper.selectBoardListWithPaging(pageDTO)
 				.stream()
@@ -87,7 +78,7 @@ public class BoardService {
 		// 게시판 업데이트
 		BoardVO vo = BoardVO.updateOf(dto);
 		boardMapper.updateBoard(vo, boardId);
-		
+
 		// 카테고리 수정
 		categoryService.modifyCategory(boardId, dto.getAddedCategoryList(), dto.getRemovedCategoryIds());
 	}
