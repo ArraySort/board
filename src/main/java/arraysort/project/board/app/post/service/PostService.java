@@ -72,7 +72,7 @@ public class PostService {
 		postComponent.getValidatedBoard(boardId);
 
 		int totalPostCount = postMapper.selectTotalPostCount(dto, boardId);
-		PageDTO pageDTO = new PageDTO(totalPostCount, dto, boardId);
+		PageDTO pageDTO = new PageDTO(dto, boardId);
 
 		List<PostListResDTO> postList = postMapper.selectPostListWithPaging(pageDTO)
 				.stream()

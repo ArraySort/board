@@ -9,10 +9,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PageDTO {
 
-	private long totalPostCount;
-
-	private long totalCommentCount;
-
 	private int offset;
 
 	private int pageRowCount;
@@ -25,8 +21,7 @@ public class PageDTO {
 
 	private String userId;
 
-	public PageDTO(long totalPostCount, PageReqDTO dto, long boardId) {
-		this.totalPostCount = totalPostCount;
+	public PageDTO(PageReqDTO dto, long boardId) {
 		this.pageRowCount = Constants.PAGE_ROW_COUNT;
 		this.boardId = boardId;
 		this.dto = dto;
@@ -34,8 +29,7 @@ public class PageDTO {
 		offset = (dto.getPage() - 1) * pageRowCount;
 	}
 
-	public PageDTO(long totalCommentCount, PageReqDTO dto, long boardId, long postId) {
-		this.totalCommentCount = totalCommentCount;
+	public PageDTO(PageReqDTO dto, long boardId, long postId) {
 		this.pageRowCount = Constants.PAGE_ROW_COUNT;
 		this.boardId = boardId;
 		this.postId = postId;
@@ -44,8 +38,7 @@ public class PageDTO {
 		offset = (dto.getCommentPage() - 1) * pageRowCount;
 	}
 
-	public PageDTO(long totalBoardCount, PageReqDTO dto) {
-		this.totalPostCount = totalBoardCount;
+	public PageDTO(PageReqDTO dto) {
 		this.pageRowCount = Constants.PAGE_ROW_COUNT;
 		this.dto = dto;
 		offset = (dto.getPage() - 1) * pageRowCount;

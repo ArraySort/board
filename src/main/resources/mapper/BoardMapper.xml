@@ -22,7 +22,7 @@
                updated_at,
                delete_flag
         from board
-        where board_id = #{boardId}
+        where board_id = #{boardId} and delete_flag = 'N'
     </select>
 
     <!-- 게시판 전체 조회 -->
@@ -43,6 +43,7 @@
                updated_at,
                delete_flag
         from board
+        where delete_flag = 'N'
         order by board_order
     </select>
 
@@ -50,6 +51,7 @@
     <select id="selectTotalBoardCount" resultType="int">
         select count(*)
         from board
+        where delete_flag = 'N'
     </select>
 
     <!-- 관리자 : 게시판 추가 -->
@@ -95,15 +97,17 @@
                updated_at,
                delete_flag
         from board
+        where delete_flag = 'N'
+        order by updated_at desc
         limit #{pageRowCount} offset #{offset}
     </select>
 
     <!-- 관리자 : 게시판 존재 여부 조회-->
-    <select id="selectIsExistBoardName" parameterType="String">
+    <select id="selectIsExistBoardName" parameterType="String" resultType="boolean">
         select exists(
             select 1
             from board
-            where board_name = #{boardName}
+            where board_name = #{boardName} and delete_flag = 'N'
         )
     </select>
 
@@ -126,7 +130,7 @@
         select exists(
             select 1
             from board
-            where board_id = #{boardId}
+            where board_id = #{boardId} and delete_flag = 'N'
         )
     </select>
 

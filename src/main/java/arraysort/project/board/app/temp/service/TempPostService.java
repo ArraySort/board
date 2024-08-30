@@ -63,7 +63,7 @@ public class TempPostService {
 		postComponent.getValidatedBoard(boardId);
 
 		int totalTempPostCount = tempPostMapper.selectTotalTempPostCount(dto, boardId);
-		PageDTO pageDTO = new PageDTO(totalTempPostCount, dto, boardId);
+		PageDTO pageDTO = new PageDTO(dto, boardId);
 
 		List<TempPostListResDTO> tempPostList = tempPostMapper.selectTempPostListWithPaging(pageDTO)
 				.stream()

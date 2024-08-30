@@ -70,7 +70,7 @@ public class CommentService {
 
 		// 최상위 댓글 개수, Page 정보 생성
 		int totalTopLevelCommentCount = commentMapper.selectTotalTopLevelCommentCount(dto, postId);
-		PageDTO pageDTO = new PageDTO(totalTopLevelCommentCount, dto, boardId, postId);
+		PageDTO pageDTO = new PageDTO(dto, boardId, postId);
 
 		// 대댓글 렌더링을 위한 트리구조 변환
 		List<CommentListResDTO> commentTree = commentComponent.buildCommentTree(getAllCommentList(postId, pageDTO));
