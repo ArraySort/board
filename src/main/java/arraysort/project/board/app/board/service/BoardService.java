@@ -72,7 +72,7 @@ public class BoardService {
 	public void modifyBoard(long boardId, BoardEditReqDTO dto) {
 		// 게시판 존재 검증
 		if (!boardMapper.selectIsExistBoard(boardId)) {
-			return;
+			throw new BoardNotFoundException();
 		}
 
 		// 게시판 업데이트

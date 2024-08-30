@@ -33,9 +33,13 @@
     </select>
 
     <!-- 관리자 : 카테고리 추가 -->
-    <insert id="insertCategory">
+    <insert id="insertCategoryList" parameterType="arraysort.project.board.app.category.domain.CategoryVO">
         insert into category(board_id, category_name, created_by, updated_by)
-        values (#{boardId}, #{categoryName}, #{createdBy}, #{updatedBy})
+        values
+            <foreach collection="categories" item="category" separator=",">
+                (#{category.boardId}, #{category.categoryName}, #{category.createdBy}, #{category.updatedBy})
+            </foreach>
+
     </insert>
 
     <!-- 관리자 : 카테고리 삭제 -->

@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>게시판 추가</title>
+    <title>게시판 수정</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript">
@@ -85,6 +85,8 @@
 
                         $('#categoriesContainer').append(categoryTag);
                         $(this).val('');
+                    } else {
+                        alertMessage(e, "카테고리는 공백이나 중복입력이 불가합니다.");
                     }
                 }
             });
@@ -118,6 +120,12 @@
             // 삭제 리스트 업데이트
             function updateRemovedCategoryIds() {
                 $('#removedCategoryIds').val(removedCategoryIds.join(','));
+            }
+
+            // 메세지 출력
+            function alertMessage(e, message) {
+                e.preventDefault();
+                alert(message);
             }
         });
     </script>
@@ -160,12 +168,14 @@
                 </select>
             </div>
 
+            <label>카테고리 입력</label>
             <div class="form-group">
                 <input type="text" id="categoryInput" class="form-control"
                        placeholder="카테고리를 입력하고 엔터를 치세요.">
             </div>
 
             <div id="categoriesContainer" class="mt-3">
+                <label>추가된 카테고리 : </label>
                 <c:forEach var="category" items="${categoryList}">
                     <span class="mr-2">${category.categoryName}
                        <button type="button" class="close ml-2 remove-existing-category-button" aria-label="Close"

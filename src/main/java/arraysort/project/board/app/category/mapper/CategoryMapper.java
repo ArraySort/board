@@ -16,7 +16,7 @@ public interface CategoryMapper {
 	List<CategoryVO> selectCategoryListByBoardId(long boardId);
 
 	// 관리자 : 카테고리 추가
-	void insertCategory(CategoryVO vo);
+	void insertCategoryList(List<CategoryVO> categories);
 
 	// 관리자 : 카테고리 삭제
 	void deleteCategories(List<Long> removedCategoryIds);

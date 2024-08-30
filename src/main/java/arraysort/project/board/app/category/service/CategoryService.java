@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,15 +32,9 @@ public class CategoryService {
 			throw new CategoryNotFoundException();
 		}
 
-		for (String categoryName : categories) {
-			CategoryAddReqDTO dto = CategoryAddReqDTO.builder()
-					.boardId(boardId)
-					.categoryName(categoryName)
-					.build();
+		List<CategoryVO> categoryList = getCategoryList(boardId, categories);
 
-			CategoryVO vo = CategoryVO.insertOf(dto);
-			categoryMapper.insertCategory(vo);
-		}
+		categoryMapper.insertCategoryList(categoryList);
 	}
 
 	// 카테고리 수정
@@ -48,21 +44,34 @@ public class CategoryService {
 		validateCategoryCount(boardId, addedCategoryList, removedCategoryIds);
 
 		if (!addedCategoryList.isEmpty()) {
-			for (String categoryName : addedCategoryList) {
-				CategoryAddReqDTO dto = CategoryAddReqDTO.builder()
-						.boardId(boardId)
-						.categoryName(categoryName)
-						.build();
+			List<CategoryVO> categoryList = getCategoryList(boardId, addedCategoryList);
 
-				CategoryVO vo = CategoryVO.insertOf(dto);
-				categoryMapper.insertCategory(vo);
-			}
+			categoryMapper.insertCategoryList(categoryList);
 		}
 
 		// 기존 카테고리 삭제
 		if (!removedCategoryIds.isEmpty()) {
 			categoryMapper.deleteCategories(removedCategoryIds);
 		}
+	}
+
+	/**
+	 * 추가 카테고리 리스트 반환
+	 *
+	 * @param boardId    게시판 ID
+	 * @param categories 추가된 카테고리 리스트
+	 * @return 추가된 카테고리 VO 리스트
+	 */
+	private List<CategoryVO> getCategoryList(long boardId, List<String> categories) {
+		Set<String> uniqueCategories = new HashSet<>(categories);
+		return uniqueCategories.stream()
+				.map(categoryName -> {
+					CategoryAddReqDTO dto = CategoryAddReqDTO.builder()
+							.boardId(boardId)
+							.categoryName(categoryName)
+							.build();
+					return CategoryVO.insertOf(dto);
+				}).toList();
 	}
 
 	/**
