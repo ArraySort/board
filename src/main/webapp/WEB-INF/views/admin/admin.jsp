@@ -11,7 +11,7 @@
 <ul>
     <li><a href="${pageContext.request.contextPath}/admin/user">회원 관리</a></li>
     <li><a href="${pageContext.request.contextPath}/admin/board">게시판 관리</a></li>
-    <li><a href="${pageContext.request.contextPath}/admin/post">게시글 관리</a></li>
+    <li><a href="${pageContext.request.contextPath}/admin/post/1">게시글 관리</a></li>
     <li><a href="${pageContext.request.contextPath}/admin/comment">댓글 관리</a></li>
     <li><a href="${pageContext.request.contextPath}/admin/report">신고내역 관리</a></li>
 </ul>

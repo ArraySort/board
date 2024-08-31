@@ -100,7 +100,7 @@
                        href="${pageContext.request.contextPath}/admin/board?page=${pageNum}">${pageNum}</a>
                 </li>
             </c:forEach>
-            <c:if test="${pagination.next}">
+            <c:if test="${boardPagination.next}">
                 <li class="page-item">
                     <a class="page-link"
                        href="${pageContext.request.contextPath}/admin/board?page=${boardPagination.endBlockPage + 1}">&gt;</a>
