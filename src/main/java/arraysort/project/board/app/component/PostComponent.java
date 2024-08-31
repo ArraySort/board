@@ -40,16 +40,16 @@ public class PostComponent {
 	 */
 	@Transactional(readOnly = true)
 	public BoardVO getValidatedBoard(long boardId) {
-		// 1. 게시글을 추가하려는 게시판 존재하는지 검증
+		// 1. 게시간 존재 검증
 		BoardVO boardDetail = boardMapper.selectBoardDetailById(boardId)
 				.orElseThrow(BoardNotFoundException::new);
 
-		// 2. 게시글을 추가하려는 게시판이 비활성화 상태인지, 삭제된 상태인지 검증
+		// 2. 게시판 상태 검증(비활성화, 삭제)
 		if (boardDetail.getActivateFlag() == Flag.N || boardDetail.getDeleteFlag() == Flag.Y) {
 			throw new BoardNotFoundException();
 		}
 
-		validateUserPermissionForBoard(boardDetail);
+		validatePermissionForBoard(boardDetail);
 
 		return boardDetail;
 	}
@@ -86,8 +86,8 @@ public class PostComponent {
 	 *
 	 * @param boardDetail 검증된 게시판 세부정보
 	 */
-	private void validateUserPermissionForBoard(BoardVO boardDetail) {
-		if (UserUtil.isAuthenticatedUser()) {
+	private void validatePermissionForBoard(BoardVO boardDetail) {
+		if (UserUtil.isUser()) {
 			// 1. 로그인 한 사용자 존재 검증
 			UserVO userDetail = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
 					.orElseThrow(() -> new UsernameNotFoundException(UserUtil.getCurrentLoginUserId()));
@@ -102,7 +102,7 @@ public class PostComponent {
 				throw new InvalidPrincipalException("올바르지 않은 사용자 접근 등급입니다.");
 			}
 			// 4. 로그인 하지 않은 사용자
-		} else if (boardDetail.getAccessLevel() != 0) {
+		} else if (!UserUtil.isAdmin() && boardDetail.getAccessLevel() != 0) {
 			throw new InvalidPrincipalException("로그인이 필요합니다");
 		}
 	}
@@ -123,8 +123,10 @@ public class PostComponent {
 				.orElseThrow(DetailNotFoundException::new));
 
 		// 2. 게시글 상태 검증(삭제, 비활성화 상태)
-		if (postDetail.getActivateFlag() == Flag.N || postDetail.getDeleteFlag() == Flag.Y) {
-			throw new DetailNotFoundException();
+		if (!UserUtil.isAdmin()) {
+			if (postDetail.getActivateFlag() == Flag.N || postDetail.getDeleteFlag() == Flag.Y) {
+				throw new DetailNotFoundException();
+			}
 		}
 
 		validatePrivatePost(postDetail);

@@ -25,7 +25,7 @@ public class Constants {
 	// Spring Security ROLE
 	public static final String ROLE_USER = "ROLE_USER";
 	public static final String ROLE_ADMIN = "ROLE_ADMIN";
-	public static final String ANONYMOUS_USER = "anonymousUser";
+	public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
 
 	// Controller ModelAndVIew
 	public static final String MAV_ALERT = "common/alert";

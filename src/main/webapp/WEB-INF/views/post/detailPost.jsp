@@ -359,6 +359,14 @@
     // 현재 로그인 한 유저의 값
     String currentUserId = UserUtil.getCurrentLoginUserId();
     pageContext.setAttribute("currentUserId", currentUserId);
+
+    boolean isAdmin = UserUtil.isAdmin();
+    boolean isUser = UserUtil.isUser();
+    boolean isAnonymous = UserUtil.isAnonymous();
+
+    pageContext.setAttribute("isAdmin", isAdmin);
+    pageContext.setAttribute("isUser", isUser);
+    pageContext.setAttribute("isAnonymous", isAnonymous);
 %>
 
 <div style="text-align: center">
@@ -710,13 +718,19 @@
 
         <!-- 목록, 수정, 삭제 버튼 -->
         <div class="d-flex justify-content-center">
-            <form method="get" action="/${boardId}/post">
-                <input type="hidden" name="search" value="${page.search}">
-                <input type="hidden" name="searchType" value="${page.searchType}">
-                <input type="hidden" name="sortType" value="${page.sortType}">
-                <input type="hidden" name="page" value="${page.page}">
-                <button type="submit">목록</button>
-            </form>
+            <c:if test="${isUser || isAnonymous}">
+                <form method="get" action="/${boardId}/post">
+                    <input type="hidden" name="search" value="${page.search}">
+                    <input type="hidden" name="searchType" value="${page.searchType}">
+                    <input type="hidden" name="sortType" value="${page.sortType}">
+                    <input type="hidden" name="page" value="${page.page}">
+                    <button type="submit">목록</button>
+                </form>
+            </c:if>
+
+            <c:if test="${isAdmin}">
+                <button onclick="location.href='/admin/post/${boardId}'">관리 페이지 돌아가기</button>
+            </c:if>
 
             <c:if test="${postDetail.userId == currentUserId}">
                 <button type="button"

@@ -1,17 +1,32 @@
 package arraysort.project.board.app.utils;
 
+import arraysort.project.board.app.common.Constants;
 import arraysort.project.board.app.exception.InvalidPrincipalException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Objects;
-
-import static arraysort.project.board.app.common.Constants.ANONYMOUS_USER;
 
 public class UserUtil {
 
 	private UserUtil() {
 		throw new IllegalStateException("Utility class");
+	}
+
+	// 관리자 인증
+	public static boolean isAdmin() {
+		return hasRole(Constants.ROLE_ADMIN);
+	}
+
+	// 사용자 인증
+	public static boolean isUser() {
+		return hasRole(Constants.ROLE_USER);
+	}
+
+	// 익명 사용자 인증
+	public static boolean isAnonymous() {
+		return hasRole(Constants.ROLE_ANONYMOUS);
 	}
 
 	/**
@@ -55,7 +70,7 @@ public class UserUtil {
 	 */
 	public static boolean isAuthenticatedUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return isValidAuthentication(authentication) && !authentication.getPrincipal().equals(ANONYMOUS_USER);
+		return isValidAuthentication(authentication) && !isAnonymous();
 	}
 
 	/**
@@ -72,5 +87,25 @@ public class UserUtil {
 	 */
 	private static boolean isValidAuthentication(Authentication authentication) {
 		return authentication != null && authentication.isAuthenticated();
+	}
+
+	/**
+	 * Security 역할 체크
+	 *
+	 * @param role 검증하고자 하는 Security 설정 역할
+	 * @return role 에 대한 참/거짓
+	 */
+	private static boolean hasRole(String role) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || authentication.getAuthorities() == null) {
+			return false;
+		}
+
+		for (GrantedAuthority authority : authentication.getAuthorities()) {
+			if (authority.getAuthority().equals(role)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

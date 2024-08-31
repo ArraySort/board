@@ -81,7 +81,7 @@
             <c:forEach var="post" items="${postPagination.postList}" varStatus="status">
                 <c:set var="postNumber"
                        value="${postPagination.totalPostCount - ((postPagination.currentPage - 1) * 10) - status.index}"/>
-                <tr>
+                <tr onclick="location.href='/${currentBoard.boardId}/post/detail/${post.postId}'">
                     <th scope="row">${postNumber}</th>
                     <td class="text-truncate" style="max-width: 150px;">${post.title}</td>
                     <td>${post.userName}</td>
