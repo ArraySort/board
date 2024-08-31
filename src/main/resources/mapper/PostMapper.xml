@@ -57,14 +57,25 @@
         inner join category c on p.category_id = c.category_id
         <where>
             p.board_id = #{boardId} and p.delete_flag = 'N'
+            <choose>
+                <when test='dto.activateFlag.toString() == "Y"'>
+                    and p.activate_flag = 'Y'
+                </when>
+
+                <when test='dto.activateFlag.toString() == "N"'>
+                     and p.activate_flag = 'N'
+                </when>
+            </choose>
             <if test="dto.search != null and dto.search != ''">
                 <choose>
                     <when test="dto.searchType != null and dto.searchType.toString() == 'ALL'">
                         and (p.title like concat('%', #{dto.search}, '%') or p.content like concat('%', #{dto.search}, '%'))
                     </when>
+
                     <when test="dto.searchType != null and dto.searchType.toString() == 'TITLE'">
                         and p.title like concat('%', #{dto.search}, '%')
                     </when>
+
                     <when test="dto.searchType != null and dto.searchType.toString() == 'CONTENT'">
                         and p.content like concat('%', #{dto.search}, '%')
                     </when>
@@ -99,6 +110,15 @@
         from post
         <where>
             board_id = #{boardId} and delete_flag = 'N'
+            <choose>
+                <when test='dto.activateFlag.toString() == "Y"'>
+                    and activate_flag = 'Y'
+                </when>
+
+                <when test='dto.activateFlag.toString() == "N"'>
+                    and activate_flag = 'N'
+                </when>
+            </choose>
             <if test="dto.search != null and dto.search != ''">
                 <choose>
                     <when test="dto.searchType != null and dto.searchType.toString() == 'ALL'">
@@ -197,5 +217,12 @@
             where category_id = #{categoryId} and delete_flag = 'N' and activate_flag = 'Y'
         )
     </select>
+
+    <!-- 관리자 : 게시글 활성화 상태 변경 -->
+    <update id="updateActivateFlag">
+        update post
+        set activate_flag = #{flag}
+        where board_id = #{boardId} and post_id = ${postId}
+    </update>
 
 </mapper>

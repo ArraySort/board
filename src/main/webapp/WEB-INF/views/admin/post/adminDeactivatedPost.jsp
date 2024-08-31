@@ -6,7 +6,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>게시글 관리 페이지</title>
+    <title>비활성화 게시글 관리 페이지</title>
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
 
@@ -16,7 +16,7 @@
         function sendBoardIdToButton() {
             const boardId = $('#boardId').val();
             if (boardId) {
-                window.location.href = '/admin/post/' + boardId;
+                window.location.href = '/admin/post/' + boardId + '/deactivated';
             } else {
                 alert('게시판을 선택하세요');
             }
@@ -25,17 +25,17 @@
 
 </head>
 <body>
-<h1 class="text-center my-4">게시글 관리 페이지</h1>
+<h1 class="text-center my-4">비활성화 게시글 관리 페이지</h1>
 
 <div class="container">
     <div class="d-flex align-items-center justify-content-between mb-2">
         <div>
             <h5>현재 게시판 : ${currentBoard.boardName}</h5>
-            <h3 class="mb-0">게시글 목록</h3>
+            <h3 class="mb-0">비활성화 게시글 목록</h3>
         </div>
 
         <h4 class="mb-0 position-absolute start-50 translate-middle-x">
-            총 게시글 개수 : ${postPagination.totalPostCount}
+            총 게시글 개수 : ${deactivatePostPagination.totalPostCount}
         </h4>
 
         <!-- 게시판 선택 -->
@@ -50,10 +50,8 @@
                 <button class="btn btn-dark" type="button" onclick="sendBoardIdToButton()">선택</button>
             </div>
 
-            <%-- TODO : 게시글 추가 기능 구현--%>
-            <button type="button" class="btn btn-primary me-2">게시글 추가</button>
             <button type="button" class="btn btn-primary"
-                    onclick="location.href='/admin/post/${currentBoard.boardId}/deactivated'">비활성화 목록
+                    onclick="location.href='/admin/post/${currentBoard.boardId}'">활성화 목록
             </button>
         </div>
     </div>
@@ -74,13 +72,13 @@
                 <th scope="col">채택댓글</th>
                 <th scope="col">좋아요수</th>
                 <th scope="col">비공개</th>
-                <th scope="col">비활성화</th>
+                <th scope="col">활성화</th>
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="post" items="${postPagination.postList}" varStatus="status">
+            <c:forEach var="post" items="${deactivatePostPagination.postList}" varStatus="status">
                 <c:set var="postNumber"
-                       value="${postPagination.totalPostCount - ((postPagination.currentPage - 1) * 10) - status.index}"/>
+                       value="${deactivatePostPagination.totalPostCount - ((deactivatePostPagination.currentPage - 1) * 10) - status.index}"/>
                 <tr>
                     <th scope="row">${postNumber}</th>
                     <td class="text-truncate" style="max-width: 150px;">${post.title}</td>
@@ -101,7 +99,7 @@
                         <form action="/admin/post/${currentBoard.boardId}/${post.postId}/process-edit-activate-flag-post"
                               method="post">
                             <sec:csrfInput/>
-                            <button class="btn-sm btn-primary" type="submit">비활성화</button>
+                            <button class="btn-sm btn-success" type="submit">활성화</button>
                         </form>
                     </td>
                 </tr>
@@ -114,29 +112,31 @@
     <nav>
         <ul class="pagination justify-content-center">
             <li class="page-item">
-                <a class="page-link" href="${pageContext.request.contextPath}/admin/post/${boardId}?page=1">&laquo;</a>
+                <a class="page-link"
+                   href="${pageContext.request.contextPath}/admin/post/${boardId}/deactivated?page=1">&laquo;</a>
             </li>
-            <c:if test="${postPagination.prev}">
+            <c:if test="${deactivatePostPagination.prev}">
                 <li class="page-item">
                     <a class="page-link"
-                       href="${pageContext.request.contextPath}/admin/post/${boardId}?page=${postPagination.startBlockPage - 1}">&lt;</a>
+                       href="${pageContext.request.contextPath}/admin/post/${boardId}/deactivated?page=${deactivatePostPagination.startBlockPage - 1}">&lt;</a>
                 </li>
             </c:if>
-            <c:forEach var="pageNum" begin="${postPagination.startBlockPage}" end="${postPagination.endBlockPage}">
-                <li class="page-item ${pageNum == postPagination.currentPage ? 'active' : ''}">
+            <c:forEach var="pageNum" begin="${deactivatePostPagination.startBlockPage}"
+                       end="${deactivatePostPagination.endBlockPage}">
+                <li class="page-item ${pageNum == deactivatePostPagination.currentPage ? 'active' : ''}">
                     <a class="page-link"
-                       href="${pageContext.request.contextPath}/admin/post/${boardId}?page=${pageNum}">${pageNum}</a>
+                       href="${pageContext.request.contextPath}/admin/post/${boardId}/deactivated?page=${pageNum}">${pageNum}</a>
                 </li>
             </c:forEach>
-            <c:if test="${postPagination.next}">
+            <c:if test="${deactivatePostPagination.next}">
                 <li class="page-item">
                     <a class="page-link"
-                       href="${pageContext.request.contextPath}/admin/post/${boardId}?page=${postPagination.endBlockPage + 1}">&gt;</a>
+                       href="${pageContext.request.contextPath}/admin/post/${boardId}/deactivated?page=${deactivatePostPagination.endBlockPage + 1}">&gt;</a>
                 </li>
             </c:if>
             <li class="page-item">
                 <a class="page-link"
-                   href="${pageContext.request.contextPath}/admin/post/${boardId}?page=${postPagination.totalPageCount}">&raquo;</a>
+                   href="${pageContext.request.contextPath}/admin/post/${boardId}/deactivated?page=${deactivatePostPagination.totalPageCount}">&raquo;</a>
             </li>
         </ul>
     </nav>

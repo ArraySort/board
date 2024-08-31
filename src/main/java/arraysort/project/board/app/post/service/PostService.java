@@ -10,6 +10,7 @@ import arraysort.project.board.app.common.page.PageReqDTO;
 import arraysort.project.board.app.common.page.PageResDTO;
 import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
+import arraysort.project.board.app.exception.DetailNotFoundException;
 import arraysort.project.board.app.exception.IdNotFoundException;
 import arraysort.project.board.app.exception.InvalidPrincipalException;
 import arraysort.project.board.app.history.service.PostHistoryService;
@@ -142,8 +143,27 @@ public class PostService {
 		// 댓글 삭제(이미지 포함)
 		commentService.removeCommentByPostRemove(boardId, postId);
 
-		// 게시물 삭제
+		// 게시글 삭제
 		postMapper.deletePost(postId);
+	}
+
+	// 관리자 : 게시글 활성화 상태 변경
+	@Transactional
+	public void modifyActivateFlag(long boardId, long postId) {
+		// 게시판 검증
+		postComponent.getValidatedBoard(boardId);
+
+		// 게시글 검증
+		PostVO vo = postMapper.selectPostDetailByPostId(postId, boardId, UserUtil.getCurrentLoginUserId())
+				.orElseThrow(DetailNotFoundException::new);
+
+		if (vo.getActivateFlag() == Flag.Y) {
+			// 비활성화 상태로 변경
+			postMapper.updateActivateFlag(boardId, postId, Flag.N);
+		} else {
+			// 활성화 상태로 변경
+			postMapper.updateActivateFlag(boardId, postId, Flag.Y);
+		}
 	}
 
 	// 게시글 작성, 수정 페이지 요청에 대한 사용자 검증

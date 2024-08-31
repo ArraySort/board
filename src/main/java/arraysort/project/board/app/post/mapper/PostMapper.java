@@ -1,5 +1,6 @@
 package arraysort.project.board.app.post.mapper;
 
+import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.common.page.PageDTO;
 import arraysort.project.board.app.common.page.PageReqDTO;
 import arraysort.project.board.app.post.domain.PostVO;
@@ -37,4 +38,7 @@ public interface PostMapper {
 
 	// 관리자 : 카테고리 사용 여부 반환
 	boolean selectIsCategoryInUse(long categoryId);
+
+	// 관리자 : 게시글 활성화 상태 변경
+	void updateActivateFlag(long boardId, long postId, Flag flag);
 }

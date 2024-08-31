@@ -1,5 +1,6 @@
 package arraysort.project.board.app.common.page;
 
+import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.post.domain.SearchType;
 import arraysort.project.board.app.post.domain.SortType;
 import lombok.Getter;
@@ -19,10 +20,13 @@ public class PageReqDTO {
 
 	private SortType sortType;
 
+	private Flag activateFlag;
+
 	public PageReqDTO() {
 		this.page = 1;
 		this.commentPage = 1;
 		this.searchType = SearchType.ALL;
 		this.sortType = SortType.LATEST;
+		this.activateFlag = Flag.Y;
 	}
 }
