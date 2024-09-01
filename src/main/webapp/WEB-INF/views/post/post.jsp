@@ -100,9 +100,21 @@
                     <tr>
                         <td>${postNumber}</td>
                         <td>
-                            <a href="/${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">${post.title}</a>
+                            <a href="/${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
+                                <c:if test="${post.noticeFlag == 'Y'}">
+                                    [공지사항]
+                                </c:if>
+                                    ${post.title}
+                            </a>
                         </td>
-                        <td>${post.userName}</td>
+                        <c:choose>
+                            <c:when test="${post.adminId != null}">
+                                <td>관리자</td>
+                            </c:when>
+                            <c:otherwise>
+                                <td>${post.userName}</td>
+                            </c:otherwise>
+                        </c:choose>
                         <td><fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/></td>
                         <td><fmt:formatDate value="${post.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></td>
                         <td>${post.categoryName}</td>

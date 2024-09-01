@@ -50,8 +50,9 @@
                 <button class="btn btn-dark" type="button" onclick="sendBoardIdToButton()">선택</button>
             </div>
 
-            <%-- TODO : 게시글 추가 기능 구현--%>
-            <button type="button" class="btn btn-primary me-2">게시글 추가</button>
+            <button type="button" class="btn btn-primary me-2"
+                    onclick="location.href='/admin/post/${currentBoard.boardId}/add'">게시글 추가
+            </button>
             <button type="button" class="btn btn-primary"
                     onclick="location.href='/admin/post/${currentBoard.boardId}/deactivated'">비활성화 목록
             </button>
@@ -83,8 +84,20 @@
                        value="${postPagination.totalPostCount - ((postPagination.currentPage - 1) * 10) - status.index}"/>
                 <tr onclick="location.href='/${currentBoard.boardId}/post/detail/${post.postId}'">
                     <th scope="row">${postNumber}</th>
-                    <td class="text-truncate" style="max-width: 150px;">${post.title}</td>
-                    <td>${post.userName}</td>
+                    <td class="text-truncate" style="max-width: 150px;">
+                        <c:if test="${post.noticeFlag == 'Y'}">
+                            [공지사항]
+                        </c:if>
+                            ${post.title}
+                    </td>
+                    <c:choose>
+                        <c:when test="${post.adminId != null}">
+                            <td>관리자</td>
+                        </c:when>
+                        <c:otherwise>
+                            <td>${post.userName}</td>
+                        </c:otherwise>
+                    </c:choose>
                     <td class="text-truncate" style="max-width: 150px;">
                         <fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/>
                     </td>
@@ -98,7 +111,7 @@
                     <td>${post.likeCount}</td>
                     <td>${post.privateFlag}</td>
                     <td>
-                        <form action="/admin/post/${currentBoard.boardId}/${post.postId}/process-edit-activate-flag-post"
+                        <form action="/admin/post/${currentBoard.boardId}/${post.postId}/edit-activate-flag"
                               method="post">
                             <sec:csrfInput/>
                             <button class="btn-sm btn-primary" type="submit">비활성화</button>

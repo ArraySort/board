@@ -34,8 +34,9 @@ public class Constants {
 	public static final String MAV_ADMIN_LOGIN = "admin/adminLogin";
 	public static final String MAV_ADMIN_USER_MANAGEMENT = "admin/adminUserManagement";
 	public static final String MAV_ADMIN_BOARD_MANAGEMENT = "admin/board/adminBoardManagement";
-	public static final String MAV_ADMIN_DEACTIVATED_POST = "admin/post/adminDeactivatedPost";
+	public static final String MAV_ADMIN_POST_DEACTIVATED = "admin/post/adminDeactivatedPost";
 	public static final String MAV_ADMIN_POST_MANAGEMENT = "admin/post/adminPostManagement";
+	public static final String MAV_ADMIN_POST_ADD = "admin/post/adminAddPost";
 	public static final String MAV_ADMIN_COMMENT_MANAGEMENT = "admin/adminCommentManagement";
 	public static final String MAV_ADMIN_REPORT_MANAGEMENT = "admin/adminReportManagement";
 	public static final String MAV_ADMIN_BOARD_ADD = "admin/board/adminAddBoard";
@@ -82,6 +83,7 @@ public class Constants {
 	public static final String MAV_ERROR_500 = "error/code500";
 
 	public static final String MAV_REQUEST_EDIT_ACTIVATE_FLAG = "MODIFY_ACTIVATE";
+	public static final String MAV_REQUEST_ADMIN_ADD_POST = "ADMIN_ADD_POST";
 
 	private Constants() {
 	}

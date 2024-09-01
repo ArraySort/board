@@ -155,9 +155,13 @@ public class PostComponent {
 	 */
 	private void validatePrivatePost(PostDetailResDTO postDetail) {
 		// 1. 현재 조회하는 게시글이 비공개 게시글인지 검증
-		if (postDetail.getPrivateFlag() == Flag.Y &&
-				!Objects.equals(postDetail.getUserId(), UserUtil.getCurrentLoginUserId())) {
-			throw new InvalidPrincipalException("비공개 게시글은 작성자만 볼 수 있습니다.");
+		if (postDetail.getPrivateFlag() == Flag.Y) {
+			String currentUserId = UserUtil.getCurrentLoginUserId();
+			String ownerId = UserUtil.isUser() ? postDetail.getUserId() : postDetail.getAdminId();
+
+			if (!Objects.equals(ownerId, currentUserId)) {
+				throw new InvalidPrincipalException("비공개 게시글은 작성자만 볼 수 있습니다.");
+			}
 		}
 	}
 }

@@ -68,7 +68,7 @@ public class PostVO {
 
 	private boolean hasDisliked;    // 싫어요 여부
 
-	// 게시물 추가
+	// 게시글 추가
 	public static PostVO insertOf(PostAddReqDTO dto, long boardId) {
 		return PostVO.builder()
 				.userId(UserUtil.getCurrentLoginUserId())
@@ -82,7 +82,22 @@ public class PostVO {
 				.build();
 	}
 
-	// 게시물 수정
+	// 관리자 : 게시글 추가
+	public static PostVO insertAdminOf(PostAddAdminReqDTO dto, long boardId) {
+		return PostVO.builder()
+				.adminId(UserUtil.getCurrentLoginUserId())
+				.boardId(boardId)
+				.categoryId(dto.getCategoryId())
+				.title(dto.getTitle())
+				.content(dto.getContent())
+				.privateFlag(dto.getPrivateFlag())
+				.noticeFlag(dto.getNoticeFlag())
+				.createdBy(UserUtil.getCurrentLoginUserId())
+				.updatedBy(UserUtil.getCurrentLoginUserId())
+				.build();
+	}
+
+	// 게시글 수정
 	public static PostVO updateOf(PostEditReqDTO dto, long postId) {
 		return PostVO.builder()
 				.postId(postId)
@@ -93,7 +108,7 @@ public class PostVO {
 				.build();
 	}
 
-	// 임시저장 게시물 추가
+	// 임시저장 게시글 추가
 	public static PostVO insertOf(TempPostPublishReqDTO dto, long boardId) {
 		return PostVO.builder()
 				.userId(UserUtil.getCurrentLoginUserId())

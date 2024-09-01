@@ -26,7 +26,8 @@
             "LOGIN_ADMIN": "/admin",
             "ADD_BOARD": "/admin/board",
             "MODIFY_BOARD": "/admin/board",
-            "DELETE_BOARD": "/admin/board"
+            "DELETE_BOARD": "/admin/board",
+            "ADMIN_ADD_POST": "/admin/post/${boardId}"
         }
 
         if (requestRoutes[request]) {

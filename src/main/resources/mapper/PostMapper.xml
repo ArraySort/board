@@ -14,6 +14,7 @@
                          title,
                          content,
                          private_flag,
+                         notice_flag,
                          created_by,
                          updated_by)
         values (#{userId},
@@ -24,6 +25,7 @@
                 #{title},
                 #{content},
                 #{privateFlag},
+                #{noticeFlag},
                 #{createdBy},
                 #{updatedBy})
     </insert>
@@ -32,6 +34,7 @@
     <select id="selectPostListWithPaging" resultType="arraysort.project.board.app.post.domain.PostVO">
         select p.post_id,
                p.user_id,
+               p.admin_id,
                p.category_id,
                p.image_id,
                u.user_name,
@@ -39,6 +42,7 @@
                p.title,
                p.views,
                p.private_flag,
+               p.notice_flag,
                p.created_at,
                p.updated_at,
                (select count(*)
@@ -53,7 +57,7 @@
                     from post_like
                     where post_id = p.post_id) as like_count
         from post p
-        inner join user u on p.user_id = u.user_id
+        left join user u on p.user_id = u.user_id
         inner join category c on p.category_id = c.category_id
         <where>
             p.board_id = #{boardId} and p.delete_flag = 'N'
@@ -85,19 +89,23 @@
 
         <choose>
             <when test="dto.sortType.toString() == 'LATEST'">
-                order by p.updated_at desc
+                order by p.notice_flag desc,
+                         p.updated_at desc
             </when>
 
             <when test="dto.sortType.toString() == 'OLDEST'">
-                order by p.updated_at asc
+                order by p.notice_flag desc,
+                         p.updated_at asc
             </when>
 
             <when test="dto.sortType.toString() == 'VIEWS'">
-                order by p.views desc
+                order by p.notice_flag desc,
+                         p.views desc
             </when>
 
             <otherwise>
-                order by p.post_id desc
+                order by p.notice_flag desc,
+                         p.created_at desc
             </otherwise>
         </choose>
 
@@ -139,6 +147,7 @@
     <select id="selectPostDetailByPostId" resultType="arraysort.project.board.app.post.domain.PostVO">
         select p.post_id,
                p.user_id,
+               p.admin_id,
                p.board_id,
                p.image_id,
                u.user_name,
@@ -170,7 +179,7 @@
                    from post_dislike
                    where user_id = #{userId} and post_id = p.post_id))as has_disliked
         from post p
-        inner join user u on p.user_id = u.user_id
+        left join user u on p.user_id = u.user_id
         inner join category c on p.category_id = c.category_id
         inner join board b on p.board_id = b.board_id
         where post_id = #{postId} and c.board_id = #{boardId}
@@ -224,5 +233,12 @@
         set activate_flag = #{flag}
         where board_id = #{boardId} and post_id = ${postId}
     </update>
+
+    <!-- 관리자 : 공지사항 게시글 개수 반환 -->
+    <select id="selectNoticePostCount" resultType="int">
+        select count(*)
+        from post
+        where board_id = #{boardId} and notice_flag = #{noticeFlag}
+    </select>
 
 </mapper>

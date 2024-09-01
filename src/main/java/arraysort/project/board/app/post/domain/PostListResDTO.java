@@ -12,6 +12,8 @@ public class PostListResDTO {
 
 	private long postId;
 
+	private String adminId;
+
 	private Long imageId;
 
 	private String userName;
@@ -28,6 +30,8 @@ public class PostListResDTO {
 
 	private Flag privateFlag;
 
+	private Flag noticeFlag;
+
 	private Flag adoptedCommentFlag;
 
 	private long postNumber;
@@ -40,6 +44,7 @@ public class PostListResDTO {
 	public static PostListResDTO of(PostVO vo) {
 		return PostListResDTO.builder()
 				.postId(vo.getPostId())
+				.adminId(vo.getAdminId())
 				.imageId(vo.getImageId())
 				.userName(vo.getUserName())
 				.title(vo.getTitle())
@@ -48,6 +53,7 @@ public class PostListResDTO {
 				.categoryName(vo.getCategoryName())
 				.views(vo.getViews())
 				.privateFlag(vo.getPrivateFlag())
+				.noticeFlag(vo.getNoticeFlag())
 				.adoptedCommentFlag(vo.getAdoptedCommentFlag())
 				.commentCount(vo.getCommentCount())
 				.likeCount(vo.getLikeCount())

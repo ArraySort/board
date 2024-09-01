@@ -1,6 +1,7 @@
 package arraysort.project.board.app.post.service;
 
 import arraysort.project.board.app.board.domain.BoardVO;
+import arraysort.project.board.app.board.mapper.BoardMapper;
 import arraysort.project.board.app.category.domain.CategoryVO;
 import arraysort.project.board.app.comment.service.CommentService;
 import arraysort.project.board.app.common.enums.BoardType;
@@ -37,6 +38,8 @@ public class PostService {
 
 	private final UserMapper userMapper;
 
+	private final BoardMapper boardMapper;
+
 	private final ImageService imageService;
 
 	private final PostHistoryService postHistoryService;
@@ -61,7 +64,7 @@ public class PostService {
 		postMapper.insertPost(vo);
 
 		// 게시글 이미지 업로드
-		handlePostImages(dto, boardDetail, vo.getPostId());
+		handlePostImages(dto.getImages(), boardDetail, vo.getPostId());
 
 		// 게시글 기록 추가(이미지 포함)
 		postHistoryService.addPostHistory(vo, categoryDetail.getCategoryName());
@@ -166,6 +169,34 @@ public class PostService {
 		}
 	}
 
+	// 관리자 : 게시글 추가
+	@Transactional
+	public void addAdminPost(PostAddAdminReqDTO dto, long boardId) {
+		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
+		CategoryVO categoryDetail = postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
+		PostVO vo = PostVO.insertAdminOf(dto, boardId);
+
+		// 갤러리 게시판일 때 썸네일 이미지 추가
+		if (boardDetail.getBoardType() == BoardType.GALLERY) {
+			vo.updateThumbnailImageId(imageService.addThumbnailImage(dto.getThumbnailImage()));
+		}
+
+		// 게시판에 설정된 공지사항 개수 검증
+		if (dto.getNoticeFlag() == Flag.Y &&
+				boardDetail.getNoticeCount() <= postMapper.selectNoticePostCount(boardId, Flag.Y)) {
+			throw new InvalidPrincipalException("게시판의 최대 공지사항 개수를 초과합니다.");
+		}
+
+		// 게시글 추가
+		postMapper.insertPost(vo);
+
+		// 게시글 이미지 업로드
+		handlePostImages(dto.getImages(), boardDetail, vo.getPostId());
+
+		// 게시글 기록 추가(이미지 포함)
+		postHistoryService.addPostHistory(vo, categoryDetail.getCategoryName());
+	}
+
 	// 게시글 작성, 수정 페이지 요청에 대한 사용자 검증
 	@Transactional(readOnly = true)
 	public void validateAddByUserLevel() {
@@ -198,20 +229,20 @@ public class PostService {
 	 * 게시판의 이미지 허용 여부가 Y 일 때만 실행
 	 * 게시판의 이미지 허용 여부가 Y 일 때 최대 업로드 가용 이미지 검증
 	 *
-	 * @param dto         추가되는 게시글 정보(사용자 입력)
+	 * @param images      추가되는 게시글 이미지 리스트
 	 * @param boardDetail 검증된 게시판 세부정보
 	 * @param postId      게시글 ID
 	 */
-	private void handlePostImages(PostAddReqDTO dto, BoardVO boardDetail, long postId) {
+	private void handlePostImages(List<MultipartFile> images, BoardVO boardDetail, long postId) {
 		if (boardDetail.getImageFlag() == Flag.N) {
 			return;
 		}
 
-		if (dto.getImages().size() > boardDetail.getImageLimit()) {
+		if (images.size() > boardDetail.getImageLimit()) {
 			throw new BoardImageOutOfRangeException("해당 게시판은 최대 " + boardDetail.getImageLimit() + " 개 까지 업로드 가능합니다.");
 		}
 
-		imageService.addImages(dto.getImages(), postId);
+		imageService.addImages(images, postId);
 	}
 
 	/**

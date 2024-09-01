@@ -96,7 +96,7 @@
                     <td>${post.likeCount}</td>
                     <td>${post.privateFlag}</td>
                     <td>
-                        <form action="/admin/post/${currentBoard.boardId}/${post.postId}/process-edit-activate-flag-post"
+                        <form action="/admin/post/${currentBoard.boardId}/${post.postId}/edit-activate-flag"
                               method="post">
                             <sec:csrfInput/>
                             <button class="btn-sm btn-success" type="submit">활성화</button>

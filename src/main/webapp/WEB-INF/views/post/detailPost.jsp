@@ -381,7 +381,16 @@
             </div>
         </div>
 
-        <div>작성자 : ${postDetail.userName}</div>
+        <div>작성자 :
+            <c:choose>
+                <c:when test="${postDetail.adminId != null}">
+                    <td>관리자</td>
+                </c:when>
+                <c:otherwise>
+                    <td>${postDetail.userName}</td>
+                </c:otherwise>
+            </c:choose>
+        </div>
         <div>카테고리 : ${postDetail.categoryName}</div>
         <div>현재 게시판 : ${postDetail.boardName}</div>
 
