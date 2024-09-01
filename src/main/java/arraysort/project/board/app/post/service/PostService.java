@@ -1,7 +1,6 @@
 package arraysort.project.board.app.post.service;
 
 import arraysort.project.board.app.board.domain.BoardVO;
-import arraysort.project.board.app.board.mapper.BoardMapper;
 import arraysort.project.board.app.category.domain.CategoryVO;
 import arraysort.project.board.app.comment.service.CommentService;
 import arraysort.project.board.app.common.enums.BoardType;
@@ -37,8 +36,6 @@ public class PostService {
 	private final PostMapper postMapper;
 
 	private final UserMapper userMapper;
-
-	private final BoardMapper boardMapper;
 
 	private final ImageService imageService;
 
@@ -108,7 +105,7 @@ public class PostService {
 		postComponent.validatePostOwnership(postDetail.getUserId());
 
 		// 이미지 수정
-		handlePostImages(dto, boardDetail, postId);
+		handlePostImages(dto.getAddedImages(), dto.getRemovedImageIds(), boardDetail, postId);
 
 		PostVO vo = PostVO.updateOf(dto, postId);
 		// 썸네일 이미지 수정
@@ -154,7 +151,7 @@ public class PostService {
 	@Transactional
 	public void modifyActivateFlag(long boardId, long postId) {
 		// 게시판 검증
-		postComponent.getValidatedBoard(boardId);
+		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
 
 		// 게시글 검증
 		PostVO vo = postMapper.selectPostDetailByPostId(postId, boardId, UserUtil.getCurrentLoginUserId())
@@ -165,6 +162,7 @@ public class PostService {
 			postMapper.updateActivateFlag(boardId, postId, Flag.N);
 		} else {
 			// 활성화 상태로 변경
+			validateBoardNoticeCount(boardId, vo.getNoticeFlag(), boardDetail.getNoticeCount());
 			postMapper.updateActivateFlag(boardId, postId, Flag.Y);
 		}
 	}
@@ -182,10 +180,7 @@ public class PostService {
 		}
 
 		// 게시판에 설정된 공지사항 개수 검증
-		if (dto.getNoticeFlag() == Flag.Y &&
-				boardDetail.getNoticeCount() <= postMapper.selectNoticePostCount(boardId, Flag.Y)) {
-			throw new InvalidPrincipalException("게시판의 최대 공지사항 개수를 초과합니다.");
-		}
+		validateBoardNoticeCount(boardId, dto.getNoticeFlag(), boardDetail.getNoticeCount());
 
 		// 게시글 추가
 		postMapper.insertPost(vo);
@@ -195,6 +190,62 @@ public class PostService {
 
 		// 게시글 기록 추가(이미지 포함)
 		postHistoryService.addPostHistory(vo, categoryDetail.getCategoryName());
+	}
+
+	// 관리자 : 게시글 수정
+	@Transactional
+	public void modifyAdminPost(PostEditAdminReqDTO dto, long postId, long boardId) {
+		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
+		CategoryVO categoryDetail = postComponent.getValidatedCategory(dto.getCategoryId(), boardDetail);
+		PostDetailResDTO postDetail = postComponent.getValidatedPost(postId, boardId);
+
+		// 게시글 소유자 검증
+		postComponent.validatePostOwnership(postDetail.getAdminId());
+
+		// 게시판에 설정된 공지사항 개수 검증
+		validateBoardNoticeCount(boardId, dto.getNoticeFlag(), boardDetail.getNoticeCount());
+
+		// 이미지 수정
+		handlePostImages(dto.getAddedImages(), dto.getRemovedImageIds(), boardDetail, postId);
+
+		PostVO vo = PostVO.updateAdminOf(dto, postId);
+		// 썸네일 이미지 수정
+		vo.updateThumbnailImageId(postDetail.getImageId());
+
+		// 썸네일 이미지 업로드 검증 : 갤러리 게시판인지, 썸네일 이미지가 비어있는지
+		if (boardDetail.getBoardType() == BoardType.GALLERY && !dto.getThumbnailImage().isEmpty()) {
+			vo.updateThumbnailImageId(imageService.modifyThumbnailImage(dto.getThumbnailImage(), postId));
+		}
+
+		// 게시물 수정
+		postMapper.updatePost(vo, postId);
+
+		// 게시물 기록 추가(수정)
+		postHistoryService.addPostHistory(vo, categoryDetail.getCategoryName());
+	}
+
+	// 관리자 : 게시글 삭제
+	@Transactional
+	public void removeAdminPost(long postId, long boardId) {
+		BoardVO boardDetail = postComponent.getValidatedBoard(boardId);
+		PostDetailResDTO postDetail = postComponent.getValidatedPost(postId, boardId);
+
+		// 게시글 소유자 검증
+		postComponent.validatePostOwnership(postDetail.getAdminId());
+
+		// 게시글 내부 이미지 삭제 처리
+		handlePostImageRemove(postId, boardDetail);
+
+		// 갤러리 게시판에서 게시글을 삭제했을 때 썸네일 이미지 삭제
+		if (boardDetail.getBoardType() == BoardType.GALLERY) {
+			imageService.removeThumbnailImage(postId);
+		}
+
+		// 댓글 삭제(이미지 포함)
+		commentService.removeCommentByPostRemove(boardId, postId);
+
+		// 게시글 삭제
+		postMapper.deletePost(postId);
 	}
 
 	// 게시글 작성, 수정 페이지 요청에 대한 사용자 검증
@@ -250,31 +301,32 @@ public class PostService {
 	 * 게시판의 이미지 허용 여부가 Y 일 때만 실행
 	 * 게시판의 이미지 허용 여부가 Y 일 때 최대 업로드 가용 이미지 검증
 	 *
-	 * @param dto         수정되는 게시글 정보(사용자 입력)
+	 * @param addedImages 추가된 이미지 리스트
+	 * @param removedIds  삭제된 이미지 리스트
 	 * @param boardDetail 검증된 게시판 세부정보
 	 * @param postId      게시글 ID
 	 */
-	private void handlePostImages(PostEditReqDTO dto, BoardVO boardDetail, long postId) {
+	private void handlePostImages(List<MultipartFile> addedImages, List<Long> removedIds, BoardVO boardDetail, long postId) {
 		if (boardDetail.getImageFlag() == Flag.N) {
 			return;
 		}
 
-		boolean addedImageCheck = dto.getAddedImages().stream()
+		boolean addedImageCheck = addedImages.stream()
 				.anyMatch(MultipartFile::isEmpty);
 
-		int addedImageCount = addedImageCheck ? 0 : dto.getAddedImages().size();
+		int addedImageCount = addedImageCheck ? 0 : addedImages.size();
 
-		int imageCount = imageService.findImageCountByPostId(postId) + addedImageCount - dto.getRemovedImageIds().size();
+		int imageCount = imageService.findImageCountByPostId(postId) + addedImageCount - removedIds.size();
 
 		if (imageCount > boardDetail.getImageLimit()) {
 			throw new BoardImageOutOfRangeException("해당 게시판은 최대 " + boardDetail.getImageLimit() + " 개 까지 업로드 가능합니다.");
 		}
 
-		if (!dto.getRemovedImageIds().isEmpty()) {
-			imageService.removeImages(dto.getRemovedImageIds());
+		if (!removedIds.isEmpty()) {
+			imageService.removeImages(removedIds);
 		}
 
-		imageService.addImages(dto.getAddedImages(), postId);
+		imageService.addImages(addedImages, postId);
 	}
 
 	/**
@@ -296,6 +348,20 @@ public class PostService {
 				.toList();
 		if (!deletePostImageIds.isEmpty()) {
 			imageService.removeImages(deletePostImageIds);
+		}
+	}
+
+	/**
+	 * 관리자 : 공지사항 게시글 추가, 활성화 변경 시 게시판에 설정된 공지사항 수 검증
+	 *
+	 * @param boardId     게시글을 추가하려는 게시판 ID
+	 * @param noticeFlag  공지사항 여부
+	 * @param noticeCount 게시판에 설정된 공지사항 수
+	 */
+	private void validateBoardNoticeCount(long boardId, Flag noticeFlag, int noticeCount) {
+		if (noticeFlag == Flag.Y &&
+				noticeCount <= postMapper.selectNoticePostCount(boardId)) {
+			throw new InvalidPrincipalException("게시판의 최대 공지사항 개수를 초과합니다.");
 		}
 	}
 }

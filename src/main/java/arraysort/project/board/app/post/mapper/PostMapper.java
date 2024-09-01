@@ -43,6 +43,6 @@ public interface PostMapper {
 	void updateActivateFlag(long boardId, long postId, Flag flag);
 
 	// 관리자 : 공지사항 게시글 개수 반환
-	int selectNoticePostCount(long boardId, Flag noticeFlag);
+	int selectNoticePostCount(long boardId);
 
 }

@@ -32,6 +32,8 @@ public class PostDetailResDTO {
 
 	private Flag privateFlag;
 
+	private Flag noticeFlag;
+
 	private Flag activateFlag;
 
 	private Flag deleteFlag;
@@ -66,6 +68,7 @@ public class PostDetailResDTO {
 				.title(vo.getTitle())
 				.content(vo.getContent())
 				.privateFlag(vo.getPrivateFlag())
+				.noticeFlag(vo.getNoticeFlag())
 				.activateFlag(vo.getActivateFlag())
 				.deleteFlag(vo.getDeleteFlag())
 				.createdAt(vo.getCreatedAt())

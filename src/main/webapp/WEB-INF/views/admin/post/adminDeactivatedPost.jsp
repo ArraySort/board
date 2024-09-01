@@ -81,8 +81,20 @@
                        value="${deactivatePostPagination.totalPostCount - ((deactivatePostPagination.currentPage - 1) * 10) - status.index}"/>
                 <tr onclick="location.href='/${currentBoard.boardId}/post/detail/${post.postId}'">
                     <th scope="row">${postNumber}</th>
-                    <td class="text-truncate" style="max-width: 150px;">${post.title}</td>
-                    <td>${post.userName}</td>
+                    <td class="text-truncate" style="max-width: 150px;">
+                        <c:if test="${post.noticeFlag == 'Y'}">
+                            [공지사항]
+                        </c:if>
+                            ${post.title}
+                    </td>
+                    <c:choose>
+                        <c:when test="${post.adminId != null}">
+                            <td>관리자</td>
+                        </c:when>
+                        <c:otherwise>
+                            <td>${post.userName}</td>
+                        </c:otherwise>
+                    </c:choose>
                     <td class="text-truncate" style="max-width: 150px;">
                         <fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/>
                     </td>

@@ -156,6 +156,7 @@
                p.title,
                p.content,
                p.private_flag,
+               p.notice_flag,
                p.activate_flag,
                p.delete_flag,
                p.created_at,
@@ -192,6 +193,7 @@
             title = #{vo.title},
             content = #{vo.content},
             private_flag = #{vo.privateFlag},
+            notice_flag = #{vo.noticeFlag},
             category_id = #{vo.categoryId}
         where post_id = #{postId}
     </update>
@@ -238,7 +240,10 @@
     <select id="selectNoticePostCount" resultType="int">
         select count(*)
         from post
-        where board_id = #{boardId} and notice_flag = #{noticeFlag}
+        where board_id = #{boardId}
+          and notice_flag = 'Y'
+          and delete_flag = 'N'
+          and activate_flag = 'Y'
     </select>
 
 </mapper>

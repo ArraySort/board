@@ -737,8 +737,17 @@
                 </form>
             </c:if>
 
-            <c:if test="${isAdmin}">
+            <c:if test="${isAdmin && postDetail.adminId == currentUserId}">
                 <button onclick="location.href='/admin/post/${boardId}'">관리 페이지 돌아가기</button>
+                <button type="button"
+                        onclick="location.href='/admin/post/${boardId}/${postDetail.postId}/edit'">
+                    수정
+                </button>
+                <form method="post"
+                      action="/admin/post/${boardId}/${postDetail.postId}/delete-admin-post">
+                    <sec:csrfInput/>
+                    <button type="submit">삭제</button>
+                </form>
             </c:if>
 
             <c:if test="${postDetail.userId == currentUserId}">

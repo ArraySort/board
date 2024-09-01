@@ -108,6 +108,19 @@ public class PostVO {
 				.build();
 	}
 
+
+	// 관리자 : 게시글 수정
+	public static PostVO updateAdminOf(PostEditAdminReqDTO dto, long postId) {
+		return PostVO.builder()
+				.postId(postId)
+				.title(dto.getTitle())
+				.content(dto.getContent())
+				.categoryId(dto.getCategoryId())
+				.privateFlag(dto.getPrivateFlag())
+				.noticeFlag(dto.getNoticeFlag())
+				.build();
+	}
+
 	// 임시저장 게시글 추가
 	public static PostVO insertOf(TempPostPublishReqDTO dto, long boardId) {
 		return PostVO.builder()
