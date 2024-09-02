@@ -71,7 +71,7 @@ public class UserService implements UserDetailsService {
 		String userId = UserUtil.getCurrentLoginUserId();
 
 		// 게시글 작성 시 포인트 지급(20)
-		userMapper.updateUserPointByPost(userId, POST_POINT);
+		userMapper.updateUserPointForPost(userId, POST_POINT);
 	}
 
 	// 댓글 작성에 따른 사용자 포인트 지급
@@ -83,11 +83,11 @@ public class UserService implements UserDetailsService {
 		if (vo.isBelowAccessLevel2()) {
 			// 일일 댓글 제한에 도달하지 못했을 때(20)
 			if (vo.isDailyCommentLimitNotReached()) {
-				userMapper.updateUserPointByComment(vo.getUserId(), COMMENT_PONT_FOR_LEVEL1);
+				userMapper.updateUserPointForComment(vo.getUserId(), COMMENT_PONT_FOR_LEVEL1);
 			}
 		} else {
 			// 레벨 2인 유저는 제한 없이 포인트 지급(10)
-			userMapper.updateUserPointByComment(vo.getUserId(), COMMENT_PONT);
+			userMapper.updateUserPointForComment(vo.getUserId(), COMMENT_PONT);
 		}
 	}
 

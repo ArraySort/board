@@ -106,14 +106,14 @@
     </update>
 
     <!-- 게시글 작성에 따른 사용자 포인트 업데이트 -->
-    <update id="updateUserPointByPost">
+    <update id="updateUserPointForPost">
         update user
         set point = point + #{point}
         where user_id = #{userId} and delete_flag = 'N' and activate_flag = 'Y'
     </update>
 
     <!-- 댓글 작성에 따른 사용자 포인트 지급 -->
-    <update id="updateUserPointByComment">
+    <update id="updateUserPointForComment">
         update user
         set daily_comment_count = daily_comment_count + 1,
             point = point + #{point}
