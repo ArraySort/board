@@ -30,4 +30,6 @@ public interface UserMapper {
 	// 로그인 시도 정보 업데이트
 	void updateLoginAttempts(UserVO vo);
 
+	// 사용자 접근 시간 업데이트
+	void updateAccessTime(String userId);
 }

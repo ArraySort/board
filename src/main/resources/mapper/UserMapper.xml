@@ -96,4 +96,10 @@
         where user_id = #{userId}
     </update>
 
+    <!-- 사용자 접근 시간 업데이트 -->
+    <update id="updateAccessTime" parameterType="String">
+        update user
+        set access_time = current_timestamp
+        where user_id = #{userId} and delete_flag = 'N' and activate_flag = 'Y'
+    </update>
 </mapper>

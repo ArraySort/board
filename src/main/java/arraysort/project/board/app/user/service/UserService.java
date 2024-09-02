@@ -87,6 +87,7 @@ public class UserService implements UserDetailsService {
 	/**
 	 * 로그인 상태 초기화
 	 * 로그인 성공 시 로그인 시도 횟수, 로그인 잠금에 대한 초기화
+	 * 로그인 성공 시 사용자 접근 시간 업데이트
 	 *
 	 * @param userId 로그인을 시도하는 유저 ID
 	 */
@@ -95,7 +96,10 @@ public class UserService implements UserDetailsService {
 		userMapper.selectUserByUserId(userId).ifPresent(vo -> {
 			if (vo.getLoginTryCount() > 0 || vo.getLoginLock() != null) {
 				vo.resetLoginStatus();
+				// 로그인 시도 횟수 초기화
 				userMapper.updateLoginAttempts(vo);
+				// 사용자 접근 시간 업데이트
+				userMapper.updateAccessTime(userId);
 			}
 		});
 	}
