@@ -9,6 +9,7 @@ import arraysort.project.board.app.user.mapper.UserMapper;
 import arraysort.project.board.app.utils.UserUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -90,6 +91,12 @@ public class UserService implements UserDetailsService {
 			// 레벨 2인 유저는 제한 없이 포인트 지급(10)
 			userMapper.updateUserPointForComment(vo.getUserId(), COMMENT_PONT);
 		}
+	}
+
+	// 일일 댓글 수 초기화 : 매일 자정에 실행되는 스케줄러
+	@Scheduled(cron = "0 0 0 * * *")
+	public void resetDailyCommentCount() {
+		userMapper.resetAllDailyCommentCounts();
 	}
 
 	/**

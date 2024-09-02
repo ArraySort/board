@@ -134,4 +134,11 @@
         where user_id = #{userId} and delete_flag = 'N' and activate_flag = 'Y'
     </update>
 
+    <!-- 모든 사용자 일일 댓글 수 초기화(스케줄러) -->
+    <update id="resetAllDailyCommentCounts">
+        update user
+        set daily_comment_count = 0
+        where delete_flag = 'N' and activate_flag = 'Y'
+    </update>
+
 </mapper>

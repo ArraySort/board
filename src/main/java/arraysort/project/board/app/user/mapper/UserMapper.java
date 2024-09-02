@@ -44,4 +44,7 @@ public interface UserMapper {
 
 	// 유저 등업
 	void updateUserLevelUp(String userId);
+
+	// 모든 사용자 일일 댓글 수 초기화(스케줄러)
+	void resetAllDailyCommentCounts();
 }
