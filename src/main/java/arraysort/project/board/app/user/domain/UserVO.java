@@ -69,14 +69,41 @@ public class UserVO {
 				.build();
 	}
 
+	// 비활성화 여부 반환
+	public boolean isNotActivated() {
+		return this.activateFlag == Flag.N;
+	}
+
+	// 삭제 여부 반환
+	public boolean isDeleted() {
+		return this.deleteFlag == Flag.Y;
+	}
+
 	// 로그인 시도 횟수 증가
 	public void incrementLoginTryCount() {
 		this.loginTryCount = loginTryCount + 1;
 	}
 
+	// 로그인 잠금 활성화 조건 만족 여부
+	public boolean shouldActivateLoginLock() {
+		return this.loginTryCount >= Constants.MAX_ATTEMPTS_COUNT &&
+				this.loginTryCount % Constants.MAX_ATTEMPTS_COUNT == 0;
+	}
+
+	// 로그인 잠금 활성화 여부
+	public boolean isActivatedLoginLock() {
+		return this.loginTryCount >= Constants.MAX_ATTEMPTS_COUNT &&
+				this.loginLock != null && this.loginLock.toInstant().isAfter(Instant.now());
+	}
+
 	// 로그인 잠금 활성화
 	public void activateLoginLock() {
 		this.loginLock = Timestamp.from(Instant.now().plusSeconds(Constants.LOGIN_LOCK_SEC));
+	}
+
+	// 로그인 잠금에 대한 정보가 있는지 여부
+	public boolean hasLoginLockInfo() {
+		return this.loginTryCount > 0 || this.loginLock != null;
 	}
 
 	// 로그인 상태 초기화
@@ -100,7 +127,6 @@ public class UserVO {
 		LocalDate lastAccessDay = this.accessTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		return !lastAccessDay.equals(LocalDate.now());
 	}
-
 
 	// 등업 가능 여부
 	public boolean canUpgradeLevel(int currentAddPoint) {

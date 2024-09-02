@@ -1,7 +1,5 @@
 package arraysort.project.board.app.user.service;
 
-import arraysort.project.board.app.common.Constants;
-import arraysort.project.board.app.common.enums.Flag;
 import arraysort.project.board.app.exception.*;
 import arraysort.project.board.app.user.domain.UserSignupReqDTO;
 import arraysort.project.board.app.user.domain.UserVO;
@@ -19,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -55,7 +52,7 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 		UserVO vo = userMapper.selectUserByUserId(userId)
-				.orElseThrow(() -> new UsernameNotFoundException(userId));
+				.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
 		// 유저 검증
 		validateUser(vo);
@@ -69,16 +66,15 @@ public class UserService implements UserDetailsService {
 	// 게시글 작성에 따른 사용자 포인트 지급, Level 2 해당
 	@Transactional
 	public void giveUserPointForPost() {
-		String userId = UserUtil.getCurrentLoginUserId();
-
 		// 게시글 작성 시 포인트 지급(20)
-		userMapper.updateUserPointForPost(userId, POST_POINT);
+		userMapper.updateUserPointForPost(UserUtil.getCurrentLoginUserId(), POST_POINT);
 	}
 
 	// 댓글 작성에 따른 사용자 포인트 지급
 	@Transactional
 	public void giveUserPointForComment() {
-		UserVO vo = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId()).orElseThrow();
+		UserVO vo = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
+				.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
 		// 레벨 2 보다 낮은 사용자인 경우
 		if (vo.isBelowAccessLevel2()) {
@@ -113,8 +109,7 @@ public class UserService implements UserDetailsService {
 			vo.incrementLoginTryCount();
 
 			// 2. 로그인 잠금 활성화
-			if (vo.getLoginTryCount() >= Constants.MAX_ATTEMPTS_COUNT &&
-					vo.getLoginTryCount() % Constants.MAX_ATTEMPTS_COUNT == 0) {
+			if (vo.shouldActivateLoginLock()) {
 				vo.activateLoginLock();
 			}
 
@@ -133,7 +128,7 @@ public class UserService implements UserDetailsService {
 	@Transactional
 	public void handleSuccessLoginAttempts(String userId) {
 		userMapper.selectUserByUserId(userId).ifPresent(vo -> {
-			if (vo.getLoginTryCount() > 0 || vo.getLoginLock() != null) {
+			if (vo.hasLoginLockInfo()) {
 				// 1. 로그인 시도 횟수 초기화
 				vo.resetLoginStatus();
 
@@ -153,7 +148,8 @@ public class UserService implements UserDetailsService {
 	 * @param userId 로그인 한 사용자 ID
 	 */
 	private void giveUserPointForAttendance(String userId) {
-		UserVO vo = userMapper.selectUserByUserId(userId).orElseThrow();
+		UserVO vo = userMapper.selectUserByUserId(userId)
+				.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
 		// 일일 최초 로그인 일 때
 		if (vo.isNotAccessedToday()) {
@@ -201,11 +197,11 @@ public class UserService implements UserDetailsService {
 	 * @param vo 로그인 유저의 정보
 	 */
 	private void validateUser(UserVO vo) {
-		if (vo.getActivateFlag() == Flag.N) {
+		if (vo.isNotActivated()) {
 			throw new NotActivatedUserException("관리자에 의해 비활성화 된 계정입니다.");
 		}
 
-		if (vo.getDeleteFlag() == Flag.Y) {
+		if (vo.isDeleted()) {
 			throw new UsernameNotFoundException(vo.getUserId());
 		}
 	}
@@ -217,8 +213,7 @@ public class UserService implements UserDetailsService {
 	 * @param vo 로그인 하려는 사용자 정보
 	 */
 	private void validateLoginAttempts(UserVO vo) {
-		if (vo.getLoginTryCount() >= Constants.MAX_ATTEMPTS_COUNT &&
-				vo.getLoginLock() != null && vo.getLoginLock().toInstant().isAfter(Instant.now())) {
+		if (vo.isActivatedLoginLock()) {
 			throw new LoginLockException("로그인 시도가 지정된 횟수를 초과하여 계정이 잠금 처리되었습니다. 잠시후에 다시 시도하세요.");
 		}
 	}
