@@ -51,11 +51,13 @@
                access_time,
                login_try_count,
                login_lock,
+               point,
                activate_flag,
                created_by,
                created_at,
                updated_at,
-               delete_flag
+               delete_flag,
+               daily_comment_count
         from user
         where user_id = #{userId}
     </select>
@@ -102,4 +104,20 @@
         set access_time = current_timestamp
         where user_id = #{userId} and delete_flag = 'N' and activate_flag = 'Y'
     </update>
+
+    <!-- 게시글 작성에 따른 사용자 포인트 업데이트 -->
+    <update id="updateUserPointByPost">
+        update user
+        set point = point + #{point}
+        where user_id = #{userId} and delete_flag = 'N' and activate_flag = 'Y'
+    </update>
+
+    <!-- 댓글 작성에 따른 사용자 포인트 지급 -->
+    <update id="updateUserPointByComment">
+        update user
+        set daily_comment_count = daily_comment_count + 1,
+            point = point + #{point}
+        where user_id = #{userId} and delete_flag = 'N' and activate_flag = 'Y'
+    </update>
+
 </mapper>

@@ -32,4 +32,10 @@ public interface UserMapper {
 
 	// 사용자 접근 시간 업데이트
 	void updateAccessTime(String userId);
+
+	// 게시글 작성에 따른 사용자 포인트 지급
+	void updateUserPointByPost(String userId, int point);
+
+	// 댓글 작성에 따른 사용자 포인트 지급
+	void updateUserPointByComment(String userId, int point);
 }

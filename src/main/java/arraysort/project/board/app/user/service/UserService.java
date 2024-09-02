@@ -6,6 +6,7 @@ import arraysort.project.board.app.exception.*;
 import arraysort.project.board.app.user.domain.UserSignupReqDTO;
 import arraysort.project.board.app.user.domain.UserVO;
 import arraysort.project.board.app.user.mapper.UserMapper;
+import arraysort.project.board.app.utils.UserUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,7 +22,7 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.Objects;
 
-import static arraysort.project.board.app.common.Constants.ROLE_USER;
+import static arraysort.project.board.app.common.Constants.*;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +63,32 @@ public class UserService implements UserDetailsService {
 		validateLoginAttempts(vo);
 
 		return createUserDetails(vo);
+	}
+
+	// 게시글 작성에 따른 사용자 포인트 지급, Level 2 해당
+	@Transactional
+	public void giveUserPointForPost() {
+		String userId = UserUtil.getCurrentLoginUserId();
+
+		// 게시글 작성 시 포인트 지급(20)
+		userMapper.updateUserPointByPost(userId, POST_POINT);
+	}
+
+	// 댓글 작성에 따른 사용자 포인트 지급
+	@Transactional
+	public void giveUserPointForComment() {
+		UserVO vo = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId()).orElseThrow();
+
+		// 레벨 2 보다 낮은 사용자인 경우
+		if (vo.isBelowAccessLevel2()) {
+			// 일일 댓글 제한에 도달하지 못했을 때(20)
+			if (vo.isDailyCommentLimitNotReached()) {
+				userMapper.updateUserPointByComment(vo.getUserId(), COMMENT_PONT_FOR_LEVEL1);
+			}
+		} else {
+			// 레벨 2인 유저는 제한 없이 포인트 지급(10)
+			userMapper.updateUserPointByComment(vo.getUserId(), COMMENT_PONT);
+		}
 	}
 
 	/**

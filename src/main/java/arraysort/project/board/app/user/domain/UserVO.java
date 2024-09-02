@@ -33,6 +33,8 @@ public class UserVO {
 
 	private Integer accessLevel;    // 유저 접근 등급
 
+	private int point;    // 유저 포인트
+
 	private Date accessTime;    // 최근 접속 시간
 
 	private Integer loginTryCount;    // 로그인 시도 횟수
@@ -48,6 +50,8 @@ public class UserVO {
 	private String updatedAt;    // 최종 수정 시간
 
 	private Flag deleteFlag;  // 삭제 여부
+
+	private int dailyCommentCount;    // 일일 댓글 개수
 
 	// 로그인
 	public static UserVO of(UserSignupReqDTO dto) {
@@ -77,5 +81,15 @@ public class UserVO {
 	public void resetLoginStatus() {
 		this.loginLock = null;
 		this.loginTryCount = 0;
+	}
+
+	// 레벨 2 보다 낮은지 여부
+	public boolean isBelowAccessLevel2() {
+		return this.accessLevel < 2;
+	}
+
+	// 일일 댓글 개수에 도달했는지 여부
+	public boolean isDailyCommentLimitNotReached() {
+		return this.dailyCommentCount < 3;
 	}
 }
