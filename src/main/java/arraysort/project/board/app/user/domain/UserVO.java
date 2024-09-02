@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Getter
@@ -91,5 +93,11 @@ public class UserVO {
 	// 일일 댓글 개수에 도달했는지 여부
 	public boolean isDailyCommentLimitNotReached() {
 		return this.dailyCommentCount < 3;
+	}
+
+	// 가장 최근 접근이 오늘인지 아닌지 여부 : 오늘이 아니면 True, 오늘이면 false
+	public boolean isNotAccessedToday() {
+		LocalDate lastAccessDay = this.accessTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		return !lastAccessDay.equals(LocalDate.now());
 	}
 }

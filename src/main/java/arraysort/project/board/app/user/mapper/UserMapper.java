@@ -38,4 +38,7 @@ public interface UserMapper {
 
 	// 댓글 작성에 따른 사용자 포인트 지급
 	void updateUserPointForComment(String userId, int point);
+
+	// 일일 최초 로그인 시 포인트 지급
+	void updateUserPointForAttendance(String userId, int point);
 }

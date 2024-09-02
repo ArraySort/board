@@ -120,4 +120,11 @@
         where user_id = #{userId} and delete_flag = 'N' and activate_flag = 'Y'
     </update>
 
+    <!-- 일일 최초 로그인 시 포인트 지급 -->
+    <update id="updateUserPointForAttendance">
+        update user
+        set point = point + #{point}
+        where user_id = #{userId} and delete_flag = 'N' and activate_flag = 'Y'
+    </update>
+
 </mapper>

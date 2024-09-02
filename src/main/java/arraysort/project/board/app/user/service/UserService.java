@@ -125,11 +125,29 @@ public class UserService implements UserDetailsService {
 				vo.resetLoginStatus();
 				// 로그인 시도 횟수 초기화
 				userMapper.updateLoginAttempts(vo);
-				// 사용자 접근 시간 업데이트
-				userMapper.updateAccessTime(userId);
 			}
 		});
+		// 일일 최초 로그인 시 사용자 포인트 지급
+		giveUserPointForAttendance(userId);
+
+		// 사용자 접근 시간 업데이트
+		userMapper.updateAccessTime(userId);
 	}
+
+	/**
+	 * 일일 최초 로그인 시 사용자 포인트 지급
+	 *
+	 * @param userId 로그인 한 사용자 ID
+	 */
+	private void giveUserPointForAttendance(String userId) {
+		UserVO vo = userMapper.selectUserByUserId(userId).orElseThrow();
+
+		// 일일 최초 로그인 일 때
+		if (vo.isNotAccessedToday()) {
+			userMapper.updateUserPointForAttendance(userId, 20);
+		}
+	}
+
 
 	/**
 	 * 회원가입 시 입력한 아이디, 이름 중복검사
