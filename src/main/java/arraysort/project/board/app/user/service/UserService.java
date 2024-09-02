@@ -92,16 +92,19 @@ public class UserService implements UserDetailsService {
 	}
 
 	/**
-	 * 로그인 시도 실패 시 시도 횟수 증가
-	 * 시도 횟수가 설정된 횟수보다 많으면 로그인 잠금 활성화
+	 * 로그인 실패 시 처리
+	 * 1. 로그인 시도 횟수 증가
+	 * 2. 시도 횟수가 설정된 횟수보다 많으면 로그인 잠금 활성화
 	 *
 	 * @param userId 로그인을 시도하는 유저 ID
 	 */
 	@Transactional
 	public void handleFailedLoginAttempts(String userId) {
 		userMapper.selectUserByUserId(userId).ifPresent(vo -> {
+			// 1. 로그인 시도 횟수 증가
 			vo.incrementLoginTryCount();
 
+			// 2. 로그인 잠금 활성화
 			if (vo.getLoginTryCount() >= Constants.MAX_ATTEMPTS_COUNT &&
 					vo.getLoginTryCount() % Constants.MAX_ATTEMPTS_COUNT == 0) {
 				vo.activateLoginLock();
@@ -112,25 +115,27 @@ public class UserService implements UserDetailsService {
 	}
 
 	/**
-	 * 로그인 상태 초기화
-	 * 로그인 성공 시 로그인 시도 횟수, 로그인 잠금에 대한 초기화
-	 * 로그인 성공 시 사용자 접근 시간 업데이트
+	 * 로그인 성공 시 처리
+	 * 1. 로그인 시도 횟수, 로그인 잠금에 대한 초기화
+	 * 2. 일일 최초 로그인 일 때 사용자 포인트 지급
+	 * 3. 사용자 접근 시간 업데이트
 	 *
 	 * @param userId 로그인을 시도하는 유저 ID
 	 */
 	@Transactional
-	public void resetLoginAttempts(String userId) {
+	public void handleSuccessLoginAttempts(String userId) {
 		userMapper.selectUserByUserId(userId).ifPresent(vo -> {
 			if (vo.getLoginTryCount() > 0 || vo.getLoginLock() != null) {
+				// 1. 로그인 시도 횟수 초기화
 				vo.resetLoginStatus();
-				// 로그인 시도 횟수 초기화
+				
 				userMapper.updateLoginAttempts(vo);
 			}
 		});
-		// 일일 최초 로그인 시 사용자 포인트 지급
+		// 2. 일일 최초 로그인 시 사용자 포인트 지급
 		giveUserPointForAttendance(userId);
 
-		// 사용자 접근 시간 업데이트
+		// 3. 사용자 접근 시간 업데이트
 		userMapper.updateAccessTime(userId);
 	}
 
