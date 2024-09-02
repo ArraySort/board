@@ -41,4 +41,7 @@ public interface UserMapper {
 
 	// 일일 최초 로그인 시 포인트 지급
 	void updateUserPointForAttendance(String userId, int point);
+
+	// 유저 등업
+	void updateUserLevelUp(String userId);
 }

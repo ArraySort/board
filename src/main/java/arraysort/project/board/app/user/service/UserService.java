@@ -84,6 +84,7 @@ public class UserService implements UserDetailsService {
 			// 일일 댓글 제한에 도달하지 못했을 때(20)
 			if (vo.isDailyCommentLimitNotReached()) {
 				userMapper.updateUserPointForComment(vo.getUserId(), COMMENT_PONT_FOR_LEVEL1);
+				checkAndUpgradeUserLevel(vo, COMMENT_PONT_FOR_LEVEL1);
 			}
 		} else {
 			// 레벨 2인 유저는 제한 없이 포인트 지급(10)
@@ -128,7 +129,7 @@ public class UserService implements UserDetailsService {
 			if (vo.getLoginTryCount() > 0 || vo.getLoginLock() != null) {
 				// 1. 로그인 시도 횟수 초기화
 				vo.resetLoginStatus();
-				
+
 				userMapper.updateLoginAttempts(vo);
 			}
 		});
@@ -150,6 +151,20 @@ public class UserService implements UserDetailsService {
 		// 일일 최초 로그인 일 때
 		if (vo.isNotAccessedToday()) {
 			userMapper.updateUserPointForAttendance(userId, 20);
+			checkAndUpgradeUserLevel(vo, 20);
+		}
+	}
+
+	/**
+	 * 유저 등업
+	 * 레벨 1 사용자에 대한 유저 등업 조건 확인
+	 * 조건 만족 시 레벨 2 로 등업
+	 *
+	 * @param vo 유저 정보
+	 */
+	private void checkAndUpgradeUserLevel(UserVO vo, int currentAddPoint) {
+		if (vo.canUpgradeLevel(currentAddPoint)) {
+			userMapper.updateUserLevelUp(vo.getUserId());
 		}
 	}
 

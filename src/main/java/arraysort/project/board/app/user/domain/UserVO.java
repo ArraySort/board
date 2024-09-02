@@ -100,4 +100,10 @@ public class UserVO {
 		LocalDate lastAccessDay = this.accessTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		return !lastAccessDay.equals(LocalDate.now());
 	}
+
+
+	// 등업 가능 여부
+	public boolean canUpgradeLevel(int currentAddPoint) {
+		return this.accessLevel < 2 && this.point + currentAddPoint >= 100;
+	}
 }
