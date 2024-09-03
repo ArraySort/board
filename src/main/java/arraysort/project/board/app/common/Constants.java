@@ -5,9 +5,11 @@ public class Constants {
 	public static final int PAGE_ROW_COUNT = 10;    // 페이징 : 한페이지 당 보여줄 게시물 개수
 	public static final int PAGE_BLOCK_COUNT = 5;    // 페이징 : 페이지 블럭에 보여줄 페이지 개수
 
+	// User Point
 	public static final int POST_POINT = 20;
-	public static final int COMMENT_PONT_FOR_LEVEL1 = 20;
-	public static final int COMMENT_PONT = 10;
+	public static final int COMMENT_POINT_FOR_LEVEL1 = 20;
+	public static final int COMMENT_POINT = 10;
+	public static final int ATTENDANCE_POINT = 20;
 
 	// OAuth : registrationId
 	public static final String REGISTRATION_ID_GOOGLE = "google";

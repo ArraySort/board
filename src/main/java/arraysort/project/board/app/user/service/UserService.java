@@ -4,10 +4,8 @@ import arraysort.project.board.app.exception.*;
 import arraysort.project.board.app.user.domain.UserSignupReqDTO;
 import arraysort.project.board.app.user.domain.UserVO;
 import arraysort.project.board.app.user.mapper.UserMapper;
-import arraysort.project.board.app.utils.UserUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,11 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.Objects;
 
-import static arraysort.project.board.app.common.Constants.*;
+import static arraysort.project.board.app.common.Constants.ROLE_USER;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
+
+	private final UserPointService userPointService;
 
 	private final UserMapper userMapper;
 
@@ -61,38 +61,6 @@ public class UserService implements UserDetailsService {
 		validateLoginAttempts(vo);
 
 		return createUserDetails(vo);
-	}
-
-	// 게시글 작성에 따른 사용자 포인트 지급, Level 2 해당
-	@Transactional
-	public void giveUserPointForPost() {
-		// 게시글 작성 시 포인트 지급(20)
-		userMapper.updateUserPointForPost(UserUtil.getCurrentLoginUserId(), POST_POINT);
-	}
-
-	// 댓글 작성에 따른 사용자 포인트 지급
-	@Transactional
-	public void giveUserPointForComment() {
-		UserVO vo = userMapper.selectUserByUserId(UserUtil.getCurrentLoginUserId())
-				.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-
-		// 레벨 2 보다 낮은 사용자인 경우
-		if (vo.isBelowAccessLevel2()) {
-			// 일일 댓글 제한에 도달하지 못했을 때(20)
-			if (vo.isDailyCommentLimitNotReached()) {
-				userMapper.updateUserPointForComment(vo.getUserId(), COMMENT_PONT_FOR_LEVEL1);
-				checkAndUpgradeUserLevel(vo, COMMENT_PONT_FOR_LEVEL1);
-			}
-		} else {
-			// 레벨 2인 유저는 제한 없이 포인트 지급(10)
-			userMapper.updateUserPointForComment(vo.getUserId(), COMMENT_PONT);
-		}
-	}
-
-	// 일일 댓글 수 초기화 : 매일 자정에 실행되는 스케줄러
-	@Scheduled(cron = "0 0 0 * * *")
-	public void resetDailyCommentCount() {
-		userMapper.resetAllDailyCommentCounts();
 	}
 
 	/**
@@ -136,41 +104,11 @@ public class UserService implements UserDetailsService {
 			}
 		});
 		// 2. 일일 최초 로그인 시 사용자 포인트 지급
-		giveUserPointForAttendance(userId);
+		userPointService.giveUserPointForAttendance(userId);
 
 		// 3. 사용자 접근 시간 업데이트
 		userMapper.updateAccessTime(userId);
 	}
-
-	/**
-	 * 일일 최초 로그인 시 사용자 포인트 지급
-	 *
-	 * @param userId 로그인 한 사용자 ID
-	 */
-	private void giveUserPointForAttendance(String userId) {
-		UserVO vo = userMapper.selectUserByUserId(userId)
-				.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-
-		// 일일 최초 로그인 일 때
-		if (vo.isNotAccessedToday()) {
-			userMapper.updateUserPointForAttendance(userId, 20);
-			checkAndUpgradeUserLevel(vo, 20);
-		}
-	}
-
-	/**
-	 * 유저 등업
-	 * 레벨 1 사용자에 대한 유저 등업 조건 확인
-	 * 조건 만족 시 레벨 2 로 등업
-	 *
-	 * @param vo 유저 정보
-	 */
-	private void checkAndUpgradeUserLevel(UserVO vo, int currentAddPoint) {
-		if (vo.canUpgradeLevel(currentAddPoint)) {
-			userMapper.updateUserLevelUp(vo.getUserId());
-		}
-	}
-
 
 	/**
 	 * 회원가입 시 입력한 아이디, 이름 중복검사

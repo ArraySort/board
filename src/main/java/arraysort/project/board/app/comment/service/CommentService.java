@@ -14,7 +14,7 @@ import arraysort.project.board.app.exception.InvalidPrincipalException;
 import arraysort.project.board.app.history.service.CommentHistoryService;
 import arraysort.project.board.app.image.domain.ImageVO;
 import arraysort.project.board.app.image.service.ImageService;
-import arraysort.project.board.app.user.service.UserService;
+import arraysort.project.board.app.user.service.UserPointService;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,17 +31,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentService {
 
-	private final CommentMapper commentMapper;
-
-	private final PostComponent postComponent;
-
 	private final ImageService imageService;
 
 	private final CommentHistoryService commentHistoryService;
 
+	private final UserPointService userPointService;
+
+	private final PostComponent postComponent;
+
 	private final CommentComponent commentComponent;
 
-	private final UserService userService;
+	private final CommentMapper commentMapper;
 
 	// 댓글 추가
 	@Transactional
@@ -59,7 +59,7 @@ public class CommentService {
 		commentMapper.insertComment(vo);
 
 		// 댓글 추가 시 사용자 포인트 지급
-		userService.giveUserPointForComment();
+		userPointService.giveUserPointForComment();
 
 		// 이미지 업로드
 		handleAddCommentImages(dto, vo);

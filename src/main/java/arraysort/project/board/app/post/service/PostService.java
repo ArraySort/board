@@ -20,7 +20,7 @@ import arraysort.project.board.app.post.domain.*;
 import arraysort.project.board.app.post.mapper.PostMapper;
 import arraysort.project.board.app.user.domain.UserVO;
 import arraysort.project.board.app.user.mapper.UserMapper;
-import arraysort.project.board.app.user.service.UserService;
+import arraysort.project.board.app.user.service.UserPointService;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,20 +34,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
 
-	private final PostMapper postMapper;
-
-	private final UserMapper userMapper;
-
 	private final ImageService imageService;
 
 	private final PostHistoryService postHistoryService;
 
-	private final PostComponent postComponent;
-
 	private final CommentService commentService;
 
-	private final UserService userService;
+	private final UserPointService userPointService;
 
+	private final PostComponent postComponent;
+
+	private final PostMapper postMapper;
+
+	private final UserMapper userMapper;
+	
 	// 게시글 추가
 	@Transactional
 	public void addPost(PostAddReqDTO dto, long boardId) {
@@ -64,7 +64,7 @@ public class PostService {
 		postMapper.insertPost(vo);
 
 		// 게시글 추가 시 유저 포인트 지급
-		userService.giveUserPointForPost();
+		userPointService.giveUserPointForPost();
 
 		// 게시글 이미지 업로드
 		handlePostImages(dto.getImages(), boardDetail, vo.getPostId());
