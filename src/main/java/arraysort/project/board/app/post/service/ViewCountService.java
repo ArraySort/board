@@ -24,10 +24,7 @@ public class ViewCountService {
 	@Transactional
 	public void increaseViewCount(Long postId, String ipAddress) {
 		if (!isViewed(postId, ipAddress)) {
-			String key = "viewCount";
-			redisTemplate.opsForZSet().incrementScore(key, String.valueOf(postId), 1);
 			addView(postId, ipAddress);
-
 			// DB 에 조회수 증가 반영
 			increaseViews(postId);
 		}
