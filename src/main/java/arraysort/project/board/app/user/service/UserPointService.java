@@ -53,6 +53,12 @@ public class UserPointService {
 		}
 	}
 
+	// 일일 댓글 수 초기화
+	@Transactional
+	public void resetDailyCommentCount() {
+		userMapper.resetAllDailyCommentCounts();
+	}
+
 	/**
 	 * 유저 등업
 	 * 레벨 1 사용자에 대한 유저 등업 조건 확인
