@@ -8,7 +8,9 @@ import arraysort.project.board.app.image.service.ImageService;
 import arraysort.project.board.app.post.domain.PostAddReqDTO;
 import arraysort.project.board.app.post.domain.PostEditReqDTO;
 import arraysort.project.board.app.post.service.PostService;
+import arraysort.project.board.app.post.service.ViewCountService;
 import arraysort.project.board.app.utils.ControllerUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -31,6 +33,8 @@ public class PostController {
 	private final ImageService imageService;
 
 	private final CommentService commentService;
+
+	private final ViewCountService viewCountService;
 
 	// 게시판 페이지 이동, 게시글 리스트 조회
 	@GetMapping
@@ -61,7 +65,11 @@ public class PostController {
 
 	// 게시글 세부 페이지 이동
 	@GetMapping("/detail/{postId}")
-	public String showPostDetailPage(@PathVariable long boardId, @PathVariable long postId, @ModelAttribute("page") PageReqDTO dto, Model model) {
+	public String showPostDetailPage(@PathVariable long boardId, @PathVariable long postId,
+									 @ModelAttribute("page") PageReqDTO dto, HttpServletRequest request, Model model) {
+		// 조회수 증가
+		viewCountService.increaseViewCount(postId, request.getRemoteAddr());
+
 		model.addAttribute("boardDetail", boardService.findBoardDetailById(boardId));
 		model.addAttribute("postDetail", postService.findPostDetailByPostId(postId, boardId));
 		model.addAttribute("images", imageService.findImagesByPostId(postId));

@@ -11,7 +11,6 @@ import arraysort.project.board.app.common.page.PageResDTO;
 import arraysort.project.board.app.component.PostComponent;
 import arraysort.project.board.app.exception.BoardImageOutOfRangeException;
 import arraysort.project.board.app.exception.DetailNotFoundException;
-import arraysort.project.board.app.exception.IdNotFoundException;
 import arraysort.project.board.app.exception.InvalidPrincipalException;
 import arraysort.project.board.app.history.service.PostHistoryService;
 import arraysort.project.board.app.image.domain.ImageVO;
@@ -42,12 +41,14 @@ public class PostService {
 
 	private final UserPointService userPointService;
 
+	private final ViewCountService viewCountService;
+
 	private final PostComponent postComponent;
 
 	private final PostMapper postMapper;
 
 	private final UserMapper userMapper;
-	
+
 	// 게시글 추가
 	@Transactional
 	public void addPost(PostAddReqDTO dto, long boardId) {
@@ -89,14 +90,10 @@ public class PostService {
 		return new PageResDTO<>(totalPostCount, dto.getPage(), postList);
 	}
 
-	// 게시글 세부내용 조회, 게시글 조회수 증가
+	// 게시글 세부내용 조회
 	@Transactional
 	public PostDetailResDTO findPostDetailByPostId(long postId, long boardId) {
 		postComponent.getValidatedBoard(boardId);
-
-		// 게시글 조회수 증가
-		increaseViews(postId);
-
 		return postComponent.getValidatedPost(postId, boardId);
 	}
 
@@ -267,18 +264,6 @@ public class PostService {
 		} else {
 			throw new InvalidPrincipalException("게시글을 작성하려면 로그인이 필요합니다.");
 		}
-	}
-
-	/**
-	 * 게시글 리스트에서 게시글 세부내용 조회 시 조회수 증가
-	 *
-	 * @param postId 세부내용 조회 한 게시글 ID
-	 */
-	private void increaseViews(long postId) {
-		if (postMapper.selectExistPostId(postId).isEmpty()) {
-			throw new IdNotFoundException();
-		}
-		postMapper.updateViews(postId);
 	}
 
 	/**
