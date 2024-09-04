@@ -1,10 +1,8 @@
 package arraysort.project.board.app.admin.controller;
 
 import arraysort.project.board.app.admin.domain.AdminAddReqDTO;
-import arraysort.project.board.app.admin.domain.AdminLoginReqDTO;
 import arraysort.project.board.app.admin.service.AdminService;
 import arraysort.project.board.app.utils.ControllerUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -33,15 +31,6 @@ public class AdminLoginController {
 	@GetMapping("/login")
 	public String showLoginPage() {
 		return MAV_ADMIN_LOGIN;
-	}
-
-	// 관리자 로그인 요청
-	@PostMapping("/process-login-admin")
-	public String processLoginAdmin(@Valid @ModelAttribute AdminLoginReqDTO dto, Model model, HttpServletRequest request) {
-		adminService.login(dto, request);
-
-		ControllerUtil.addMessageAndRequest(model, "로그인 성공", MAV_REQUEST_LOGIN_ADMIN);
-		return MAV_ALERT;
 	}
 
 	// 관리자 추가 요청

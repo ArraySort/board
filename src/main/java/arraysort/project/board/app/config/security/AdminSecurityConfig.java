@@ -1,12 +1,13 @@
 package arraysort.project.board.app.config.security;
 
+import arraysort.project.board.app.admin.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -19,9 +20,15 @@ public class AdminSecurityConfig {
 			"/admin/login", "/admin/process-add-admin", "/admin/process-login-admin",
 			"/WEB-INF/views/**", "/resources/**"};
 
-	private final AdminAuthenticationProvider adminAuthenticationProvider;
-
 	private final CustomSessionExpiredStrategy customSessionExpiredStrategy;
+
+	private final AdminLoginSuccessHandler adminLoginSuccessHandler;
+
+	private final AdminLoginFailureHandler loginFailureHandler;
+
+	private final AdminService adminService;
+
+	private final PasswordEncoder passwordEncoder;
 
 	@Bean
 	public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -34,30 +41,42 @@ public class AdminSecurityConfig {
 						.authenticated()
 				)
 
+				.formLogin(form -> form
+						.loginPage("/admin/login")
+						.loginProcessingUrl("/admin/process-login-admin")
+						.usernameParameter("adminId")
+						.passwordParameter("adminPassword")
+						.successHandler(adminLoginSuccessHandler)
+						.failureHandler(loginFailureHandler)
+						.permitAll()
+				)
+
 				.logout(logout -> logout
 						.logoutUrl("/admin/process-logout")
 						.logoutSuccessUrl("/admin/login")
 						.invalidateHttpSession(true)
-						.deleteCookies("JSESSIONID", "remember-me")
+						.deleteCookies("JSESSIONID")
 						.permitAll()
 				)
 
-				.authenticationManager(adminAuthenticationManager())
+				.authenticationProvider(adminAuthenticationProvider())
 
 				.sessionManagement(session -> session
 						.maximumSessions(1)
 						.expiredSessionStrategy(customSessionExpiredStrategy)
-						.maxSessionsPreventsLogin(true)  // 중복 로그인 방지
+						.maxSessionsPreventsLogin(false)  // 중복 로그인 방지
 				);
 
 		return http.build();
 	}
 
+	// 관리자 로그인 Provider 설정
 	@Bean
-	public AuthenticationManager adminAuthenticationManager() {
-		ProviderManager providerManager = new ProviderManager(adminAuthenticationProvider);
-		providerManager.setEraseCredentialsAfterAuthentication(false);
+	public DaoAuthenticationProvider adminAuthenticationProvider() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(adminService);
+		provider.setPasswordEncoder(passwordEncoder);
 
-		return providerManager;
+		return provider;
 	}
 }
