@@ -16,7 +16,7 @@
     <li><a href="${pageContext.request.contextPath}/admin/report">신고내역 관리</a></li>
 </ul>
 
-<form action="${pageContext.request.contextPath}/process-logout" method="post">
+<form action="${pageContext.request.contextPath}/admin/process-logout" method="post">
     <sec:csrfInput/>
     <button type="submit">로그아웃</button>
 </form>
