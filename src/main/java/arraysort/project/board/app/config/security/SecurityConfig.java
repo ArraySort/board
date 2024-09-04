@@ -84,11 +84,13 @@ public class SecurityConfig {
 						.rememberMeParameter("remember-me")
 						.tokenValiditySeconds(30 * 24 * 60 * 60)    // 유효기간 : 30일
 						.alwaysRemember(false)
+						.userDetailsService(userService)
 				);
 
 		return http.build();
 	}
 
+	// 유저 로그인 Provider 설정
 	@Bean
 	public DaoAuthenticationProvider userAuthenticationProvider() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
