@@ -1,4 +1,4 @@
-package arraysort.project.board.app.config.security;
+package arraysort.project.board.app.config.scheduler;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
