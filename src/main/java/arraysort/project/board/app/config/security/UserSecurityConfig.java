@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -35,6 +36,8 @@ public class UserSecurityConfig {
 	private final UserService userService;
 
 	private final PasswordEncoder passwordEncoder;
+
+	private final SessionRegistry redisSessionRegistry;
 
 	@Bean
 	public SecurityFilterChain userFilterChain(HttpSecurity http) throws Exception {
@@ -70,20 +73,22 @@ public class UserSecurityConfig {
 						.permitAll()
 				)
 
+				// 중복 로그인 방지
 				.sessionManagement(session -> session
 						.maximumSessions(1)
+						.sessionRegistry(redisSessionRegistry)
 						.expiredSessionStrategy(customSessionExpiredStrategy)
 						.maxSessionsPreventsLogin(false)
 				)
-
-				.authenticationProvider(userAuthenticationProvider())
 
 				.rememberMe(rememberMe -> rememberMe
 						.rememberMeParameter("remember-me")
 						.tokenValiditySeconds(30 * 24 * 60 * 60)    // 유효기간 : 30일
 						.alwaysRemember(false)
 						.userDetailsService(userService)
-				);
+				)
+
+				.authenticationProvider(userAuthenticationProvider());
 
 		return http.build();
 	}
