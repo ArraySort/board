@@ -14,7 +14,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-		request.setAttribute("message", "EntryPoint");
+		request.setAttribute("message", "로그인이 필요합니다.");
 		request.getRequestDispatcher("/WEB-INF/views/common/alert.jsp").forward(request, response);
 	}
 }
