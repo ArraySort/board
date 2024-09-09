@@ -29,6 +29,10 @@ public class UserSecurityConfig {
 
 	private final LoginFailureHandler loginFailureHandler;
 
+	private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+	private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
 	private final CustomOAuth2UserService customOAuth2UserService;
 
 	private final CustomSessionExpiredStrategy customSessionExpiredStrategy;
@@ -86,6 +90,11 @@ public class UserSecurityConfig {
 						.tokenValiditySeconds(30 * 24 * 60 * 60)    // 유효기간 : 30일
 						.alwaysRemember(false)
 						.userDetailsService(userService)
+				)
+
+				.exceptionHandling(exceptionHandling -> exceptionHandling
+						.authenticationEntryPoint(customAuthenticationEntryPoint)
+						.accessDeniedHandler(customAccessDeniedHandler)
 				)
 
 				.authenticationProvider(userAuthenticationProvider());

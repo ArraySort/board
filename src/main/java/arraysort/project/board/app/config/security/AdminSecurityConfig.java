@@ -25,13 +25,17 @@ public class AdminSecurityConfig {
 
 	private final AdminLoginSuccessHandler adminLoginSuccessHandler;
 
-	private final AdminLoginFailureHandler loginFailureHandler;
+	private final AdminLoginFailureHandler adminLoginFailureHandler;
 
 	private final AdminService adminService;
 
 	private final PasswordEncoder passwordEncoder;
 
 	private final SessionRegistry redisSessionRegistry;
+
+	private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
 	@Bean
 	public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -50,7 +54,7 @@ public class AdminSecurityConfig {
 						.usernameParameter("adminId")
 						.passwordParameter("adminPassword")
 						.successHandler(adminLoginSuccessHandler)
-						.failureHandler(loginFailureHandler)
+						.failureHandler(adminLoginFailureHandler)
 						.permitAll()
 				)
 
@@ -68,6 +72,11 @@ public class AdminSecurityConfig {
 						.sessionRegistry(redisSessionRegistry)
 						.expiredSessionStrategy(customSessionExpiredStrategy)
 						.maxSessionsPreventsLogin(false)  // 중복 로그인 방지
+				)
+
+				.exceptionHandling(exceptionHandling -> exceptionHandling
+						.authenticationEntryPoint(customAuthenticationEntryPoint)
+						.accessDeniedHandler(customAccessDeniedHandler)
 				)
 
 				.authenticationProvider(adminAuthenticationProvider());
