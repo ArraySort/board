@@ -1,4 +1,4 @@
-package arraysort.project.board.app.config.security;
+package arraysort.project.board.app.config.security.component;
 
 import arraysort.project.board.app.exception.LoginLockException;
 import arraysort.project.board.app.exception.NotActivatedUserException;
@@ -18,7 +18,7 @@ import java.io.IOException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class LoginFailureHandler implements AuthenticationFailureHandler {
+public class UserLoginFailureHandler implements AuthenticationFailureHandler {
 
 	private final UserService userService;
 

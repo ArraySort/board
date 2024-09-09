@@ -1,6 +1,7 @@
-package arraysort.project.board.app.config.security;
+package arraysort.project.board.app.config.security.config;
 
 import arraysort.project.board.app.admin.service.AdminService;
+import arraysort.project.board.app.config.security.component.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

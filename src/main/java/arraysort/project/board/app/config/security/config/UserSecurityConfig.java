@@ -1,5 +1,6 @@
-package arraysort.project.board.app.config.security;
+package arraysort.project.board.app.config.security.config;
 
+import arraysort.project.board.app.config.security.component.*;
 import arraysort.project.board.app.user.service.CustomOAuth2UserService;
 import arraysort.project.board.app.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,9 @@ public class UserSecurityConfig {
 			"/{boardId}/post/**", "/image/{imageId}",
 			"/WEB-INF/views/**", "/resources/**"};
 
-	private final LoginSuccessHandler loginSuccessHandler;
+	private final UserLoginSuccessHandler userLoginSuccessHandler;
 
-	private final LoginFailureHandler loginFailureHandler;
+	private final UserLoginFailureHandler userLoginFailureHandler;
 
 	private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
@@ -57,16 +58,16 @@ public class UserSecurityConfig {
 						.loginProcessingUrl("/user/process-login")
 						.usernameParameter("userId")
 						.passwordParameter("userPassword")
-						.failureHandler(loginFailureHandler)
-						.successHandler(loginSuccessHandler)
+						.failureHandler(userLoginFailureHandler)
+						.successHandler(userLoginSuccessHandler)
 						.permitAll()
 				)
 
 				.oauth2Login(oauth2 -> oauth2
 						.loginPage("/user/login")
 						.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-						.successHandler(loginSuccessHandler)
-						.failureHandler(loginFailureHandler)
+						.successHandler(userLoginSuccessHandler)
+						.failureHandler(userLoginFailureHandler)
 				)
 
 				.logout(logout -> logout

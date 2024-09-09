@@ -1,4 +1,4 @@
-package arraysort.project.board.app.config.security;
+package arraysort.project.board.app.config.security.config;
 
 
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package arraysort.project.board.app.config.security;
+package arraysort.project.board.app.config.security.component;
 
 import arraysort.project.board.app.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class LoginSuccessHandler implements AuthenticationSuccessHandler {
+public class UserLoginSuccessHandler implements AuthenticationSuccessHandler {
 
 	private final UserService userService;
 

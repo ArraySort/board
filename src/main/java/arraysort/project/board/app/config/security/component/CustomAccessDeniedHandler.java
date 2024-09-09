@@ -1,4 +1,4 @@
-package arraysort.project.board.app.config.security;
+package arraysort.project.board.app.config.security.component;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
