@@ -1,11 +1,13 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kr">
 <head>
-    <title>SignUp</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
+    <title>SignUp | 회원가입</title>
+
+    <jsp:include page="/WEB-INF/views/common/head-css.jsp"/>
+    <jsp:include page="/WEB-INF/views/common/head-page-meta.jsp"/>
 
     <meta id="_csrf" name="_csrf" content="${_csrf.token}"/>
     <meta id="_csrf_header" name="_csrf_header" content="${_csrf.headerName}"/>
@@ -13,10 +15,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript">
         $(() => {
-            function alertMessage(e, message) {
-                e.preventDefault();
-                alert(message);
-            }
+            disableSignUpForm(true);
 
             // CSRF
             $.ajaxSetup({
@@ -41,7 +40,6 @@
                     data: {email: email},
                     success: function (response) {
                         alert(response);
-                        $('#emailVerificationCodeForm').show();
                     },
                     error: function (xhr) {
                         alertMessage(e, "인증번호 전송 중 오류가 발생했습니다.");
@@ -67,12 +65,11 @@
                         alert(response);
 
                         // 인증 완료 시 입력 태그 및 버튼 비활성화
+                        disableSignUpForm(false);
                         $('#email').prop('disabled', true);
                         $('#sendEmailVerificationButton').prop('disabled', true);
                         $('#emailVerificationCode').prop('disabled', true);
                         $('#verifyEmailCodeButton').prop('disabled', true);
-
-                        $('#signupForm').show();
                     },
                     error: function (xhr) {
                         alert("인증에 실패했습니다.");
@@ -99,6 +96,17 @@
                     alertMessage(e, "입력하신 비밀번호와 확인 값이 일치하지 않습니다.");
                 }
             });
+
+            // 회원가입 폼 활성화 / 비활성화
+            function disableSignUpForm(disable) {
+                $('#signupForm input').prop('disabled', disable);
+                $('#signupButton').prop('disabled', disable);
+            }
+
+            function alertMessage(e, message) {
+                e.preventDefault();
+                alert(message);
+            }
         });
     </script>
 
@@ -144,101 +152,161 @@
     </script>
 
 </head>
-<body class="bg-light">
+<body>
+<div class="loader-bg">
+    <div class="loader-track">
+        <div class="loader-fill"></div>
+    </div>
+</div>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+<div class="auth-main">
+    <div class="auth-wrapper v3">
+        <div class="auth-form">
             <div class="card mt-5">
-                <div class="card-header text-center">
-                    <h1>회원가입 페이지</h1>
-                </div>
                 <div class="card-body">
+                    <%-- 로고 추가 --%>
+                    <a href="#" class="d-flex justify-content-center mt-3">
+                        <img src="${pageContext.request.contextPath}/resources/assets/images/logo-dark.svg"
+                             class="img-fluid brand-logo"
+                             alt="logo">
+                    </a>
 
-                    <!-- 이메일 인증 요청 폼 -->
-                    <div class="input-group">
-                        <input type="email" class="form-control" id="email" name="email" placeholder="이메일"
-                               required>
+                    <div class="row">
+                        <div class="d-flex justify-content-center">
+                            <div class="auth-header">
+                                <h2 class="text-secondary mt-5"><b>회원가입</b></h2>
+                                <p class="f-16 mt-2">이메일 인증 하기</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3 d-flex">
+                        <input type="email"
+                               class="form-control"
+                               id="email"
+                               name="email"
+                               placeholder="이메일" required>
+                        <label for="email">인증 메일 입력</label>
                         <button type="button"
-                                class="btn btn-primary"
-                                id="sendEmailVerificationButton">인증 코드 전송
+                                class="btn btn-secondary m-1"
+                                id="sendEmailVerificationButton">
+                            <i class="ti ti-mail-forward"></i>
                         </button>
                     </div>
 
-                    <br/>
-
-                    <!-- 인증 코드 입력 폼 -->
-                    <div class="input-group" id="emailVerificationCodeForm" style="display: none">
-                        <input type="number" class="form-control" id="inputVerificationCode"
-                               name="inputVerificationCode" placeholder="인증 코드를 입력하세요" required>
+                    <div class="form-floating mb-3 d-flex">
+                        <input type="number"
+                               class="form-control"
+                               id="inputVerificationCode"
+                               name="inputVerificationCode"
+                               placeholder="Verify Code">
+                        <label for="inputVerificationCode">인증 코드 입력</label>
                         <button type="button"
-                                class="btn btn-secondary"
-                                id="verifyEmailCodeButton">인증 코드 확인
+                                class="btn btn-secondary m-1"
+                                id="verifyEmailCodeButton">
+                            <i class="ti ti-shield-check"></i>
                         </button>
                     </div>
 
-                    <!-- 회원가입 입력 폼 -->
-                    <form method="post" action="${pageContext.request.contextPath}/user/process-signup" id="signupForm"
-                          style="display:none;">
+                    <div class="saprator mt-3">
+                        <span>이메일 인증 후 작성 가능합니다.</span>
+                    </div>
+
+                    <form method="post" action="${pageContext.request.contextPath}/user/process-signup" id="signupForm">
                         <sec:csrfInput/>
-
-                        <div class="mb-3">
-                            <label for="userId" class="form-label">아이디</label>
-                            <input type="text" class="form-control" id="userId" name="userId" placeholder="아이디"
-                                   required>
+                        <div class="form-floating mb-3">
+                            <input type="text"
+                                   class="form-control"
+                                   id="userId"
+                                   name="userId"
+                                   placeholder="User Id">
+                            <label for="userId">아이디</label>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="userPassword" class="form-label">비밀번호</label>
-                            <input type="password" class="form-control" id="userPassword" name="userPassword"
-                                   placeholder="비밀번호" required>
-                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="password"
+                                           class="form-control"
+                                           id="userPassword"
+                                           name="userPassword"
+                                           placeholder="User Password">
+                                    <label for="userPassword">비밀번호</label>
+                                </div>
+                            </div>
 
-                        <div class="mb-3">
-                            <label for="userPasswordCheck" class="form-label">비밀번호 확인</label>
-                            <input type="password" class="form-control" id="userPasswordCheck" name="userPasswordCheck"
-                                   placeholder="비밀번호 확인" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="userName" class="form-label">이름</label>
-                            <input type="text" class="form-control" id="userName" name="userName" placeholder="이름"
-                                   required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="postcode" class="form-label">우편번호</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="postcode" placeholder="우편번호" name="zipcode"
-                                       readonly>
-                                <button type="button" class="btn btn-secondary" onclick="execDaumPostcode()">
-                                    우편번호 찾기
-                                </button>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="password"
+                                           class="form-control"
+                                           id="userPasswordCheck"
+                                           name="userPasswordCheck"
+                                           placeholder="User Password Check">
+                                    <label for="userPasswordCheck">비밀번호 확인</label>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="roadAddress" class="form-label">도로명주소</label>
-                            <input type="text" class="form-control" id="roadAddress" placeholder="도로명주소" name="address"
-                                   readonly>
+                        <div class="form-floating mb-3">
+                            <input type="text"
+                                   class="form-control"
+                                   id="userName"
+                                   name="userName"
+                                   placeholder="Password">
+                            <label for="userName">이름</label>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="detailAddress" class="form-label">상세주소</label>
-                            <input type="text" class="form-control" id="detailAddress" placeholder="상세주소"
-                                   name="addressDetail">
+                        <div class="form-floating mb-3 d-flex">
+                            <input type="text"
+                                   class="form-control bg-gray-200"
+                                   id="roadAddress"
+                                   name="address"
+                                   placeholder="roadAddress" readonly>
+                            <label for="roadAddress">도로명 주소 찾기</label>
+
+                            <button type="button" class="btn btn-secondary m-1" onclick="execDaumPostcode()">
+                                <i class="ti ti-search"></i>
+                            </button>
                         </div>
 
-                        <div id="guide" class="form-text text-muted mb-3" style="display:none;"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text"
+                                           class="form-control bg-gray-200"
+                                           id="postcode"
+                                           name="zipcode"
+                                           placeholder="postcode" readonly>
+                                    <label for="postcode">우편번호</label>
+                                </div>
+                            </div>
 
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary" id="signupButton">회원가입</button>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text"
+                                           class="form-control"
+                                           id="detailAddress"
+                                           name="detailAddress"
+                                           placeholder="detailAddress">
+                                    <label for="detailAddress">상세주소</label>
+                                </div>
+                            </div>
                         </div>
                     </form>
 
-                    <div class="d-grid mt-2">
-                        <button type="button" class="btn btn-outline-primary" onclick="location.href='/home'">홈 페이지로
-                            이동
+                    <div class="d-grid mt-4">
+                        <button type="submit"
+                                class="btn btn-secondary p-2"
+                                id="signupButton"
+                                form="signupForm">회원가입
+                        </button>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-center">
+                        <button class="d-flex btn" onclick="location.href='/home'">
+                            홈페이지 돌아가기
                         </button>
                     </div>
                 </div>
@@ -246,6 +314,8 @@
         </div>
     </div>
 </div>
+
+<jsp:include page="/WEB-INF/views/common/footer-js.jsp"/>
 
 </body>
 </html>
