@@ -5,77 +5,91 @@
 
 <li class="list-group-item" style="margin-left: ${requestScope.comment.depth * 20}px">
     <!-- 댓글 상단: 작성자, 내용, 수정/삭제 버튼 -->
-    <div class="d-flex justify-content-between">
-        <!-- 작성자 -->
-        <div class="comment-author">
-            <strong>${requestScope.comment.userName}</strong>
+    <i class="ti ti-arrow-down-right"></i>
+    <div class="d-flex align-items-start position-relative">
+        <div class="me-3 position-absolute top-0 start-0">
+            <strong>${comment.userName}</strong>
+            <div class="text-muted mt-2">
+                <small>작성시간: <fmt:formatDate value="${comment.createdAt}"
+                                             pattern="yyyy-MM-dd HH:mm"/></small><br/>
+                <small>수정시간: <fmt:formatDate value="${comment.updatedAt}"
+                                             pattern="yyyy-MM-dd HH:mm"/></small>
+            </div>
         </div>
-
-        <!-- 내용 -->
-        <div class="flex-grow-1 text-center">
-            ${requestScope.comment.commentContent}
+        <div class="flex-grow-1 text-center m-4" style="font-size: 1rem;">
+            ${comment.commentContent}
         </div>
+        <div class="flex-column align-items-end position-absolute top-0 end-0">
+            <button class="btn btn-sm mx-1 ${comment.hasLiked ? 'btn-primary' : 'btn-outline-primary'} commentLikeButton"
+                    id="commentLikeButton-${comment.commentId}" type="button"
+                    data-comment-id="${comment.commentId}">
+                <i class="ti ti-thumb-up"></i><span
+                    id="commentLikeCount-${comment.commentId}">${comment.likeCount}</span>
+            </button>
+            <button class="btn btn-sm ${comment.hasDisliked ? 'btn-secondary' : 'btn-outline-secondary'} commentDislikeButton"
+                    id="commentDislikeButton-${comment.commentId}" type="button"
+                    data-comment-id="${comment.commentId}">
+                <i class="ti ti-thumb-down"></i><span
+                    id="commentDislikeCount-${comment.commentId}">${comment.dislikeCount}</span>
+            </button>
+        </div>
+    </div>
 
-        <!-- 수정/삭제 버튼 -->
-        <c:if test="${requestScope.currentUserId == requestScope.comment.userId}">
-            <div class="ms-3 d-flex align-items-center">
-                <button class="btn btn-sm btn-outline-primary me-2 commentEditButton"
-                        data-id="${requestScope.comment.commentId}">수정
-                </button>
-                <form method="post" action="/${requestScope.boardId}/post/detail/${requestScope.postId}/comment/delete"
-                      class="m-0">
-                    <sec:csrfInput/>
-                    <input type="hidden" name="commentId" value="${requestScope.comment.commentId}"/>
-                    <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
-                </form>
+    <!-- 댓글 하단: 첨부 이미지, 수정/삭제 버튼, 대댓글 보기, 답글 달기 -->
+    <div class="mt-3 position-relative">
+        <!-- 첨부 이미지 -->
+        <c:if test="${not empty comment.commentImages}">
+            <div class="position-absolute top-0 start-0">
+                <strong>[첨부 이미지]</strong>
+                <c:forEach var="image" items="${comment.commentImages}"
+                           varStatus="status">
+                    <a href="javascript:showImage('/image/${image.imageId}')">[${status.index + 1}]</a>
+                </c:forEach>
             </div>
         </c:if>
 
-        <button
-                class="btn me-2 commentLikeButton ${requestScope.comment.hasLiked ? 'btn-primary' : 'btn-outline-primary'}"
-                id="commentLikeButton-${requestScope.comment.commentId}"
-                type="button" data-comment-id="${requestScope.comment.commentId}">
-            좋아요 <span id="commentLikeCount-${requestScope.comment.commentId}">${requestScope.comment.likeCount}</span>
-        </button>
-        <button class="btn commentDislikeButton ${requestScope.comment.hasDisliked ? 'btn-secondary' : 'btn-outline-secondary'}"
-                id="commentDislikeButton-${requestScope.comment.commentId}"
-                type="button" data-comment-id="${requestScope.comment.commentId}">
-            싫어요 <span
-                id="commentDislikeCount-${requestScope.comment.commentId}">${requestScope.comment.dislikeCount}</span>
-        </button>
-    </div>
+        <!-- 대댓글 보기 및 답글 달기 버튼 -->
+        <div class="text-center">
+            <button class="btn btn-sm btn-outline-secondary showReplyFormButton"
+                    data-id="${comment.commentId}">
+                답글 달기
+            </button>
+        </div>
 
-    <!-- 댓글 하단: 첨부 이미지, 작성 시간, 수정 시간 -->
-    <div class="d-flex justify-content-between mt-2">
-        <!-- 첨부 이미지 -->
-        <div class="comment-images">
-            <c:if test="${not empty requestScope.comment.commentImages}">
-                <strong>첨부 이미지:</strong>
-                <c:forEach var="image" items="${requestScope.comment.commentImages}">
-                    <a href="javascript:showImage('/image/${image.imageId}')">
-                        [${image.originalName}]
-                    </a>
-                </c:forEach>
+        <!-- 수정/삭제 버튼 -->
+        <div class="position-absolute bottom-0 end-0">
+            <c:if test="${currentUserId == comment.userId}">
+                <button class="btn btn-sm btn-outline-primary commentEditButton"
+                        data-id="${comment.commentId}">수정
+                </button>
+                <form method="post"
+                      action="/${boardId}/post/detail/${postId}/comment/delete"
+                      class="m-0 d-inline">
+                    <sec:csrfInput/>
+                    <input type="hidden" name="commentId"
+                           value="${comment.commentId}"/>
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                        삭제
+                    </button>
+                </form>
+            </c:if>
+            <c:if test="${currentUserId != comment.userId && comment.parentId == null && currentUserId == postDetail.userId}">
+                <form method="post"
+                      action="/${boardId}/post/detail/${postId}/comment/adopt"
+                      class="m-0 d-inline">
+                    <sec:csrfInput/>
+                    <input type="hidden" name="commentId"
+                           value="${comment.commentId}"/>
+                    <button type="submit" class="btn btn-sm btn-outline-dark">
+                        <i class="ti ti-circle-check"></i>
+                    </button>
+                </form>
             </c:if>
         </div>
-
-        <!-- 작성 시간 및 수정 시간 -->
-        <div class="text-end text-muted">
-            <small>작성시간:
-                <fmt:formatDate value="${requestScope.comment.createdAt}" pattern="yyyy-MM-dd HH:mm"/></small>
-            <br/>
-            <small>수정시간:
-                <fmt:formatDate value="${requestScope.comment.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></small>
-        </div>
     </div>
-
 
     <!-- 대댓글 작성 폼 -->
     <div class="mt-3">
-        <button class="btn btn-sm btn-outline-secondary showReplyFormButton"
-                data-id="${requestScope.comment.commentId}">
-            답글 달기
-        </button>
         <form method="post" action="/${requestScope.boardId}/post/detail/${requestScope.postId}/comment/add"
               enctype="multipart/form-data"
               id="replyForm-${requestScope.comment.commentId}"
@@ -98,7 +112,7 @@
             </div>
             <!-- 추가된 이미지 리스트 -->
             <ul id="addedReplyImagesList-${requestScope.comment.commentId}"
-                class="d-flex flex-column align-items-center"></ul>
+                class="list-group"></ul>
         </form>
     </div>
 
@@ -133,7 +147,7 @@
                 <strong>기존 첨부 이미지:</strong>
                 <ul id="existingCommentImagesList-${requestScope.comment.commentId}" class="list-group">
                     <c:forEach var="image" items="${requestScope.comment.commentImages}">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <li class="list-group-item d-flex justify-content-between align-items-center rounded-3 shadow-sm m-1">
                             <a href="javascript:showImage('/image/${image.imageId}')"
                                class="text-center mx-auto">
                                     ${image.originalName}
