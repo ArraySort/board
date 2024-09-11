@@ -54,6 +54,7 @@ public class TempPostVO {
 				.title(dto.getTitle())
 				.content(dto.getContent())
 				.privateFlag(dto.getPrivateFlag())
+				.noticeFlag(Flag.N)
 				.createdBy(UserUtil.getCurrentLoginUserId())
 				.updatedBy(UserUtil.getCurrentLoginUserId())
 				.build();

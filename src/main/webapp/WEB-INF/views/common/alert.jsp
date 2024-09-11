@@ -18,6 +18,7 @@
             "DELETE_POST": "/${boardId}/post",
             "ADD_TEMP": "/${boardId}/post",
             "PUBLISH_POST": "/${boardId}/post/temp",
+            "MODIFY_TEMP": "/${boardId}/post/temp",
             "DELETE_TEMP": "/${boardId}/post/temp",
             "ADD_COMMENT": "/${boardId}/post/detail/${postId}",
             "MODIFY_COMMENT": "/${boardId}/post/detail/${postId}",

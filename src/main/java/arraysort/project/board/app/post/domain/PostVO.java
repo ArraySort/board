@@ -106,6 +106,7 @@ public class PostVO {
 				.content(dto.getContent())
 				.categoryId(dto.getCategoryId())
 				.privateFlag(dto.getPrivateFlag())
+				.noticeFlag(Flag.N)
 				.build();
 	}
 
@@ -131,6 +132,7 @@ public class PostVO {
 				.title(dto.getTitle())
 				.content(dto.getContent())
 				.privateFlag(dto.getPrivateFlag())
+				.noticeFlag(Flag.N)
 				.createdBy(UserUtil.getCurrentLoginUserId())
 				.updatedBy(UserUtil.getCurrentLoginUserId())
 				.build();
