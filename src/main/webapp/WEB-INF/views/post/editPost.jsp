@@ -160,9 +160,9 @@
 <nav class="pc-sidebar pc-sidebar-hide">
     <div class="navbar-wrapper">
         <div class="m-header">
-            <a href="../dashboard/index.html" class="b-brand text-primary">
-                <!-- ========   TODO : 로고 변경   ============ -->
-                <img src="../assets/images/logo-dark.svg" alt="" class="logo logo-lg">
+            <a href="${pageContext.request.contextPath}/home" class="b-brand text-primary">
+                <img src="${pageContext.request.contextPath}/resources/assets/images/board-logo.png" alt="로고"
+                     class="logo" style="max-width: 100%">
             </a>
         </div>
         <div class="navbar-content">

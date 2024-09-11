@@ -165,12 +165,13 @@
             <div class="card mt-5">
                 <div class="card-body">
                     <%-- 로고 추가 --%>
-                    <a href="#" class="d-flex justify-content-center mt-3">
-                        <img src="${pageContext.request.contextPath}/resources/assets/images/logo-dark.svg"
-                             class="img-fluid brand-logo"
-                             alt="logo">
-                    </a>
-
+                    <div class="text-center">
+                        <a href="${pageContext.request.contextPath}/home" class="b-brand text-primary">
+                            <img src="${pageContext.request.contextPath}/resources/assets/images/board-logo.png"
+                                 alt="로고"
+                                 class="logo" style="max-width: 100%">
+                        </a>
+                    </div>
                     <div class="row">
                         <div class="d-flex justify-content-center">
                             <div class="auth-header">
