@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html lang="kr">
 <head>
-    <title>Board Admin Add Board Page | 게시판 추가 </title>
+    <title>Board Admin Management Page | 게시판 추가 </title>
 
     <jsp:include page="/WEB-INF/views/common/head-css.jsp"/>
     <jsp:include page="/WEB-INF/views/common/head-page-meta.jsp"/>
@@ -275,7 +275,7 @@
 
 <!-- 메인 페이지 시작 -->
 <div class="pc-container">
-    <div class="pc-content">
+    <div class="pc-content col-8 mx-auto">
         <!-- 게시판 페이지 헤더 -->
         <div class="page-header">
             <div class="page-block">
@@ -321,7 +321,7 @@
                                         <div class="form-group">
                                             <label for="boardType">게시판 종류</label>
                                             <select id="boardType" name="boardType" class="form-control">
-                                                <option value="">게시판 종류 선택</option>
+                                                <option value="">선택</option>
                                                 <option value="GALLERY">갤러리</option>
                                                 <option value="GENERAL">일반</option>
                                             </select>
@@ -332,7 +332,7 @@
                                 <div class="form-group mb-4">
                                     <label for="boardOrder">메인페이지 게시판 순서</label>
                                     <select id="boardOrder" name="boardOrder" class="form-control">
-                                        <option value="">게시판 순서</option>
+                                        <option value="">선택</option>
                                         <c:forEach var="board" items="${boardList}">
                                             <option value="${board.boardOrder}">${board.boardOrder}</option>
                                         </c:forEach>
@@ -355,7 +355,7 @@
                                         <div class="form-group mb-4">
                                             <label for="imageLimit">게시글 이미지 최대 개수</label>
                                             <select id="imageLimit" name="imageLimit" class="form-control">
-                                                <option value="">게시글 이미지 최대 개수 선택</option>
+                                                <option value="">선택</option>
                                                 <option value="1">1</option>
                                                 <option value="2">2</option>
                                                 <option value="3">3</option>
@@ -368,7 +368,7 @@
                                         <div class="form-group mb-4">
                                             <label for="noticeCount">공지사항 개수</label>
                                             <select id="noticeCount" name="noticeCount" class="form-control">
-                                                <option value="">공지사항 개수 선택</option>
+                                                <option value="">선택</option>
                                                 <option value="0">0</option>
                                                 <option value="1">1</option>
                                                 <option value="2">2</option>
@@ -380,7 +380,7 @@
                                         <div class="form-group mb-4">
                                             <label for="accessLevel">게시판 접근 허용 등급</label>
                                             <select id="accessLevel" name="accessLevel" class="form-control">
-                                                <option value="">접근 허용 등급</option>
+                                                <option value="">선택</option>
                                                 <option value="0">전체</option>
                                                 <option value="1">LEVEL1</option>
                                                 <option value="2">LEVEL2</option>

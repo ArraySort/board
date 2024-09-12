@@ -154,7 +154,7 @@
 
 <!-- 메인 페이지 시작 -->
 <div class="pc-container">
-    <div class="pc-content">
+    <div class="pc-content col-8 mx-auto">
         <!-- 게시판 페이지 헤더 -->
         <div class="page-header">
             <div class="page-block">
@@ -172,7 +172,7 @@
         <div class="container mt-4">
             <div class="row">
                 <c:forEach var="board" items="${boardPagination.postList}" varStatus="status">
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-6 mb-3">
                         <div class="card">
                             <div class="card-body">
                                 <!-- 번호 및 이름 강조 -->

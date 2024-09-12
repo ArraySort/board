@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html lang="kr">
 <head>
-    <title>Board Admin Edit Board Page | 게시판 수정 </title>
+    <title>Board Admin Management Page | 게시판 수정 </title>
 
     <jsp:include page="/WEB-INF/views/common/head-css.jsp"/>
     <jsp:include page="/WEB-INF/views/common/head-page-meta.jsp"/>
@@ -306,7 +306,7 @@
 
 <!-- 메인 페이지 시작 -->
 <div class="pc-container">
-    <div class="pc-content">
+    <div class="pc-content col-8 mx-auto">
         <!-- 게시판 페이지 헤더 -->
         <div class="page-header">
             <div class="page-block">
@@ -407,7 +407,7 @@
                                         <div class="form-group mb-4">
                                             <label for="imageLimit">게시글 이미지 최대 개수</label>
                                             <select id="imageLimit" name="imageLimit" class="form-control">
-                                                <option value="">게시글 이미지 최대 개수 선택</option>
+                                                <option value="">선택</option>
                                                 <option value="1" ${boardDetail.imageLimit == '1' ? 'selected' : ''}>1
                                                 </option>
                                                 <option value="2" ${boardDetail.imageLimit == '2' ? 'selected' : ''}>2
@@ -425,7 +425,7 @@
                                         <div class="form-group mb-4">
                                             <label for="noticeCount">공지사항 개수</label>
                                             <select id="noticeCount" name="noticeCount" class="form-control">
-                                                <option value="">공지사항 개수 선택</option>
+                                                <option value="">선택</option>
                                                 <option value="0" ${boardDetail.noticeCount == '0' ? 'selected' : ''}>
                                                     0
                                                 </option>
