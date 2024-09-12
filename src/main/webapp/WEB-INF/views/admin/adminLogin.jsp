@@ -3,9 +3,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>관리자 로그인 페이지</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css">
+    <title>Admin | 관리자 로그인</title>
+
+    <jsp:include page="/WEB-INF/views/common/head-css.jsp"/>
+    <jsp:include page="/WEB-INF/views/common/head-page-meta.jsp"/>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script type="text/javascript">
@@ -40,76 +41,85 @@
             }
         });
     </script>
-
 </head>
+
 <body>
-
-<div class="container text-center">
-
-    <h1 class="mb-5">관리자 로그인 페이지</h1>
-
-    <!-- 관리자 추가 폼 -> TODO : 기능 완성 후 제거 -->
-    <span>관리자 생성</span>
-    <div class="row justify-content-center mb-5">
-        <div class="col-md-6">
-            <form action="${pageContext.request.contextPath}/admin/process-add-admin" method="post">
-                <sec:csrfInput/>
-
-                <div class="form-group row">
-                    <label for="adminCreateId" class="col-sm-3 col-form-label">관리자 ID</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" name="adminId" id="adminCreateId" placeholder="아이디"/>
-                    </div>
-                </div>
-
-                <div class="form-group row mt-3">
-                    <label for="adminCreatePassword" class="col-sm-3 col-form-label">비밀번호</label>
-                    <div class="col-sm-7">
-                        <input type="password" class="form-control" name="adminPassword" id="adminCreatePassword"
-                               placeholder="비밀번호"/>
-                    </div>
-                </div>
-
-                <div class="form-group row mt-3">
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary" id="adminCreateButton">생성</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+<div class="loader-bg">
+    <div class="loader-track">
+        <div class="loader-fill"></div>
     </div>
+</div>
 
-    <span>관리자 로그인</span>
-    <!-- 관리자 로그인 폼 -->
-    <div class="row justify-content-center">
+<div class="auth-main">
+    <div class="auth-wrapper v3">
+        <div class="auth-form">
+            <!-- 카드 시작 -->
+            <div class="card my-5">
+                <!-- 컨텐츠 시작 -->
+                <div class="card-body">
+                    <!-- 관리자 로그인 헤더 -->
+                    <div class="auth-header">
+                        <div class="text-center">
+                            <a href="${pageContext.request.contextPath}/home" class="b-brand text-primary">
+                                <img src="${pageContext.request.contextPath}/resources/assets/images/board-logo.png"
+                                     alt="로고" class="logo" style="max-width: 100%">
+                            </a>
+                        </div>
+                        <h2 class="text-secondary mt-5"><b>관리자 로그인</b></h2>
+                    </div>
+                    <!-- 관리자 로그인 헤더 종료 -->
 
-        <div class="col-md-6">
-            <form action="${pageContext.request.contextPath}/admin/process-login-admin" method="post">
-                <sec:csrfInput/>
+                    <!-- 중앙 구분선 -->
+                    <div class="saprator mt-3">
+                        <span>중복 로그인이 불가능합니다.</span>
+                    </div>
 
-                <div class="form-group row">
-                    <label for="adminId" class="col-sm-3 col-form-label">관리자 ID</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" name="adminId" id="adminId" placeholder="아이디"/>
+                    <!-- 로그인 입력 폼 -->
+                    <form method="post" action="${pageContext.request.contextPath}/admin/process-login-admin"
+                          id="adminLoginForm">
+                        <sec:csrfInput/>
+
+                        <h5 class="my-4 d-flex justify-content-center">아이디 / 비밀번호 입력</h5>
+
+                        <div class="form-floating mb-3">
+                            <input type="text"
+                                   class="form-control"
+                                   name="adminId" id="adminId"
+                                   placeholder="ID">
+                            <label for="adminId">ID</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password"
+                                   class="form-control"
+                                   name="adminPassword" id="adminPassword"
+                                   placeholder="PASSWORD">
+                            <label for="adminPassword">PASSWORD</label>
+                        </div>
+                    </form>
+                    <!-- 로그인 입력 폼 종료 -->
+
+                    <!-- 로그인 버튼 -->
+                    <div class="d-grid mt-4">
+                        <button type="submit" id="loginButton" form="adminLoginForm" class="btn btn-secondary">로그인
+                        </button>
+                    </div>
+                    <hr>
+
+                    <!-- 하단 홈페이지 이동 -->
+                    <div class="d-flex justify-content-between">
+                        <button class="d-flex btn justify-content-center" onclick="location.href='/home'">
+                            홈페이지
+                        </button>
                     </div>
                 </div>
-
-                <div class="form-group row mt-3">
-                    <label for="adminPassword" class="col-sm-3 col-form-label">비밀번호</label>
-                    <div class="col-sm-7">
-                        <input type="password" class="form-control" name="adminPassword" id="adminPassword"
-                               placeholder="비밀번호"/>
-                    </div>
-                </div>
-
-                <div class="form-group row mt-3">
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary" id="adminLoginButton">로그인</button>
-                    </div>
-                </div>
-            </form>
+                <!-- 컨텐츠 종료 -->
+            </div>
+            <!-- 카드 종료 -->
         </div>
     </div>
 </div>
+
+<jsp:include page="/WEB-INF/views/common/head-page-meta.jsp"/>
+
 </body>
 </html>

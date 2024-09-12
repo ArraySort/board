@@ -173,7 +173,7 @@
 
 <!-- 메인 페이지 시작 -->
 <div class="pc-container">
-    <div class="pc-content">
+    <div class="pc-content col-10 mx-auto">
         <!-- 게시판 페이지 헤더 -->
         <div class="page-header">
             <div class="page-block">
@@ -199,91 +199,95 @@
         <!-- 게시판 페이지 헤더 끝 -->
 
         <!-- 게시판 리스트 시작 -->
-        <div class="row">
-            <div class="card">
-                <c:if test="${boardDetail.boardType == 'GENERAL'}">
-                    <div class="table-active table-responsive table" style="margin-top: 2%">
-                        <table class="table table-bordered table-hover text-center">
-                            <thead class="table-dark table-header">
-                            <tr>
-                                <th scope="col">번호</th>
-                                <th scope="col">제목</th>
-                                <th scope="col">유저아이디</th>
-                                <th scope="col">생성시간</th>
-                                <th scope="col">수정시간</th>
-                                <th scope="col">카테고리</th>
-                                <th scope="col">조회수</th>
-                                <th scope="col">비공개</th>
-                            </tr>
-                            </thead>
-                            <tbody class="table-body">
-                            <c:forEach var="post" items="${pagination.postList}" varStatus="status">
-                                <c:set var="postNumber"
-                                       value="${pagination.totalPostCount - ((pagination.currentPage - 1) * 10) - status.index}"/>
-                                <tr onclick="location.href='/${boardId}/post/temp/${post.postId}/edit'">
-                                    <td>${postNumber}</td>
-                                    <td>${post.title}</td>
-                                    <td>${post.userName}</td>
-                                    <td><fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/></td>
-                                    <td><fmt:formatDate value="${post.updatedAt}" pattern="yyyy-MM-dd HH:mm"/></td>
-                                    <td>${post.categoryName}</td>
-                                    <td>${post.views}</td>
-                                    <td>${post.privateFlag}</td>
-                                </tr>
-                            </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
+        <c:if test="${boardDetail.boardType == 'GENERAL'}">
+            <div class="row">
+                <div class="list-group">
+                    <c:forEach var="post" items="${pagination.postList}" varStatus="status">
+                        <c:set var="postNumber"
+                               value="${pagination.totalPostCount - ((pagination.currentPage - 1) * 10) - status.index}"/>
+                        <div class="list-group-item mb-3 rounded-3 custom-hover"
+                             onclick="location.href=location.href='/${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}'">
+                            <!-- 제목, 작성자, 카테고리-->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
+                                    <strong class="mr-2" style="font-size: 1.3rem;">
+                                            ${postNumber} - ${post.title}
+                                    </strong>
+                                    <span class="mr-2" style="font-size: 1rem;">
+                                            ${post.userName}
+                                    </span>
+                                    <span class="text-muted" style="font-size: 1rem;">| ${post.categoryName}</span>
+                                </div>
+                            </div>
+                            <!-- 생성일, 수정일, 조회수, 댓글수, 좋아요 -->
+                            <div class="d-flex justify-content-between mb-1">
+                                <div>
+                                    <small style="font-size: 0.8rem;">
+                                    <span class="me-3">
+                                        비공개: <c:choose>
+                                        <c:when test="${post.privateFlag == 'Y'}"> O</c:when>
+                                        <c:when test="${post.privateFlag == 'N'}"> X</c:when>
+                                    </c:choose></span>
+                                    </small>
+                                </div>
 
-                    <!-- 페이지 버튼 -->
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            <!-- 처음 페이지로 이동하는 버튼 -->
+                                <div class="me-3">
+                                    <small style="font-size: 0.8rem;">
+                                        생성일: <fmt:formatDate value="${post.createdAt}" pattern="yyyy-MM-dd HH:mm"/> |
+                                        수정일: <fmt:formatDate value="${post.updatedAt}" pattern="yyyy-MM-dd HH:mm"/>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </div>
+                <nav class="mt-3 mb-5">
+                    <ul class="pagination justify-content-center">
+                        <!-- 처음 페이지로 이동하는 버튼 -->
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="/${boardId}/post?page=1&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">&laquo</a>
+                        </li>
+                        <!-- 이전 블록으로 이동하는 버튼 -->
+                        <c:if test="${pagination.prev}">
                             <li class="page-item">
                                 <a class="page-link"
-                                   href="/${boardId}/post?page=1&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">&laquo</a>
-                            </li>
-                            <!-- 이전 블록으로 이동하는 버튼 -->
-                            <c:if test="${pagination.prev}">
-                                <li class="page-item">
-                                    <a class="page-link"
-                                       href="/${boardId}/post?page=${pagination.startBlockPage - 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
-                                        &lt;
-                                    </a>
-                                </li>
-                            </c:if>
-                            <!-- 페이지 번호 -->
-                            <c:forEach var="pageNum" begin="${pagination.startBlockPage}"
-                                       end="${pagination.endBlockPage}">
-                                <li class="page-item ${pageNum == pagination.currentPage ? 'active' : ''}">
-                                    <a class="page-link"
-                                       href="/${boardId}/post?page=${pageNum}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
-                                            ${pageNum}
-                                    </a>
-                                </li>
-                            </c:forEach>
-                            <!-- 다음 블록으로 이동하는 버튼 -->
-                            <c:if test="${pagination.next}">
-                                <li class="page-item">
-                                    <a class="page-link"
-                                       href="/${boardId}/post?page=${pagination.endBlockPage + 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
-                                        &gt;
-                                    </a>
-                                </li>
-                            </c:if>
-                            <!-- 끝 페이지로 이동하는 버튼 -->
-                            <li class="page-item">
-                                <a class="page-link"
-                                   href="/${boardId}/post?page=${pagination.totalPageCount}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
-                                    &raquo;
+                                   href="/${boardId}/post?page=${pagination.startBlockPage - 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                                    &lt;
                                 </a>
                             </li>
-                        </ul>
-                    </nav>
-                    <!-- 페이지 버튼 끝-->
-                </c:if>
+                        </c:if>
+                        <!-- 페이지 번호 -->
+                        <c:forEach var="pageNum" begin="${pagination.startBlockPage}"
+                                   end="${pagination.endBlockPage}">
+                            <li class="page-item ${pageNum == pagination.currentPage ? 'active' : ''}">
+                                <a class="page-link"
+                                   href="/${boardId}/post?page=${pageNum}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                                        ${pageNum}
+                                </a>
+                            </li>
+                        </c:forEach>
+                        <!-- 다음 블록으로 이동하는 버튼 -->
+                        <c:if test="${pagination.next}">
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="/${boardId}/post?page=${pagination.endBlockPage + 1}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                                    &gt;
+                                </a>
+                            </li>
+                        </c:if>
+                        <!-- 끝 페이지로 이동하는 버튼 -->
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="/${boardId}/post?page=${pagination.totalPageCount}&searchType=${page.searchType}&search=${page.search}&sortType=${page.sortType}">
+                                &raquo;
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- 페이지 버튼 끝-->
             </div>
-        </div>
+        </c:if>
         <!-- 게시판 리스트 끝 -->
 
         <!-- 갤러리 게시판 시작 -->
@@ -315,7 +319,7 @@
                 </c:forEach>
 
                 <!-- 페이지 버튼 시작 -->
-                <nav>
+                <nav class="mt-3 mb-5">
                     <ul class="pagination justify-content-center">
                         <!-- 처음 페이지로 이동하는 버튼 -->
                         <li class="page-item">

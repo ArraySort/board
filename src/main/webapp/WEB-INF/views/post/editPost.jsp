@@ -59,11 +59,11 @@
                     addedImages.push(file);
 
                     $('#addedImagesList').append(`
-                        <li class="list-group-item d-flex align-items-center rounded-3 p-2 shadow w-100" style="max-width: 30%;">
-                            <a href="javascript:showImage('\${imageUrl}')" class="text-decoration-none m-2 flex-grow-1">
+                        <li class="list-group-item d-flex align-items-center rounded-3 p-2 shadow-sm w-100" style="max-width: 50%;">
+                            <a href="javascript:showImage('\${imageUrl}')" class="text-center mx-auto">
                                 \${file.name}
                             </a>
-                            <button type="button" class="btn btn-danger btn-sm remove-image-btn ml-auto m-1">X</button>
+                            <button type="button" class="btn btn-danger btn-sm ml-auto m-1 remove-image-btn">X</button>
                         </li>
                     `);
                 }
@@ -286,7 +286,7 @@
 
 <!-- 메인 페이지 시작 -->
 <div class="pc-container">
-    <div class="pc-content">
+    <div class="pc-content col-8 mx-auto">
         <!-- 게시판 페이지 헤더 -->
         <div class="page-header">
             <div class="page-block">
@@ -322,8 +322,6 @@
                             <div><strong>작성자:</strong> ${postDetail.userName}</div>
                             <div class="mx-2">|</div> <!-- 구분선 -->
                             <div><strong>카테고리:</strong> ${postDetail.categoryName}</div>
-                            <div class="mx-2">|</div> <!-- 구분선 -->
-                            <div><strong>현재 게시판:</strong> ${postDetail.boardName}</div>
                         </div>
 
                         <!-- 우측 정보 (작성/수정 시간) -->
@@ -402,11 +400,11 @@
                                     <!-- 기존 이미지 리스트 -->
                                     <ul id="existingImagesList" class="d-flex flex-column align-items-center w-100">
                                         <c:forEach var="image" items="${images}">
-                                            <li class="list-group-item d-flex align-items-center rounded-3 p-2 shadow w-100"
+                                            <li class="list-group-item d-flex align-items-center rounded-3 shadow-sm p-2 w-100"
                                                 style="max-width: 50%;"> <!-- 최대 크기 설정 -->
                                                 <!-- 이미지 이름 -->
                                                 <a href="javascript:showImage('/image/${image.imageId}')"
-                                                   class="text-decoration-none m-2 flex-grow-1">
+                                                   class="text-center mx-auto">
                                                         ${image.originalName}
                                                 </a>
                                                 <!-- 삭제 버튼 -->

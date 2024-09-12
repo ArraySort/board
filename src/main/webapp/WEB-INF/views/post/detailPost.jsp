@@ -28,6 +28,23 @@
             background-color: #ffffff !important;
             opacity: 1 !important;
         }
+
+        .thumbnail-frame {
+            border: 5px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+            display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 5px;
+        }
     </style>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -519,10 +536,13 @@
                             </form>
                         </c:if>
 
-                        <c:if test="${isAdmin && postDetail.adminId == currentUserId}">
+                        <c:if test="${isAdmin}">
                             <button type="button" class="btn btn-light-secondary"
                                     onclick="location.href='/admin/post/${boardId}'">관리 페이지 돌아가기
                             </button>
+                        </c:if>
+
+                        <c:if test="${postDetail.adminId == currentUserId}">
                             <button type="button" class="btn btn-light-secondary mx-1"
                                     onclick="location.href='/admin/post/${boardId}/${postDetail.postId}/edit'">수정
                             </button>
@@ -552,7 +572,7 @@
 
 <!-- 메인 페이지 시작 -->
 <div class="pc-container">
-    <div class="pc-content">
+    <div class="pc-content col-8 mx-auto">
         <!-- 게시판 페이지 헤더 -->
         <div class="page-header">
             <div class="page-block">
@@ -583,15 +603,22 @@
                     <div class="card-header d-flex justify-content-between align-items-start">
                         <!-- 좌측 정보 -->
                         <div class="d-flex align-items-center">
-                            <h5>게시글 조회</h5>
+                            <div style="font-size: 0.8rem"><strong>작성자:</strong> <c:choose>
+                                <c:when test="${postDetail.adminId != null}">
+                                    <td>관리자</td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td>${postDetail.userName}</td>
+                                </c:otherwise>
+                            </c:choose></div>
                             <div class="mx-2">|</div> <!-- 구분선 -->
-                            <div><strong>작성자:</strong> ${postDetail.userName}</div>
+                            <div style="font-size: 0.8rem"><strong>카테고리:</strong> ${postDetail.categoryName}</div>
                             <div class="mx-2">|</div> <!-- 구분선 -->
-                            <div><strong>카테고리:</strong> ${postDetail.categoryName}</div>
-                            <div class="mx-2">|</div> <!-- 구분선 -->
-                            <div><strong>조회수:</strong> ${postDetail.views}</div>
-                            <div class="mx-2">|</div> <!-- 구분선 -->
-                            <div><strong>댓글수:</strong> ${postDetail.commentCount}</div>
+                            <small style="font-size: 0.8rem;">
+                                <i class="ti ti-eye"> ${postDetail.views}</i> | <i
+                                    class="ti ti-message-circle"> ${postDetail.commentCount}</i> |
+                                <i class="ti ti-thumb-up"> ${postDetail.likeCount}</i>
+                            </small>
                         </div>
 
                         <!-- 우측 정보 (작성/수정 시간) -->
@@ -610,9 +637,14 @@
                     <div class="card-body">
                         <div class="p-4 border rounded shadow-sm">
                             <c:if test="${boardDetail.boardType == 'GALLERY'}">
-                                <div>현재 썸네일 이미지</div>
-                                <img src="/image/${postDetail.imageId}" id="imagePreview"
-                                     style="height: 30%; width: 30%;" alt="${postDetail.title}">
+                                <div class="text-center mb-3">
+                                    <div class="thumbnail-frame mx-auto">
+                                        <img src="/image/${postDetail.imageId}" id="imagePreview"
+                                             class="img-fluid"
+                                             style="height: 20%; width: 40%"
+                                             alt="${postDetail.title}">
+                                    </div>
+                                </div>
                             </c:if>
 
                             <div class="mb-3">
