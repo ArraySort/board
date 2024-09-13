@@ -45,6 +45,27 @@
             margin: 0 auto;
             border-radius: 5px;
         }
+
+        .liked {
+            color: #2290e9; /* 예시로 파란색을 사용 */
+        }
+
+        .disliked {
+            color: #6439af; /* 예시로 빨간색을 사용 */
+        }
+
+        .not-liked {
+            color: black; /* 기본 텍스트 색상 */
+        }
+
+        .list-group-item {
+            border: none; /* 기존 테두리 제거 */
+            border-bottom: 1px solid #dee2e6; /* 하단 테두리 추가 */
+        }
+
+        .list-group-item:last-child {
+            border-bottom: none; /* 마지막 아이템의 하단 테두리 제거 */
+        }
     </style>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -179,7 +200,10 @@
                 const replyList = $('#replyList-' + $(this).data('id'));
                 const isVisible = replyList.is(':visible');
                 replyList.toggle();
-                $(this).text(isVisible ? '대댓글 보기' : '대댓글 숨기기');
+                $(this).html(isVisible
+                    ? '<i class="ti ti-caret-right" style="font-size: 0.8rem;">답글보기</i>'
+                    : '<i class="ti ti-caret-down" style="font-size: 0.8rem;">답글숨기기</i>'
+                );
             });
 
             // [대댓글 추가] 대댓글 작성 폼
@@ -373,12 +397,12 @@
             // 댓글 좋아요/싫어요 버튼 상태 업데이트
             function updateCommentButtonState(commentId, response) {
                 // 댓글 좋아요 버튼 상태 업데이트
-                $('#commentLikeButton-' + commentId).toggleClass('btn-primary', response.commentHasLiked)
-                    .toggleClass('btn-outline-primary', !response.commentHasLiked);
+                $('#commentLikeButton-' + commentId).toggleClass('liked', response.commentHasLiked)
+                    .toggleClass('not-liked', !response.commentHasLiked);
 
                 // 댓글 싫어요 버튼 상태 업데이트
-                $('#commentDislikeButton-' + commentId).toggleClass('btn-secondary', response.commentHasDisliked)
-                    .toggleClass('btn-outline-secondary', !response.commentHasDisliked);
+                $('#commentDislikeButton-' + commentId).toggleClass('disliked', response.commentHasDisliked)
+                    .toggleClass('not-liked', !response.commentHasDisliked);
 
                 // 댓글 좋아요, 싫어요 수 업데이트
                 $('#commentLikeCount-' + commentId).text(response.commentLikeCount);
@@ -715,7 +739,7 @@
                     <!-- 게시글 내용 끝 -->
                 </div>
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header col-10 mx-auto">
                         <!-- 댓글 추가 폼 시작 -->
                         <div class="d-flex justify-content-center m-3">
                             <form method="post" action="/${boardId}/post/detail/${postId}/comment/add"
@@ -751,39 +775,36 @@
                     </div>
 
                     <!-- 댓글 시작 -->
-                    <div class="card-body">
+                    <div class="card-body col-10 mx-auto">
                         <!-- 댓글 리스트 시작 -->
-                        <div class="container mt-4" style="max-width: 90%">
+                        <div class="container mt-4">
                             <ul class="list-group">
                                 <c:forEach var="comment" items="${commentPagination.postList}">
                                     <c:if test="${comment.parentId == null}">
                                         <li class="list-group-item position-relative">
                                             <c:if test="${comment.adoptedFlag == 'Y'}">
                                                 <i class="ti ti-circle-check position-absolute"
-                                                   style="font-size: 2rem; color: #0BA969; left: -3rem; top: 0;"></i>
+                                                   style="font-size: 2rem; color: #0BA969; left: -2rem; top: 0.5rem;"></i>
                                             </c:if>
+
                                             <!-- 댓글 상단: 작성자, 작성 시간, 수정 시간, 좋아요/싫어요 버튼 -->
-                                            <div class="d-flex align-items-start position-relative">
-                                                <div class="me-3 position-absolute top-0 start-0">
-                                                    <strong>${comment.userName}</strong>
-                                                    <div class="text-muted mt-2">
-                                                        <small>작성시간: <fmt:formatDate value="${comment.createdAt}"
-                                                                                     pattern="yyyy-MM-dd HH:mm"/></small><br/>
-                                                        <small>수정시간: <fmt:formatDate value="${comment.updatedAt}"
-                                                                                     pattern="yyyy-MM-dd HH:mm"/></small>
-                                                    </div>
+                                            <div class="d-flex justify-content-between">
+                                                <div class="me-3">
+                                                    <strong>${comment.userName} | </strong>
+                                                    <small><fmt:formatDate value="${comment.updatedAt}"
+                                                                           pattern="yyyy-MM-dd HH:mm"/></small>
                                                 </div>
-                                                <div class="flex-grow-1 text-center m-4" style="font-size: 1rem;">
-                                                        ${comment.commentContent}
-                                                </div>
-                                                <div class="flex-column align-items-end position-absolute top-0 end-0">
-                                                    <button class="btn btn-sm mx-1 ${comment.hasLiked ? 'btn-primary' : 'btn-outline-primary'} commentLikeButton"
+                                                <div>
+                                                    <!-- 좋아요 버튼 -->
+                                                    <button class="btn btn-sm commentLikeButton ${comment.hasLiked ? 'liked' : 'not-liked'}"
                                                             id="commentLikeButton-${comment.commentId}" type="button"
                                                             data-comment-id="${comment.commentId}">
                                                         <i class="ti ti-thumb-up"></i><span
                                                             id="commentLikeCount-${comment.commentId}">${comment.likeCount}</span>
                                                     </button>
-                                                    <button class="btn btn-sm ${comment.hasDisliked ? 'btn-secondary' : 'btn-outline-secondary'} commentDislikeButton"
+
+                                                    <!-- 싫어요 버튼 -->
+                                                    <button class="btn btn-sm commentDislikeButton ${comment.hasDisliked ? 'disliked' : 'not-liked'}"
                                                             id="commentDislikeButton-${comment.commentId}" type="button"
                                                             data-comment-id="${comment.commentId}">
                                                         <i class="ti ti-thumb-down"></i><span
@@ -792,44 +813,49 @@
                                                 </div>
                                             </div>
 
-                                            <!-- 댓글 하단: 첨부 이미지, 수정/삭제 버튼, 대댓글 보기, 답글 달기 -->
-                                            <div class="mt-3 position-relative">
-                                                <!-- 첨부 이미지 -->
-                                                <c:if test="${not empty comment.commentImages}">
-                                                    <div class="position-absolute top-0 start-0">
-                                                        <strong>[첨부 이미지]</strong>
-                                                        <c:forEach var="image" items="${comment.commentImages}"
-                                                                   varStatus="status">
-                                                            <a href="javascript:showImage('/image/${image.imageId}')">[${status.index + 1}]</a>
-                                                        </c:forEach>
-                                                    </div>
-                                                </c:if>
+                                            <!-- 댓글 본문: 중앙 정렬 -->
+                                            <div class="mt-3 mb-4" style="font-size: 1.1rem;">
+                                                    ${comment.commentContent}
+                                            </div>
 
-                                                <!-- 대댓글 보기 및 답글 달기 버튼 -->
-                                                <div class="text-center">
-                                                    <button class="btn btn-sm btn-outline-secondary toggleReplyButton"
-                                                            data-id="${comment.commentId}">
-                                                        대댓글 보기
+                                            <!-- 댓글 하단: 첨부 이미지, 대댓글 보기 및 답글 달기, 수정/삭제/채택 버튼 -->
+                                            <div class="d-flex justify-content-between mt-2">
+                                                <div class="d-flex justify-content-center align-items-center">
+
+                                                    <!-- 대댓글 보기 및 답글 달기 버튼 -->
+                                                    <button class="toggleReplyButton border-0 bg-transparent p-0 align-items-center"
+                                                            data-id="${comment.commentId}" aria-label="대댓글 보기">
+                                                        <i class="ti ti-caret-right" style="font-size:0.8rem;">답글보기</i>
                                                     </button>
-                                                    <button class="btn btn-sm btn-outline-secondary showReplyFormButton"
-                                                            data-id="${comment.commentId}">
-                                                        답글 달기
+                                                    <button class="showReplyFormButton border-0 bg-transparent p-0 ms-2 me-3"
+                                                            data-id="${comment.commentId}" aria-label="답글 달기">
+                                                        <i class="ti ti-pencil" style="font-size: 0.8rem;">답글달기</i>
                                                     </button>
+                                                    <div>
+                                                        <!-- 첨부 이미지 -->
+                                                        <c:if test="${not empty comment.commentImages}">
+                                                            <strong>첨부 이미지 :</strong>
+                                                            <c:forEach var="image" items="${comment.commentImages}"
+                                                                       varStatus="status">
+                                                                <a href="javascript:showImage('/image/${image.imageId}')">[${status.index + 1}]</a>
+                                                            </c:forEach>
+                                                        </c:if>
+                                                    </div>
                                                 </div>
 
-                                                <!-- 수정/삭제 버튼 -->
-                                                <div class="position-absolute bottom-0 end-0">
+                                                <div>
                                                     <c:if test="${currentUserId == comment.userId}">
-                                                        <button class="btn btn-sm btn-outline-primary commentEditButton"
+                                                        <button class="btn btn-sm border-0 bg-transparent commentEditButton"
                                                                 data-id="${comment.commentId}">수정
                                                         </button>
                                                         <form method="post"
                                                               action="/${boardId}/post/detail/${postId}/comment/delete"
-                                                              class="m-0 d-inline">
+                                                              class="d-inline">
                                                             <sec:csrfInput/>
                                                             <input type="hidden" name="commentId"
                                                                    value="${comment.commentId}"/>
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                            <button type="submit"
+                                                                    class="btn btn-sm border-0 bg-transparent">
                                                                 삭제
                                                             </button>
                                                         </form>
@@ -837,13 +863,14 @@
                                                     <c:if test="${currentUserId != comment.userId && comment.parentId == null && currentUserId == postDetail.userId}">
                                                         <form method="post"
                                                               action="/${boardId}/post/detail/${postId}/comment/adopt"
-                                                              class="m-0 d-inline">
+                                                              class="d-inline">
                                                             <sec:csrfInput/>
                                                             <input type="hidden" name="commentId"
                                                                    value="${comment.commentId}"/>
                                                             <button type="submit"
-                                                                    class="btn btn-sm btn-outline-success">
-                                                                채택
+                                                                    class="btn btn-sm border-0 bg-transparent">
+                                                                <i class="ti ti-circle-check" style="font-size:1.1rem;">
+                                                                    채택하기</i>
                                                             </button>
                                                         </form>
                                                     </c:if>
@@ -855,13 +882,13 @@
                                                 <form method="post"
                                                       action="/${boardId}/post/detail/${postId}/comment/add"
                                                       enctype="multipart/form-data" id="replyForm-${comment.commentId}"
-                                                      class="mt-2 replyForm" style="display:none;">
+                                                      class="replyForm" style="display:none;">
                                                     <sec:csrfInput/>
                                                     <input type="hidden" name="depth" value="0"/>
                                                     <input type="hidden" name="parentId" value="${comment.commentId}"/>
                                                     <div class="input-group">
                                                         <button type="button"
-                                                                class="btn btn-outline-secondary addReplyImageButton"
+                                                                class="btn btn-outline-dark addReplyImageButton"
                                                                 data-reply-id="${comment.commentId}">+
                                                         </button>
                                                         <input type="file" name="commentImages"
@@ -872,12 +899,11 @@
                                                         <button type="submit" class="btn btn-outline-dark">입력</button>
                                                     </div>
                                                     <ul id="addedReplyImagesList-${comment.commentId}"
-                                                        class="list-group">
-                                                    </ul>
+                                                        class="list-group"></ul>
                                                 </form>
                                             </div>
 
-                                            <!-- 댓글 수정 폼 (초기에는 숨김) -->
+                                            <!-- 댓글 수정 폼 -->
                                             <div id="editForm-${comment.commentId}" class="mt-3" style="display:none;">
                                                 <form method="post"
                                                       action="/${boardId}/post/detail/${postId}/comment/edit"
@@ -897,8 +923,7 @@
                                                                class="d-none" multiple>
                                                         <input type="text" class="form-control" name="commentContent"
                                                                value="${comment.commentContent}">
-                                                        <button type="submit" class="btn btn-outline-dark">저장
-                                                        </button>
+                                                        <button type="submit" class="btn btn-outline-dark">저장</button>
                                                         <button type="button"
                                                                 class="btn btn-outline-dark commentEditCancelButton"
                                                                 data-id="${comment.commentId}">취소
@@ -933,13 +958,11 @@
                                         </li>
                                     </c:if>
 
+                                    <!-- 대댓글 리스트 -->
                                     <div id="replyList-${comment.commentId}" style="display: none;">
                                         <ul class="list-group">
                                             <c:forEach var="reply" items="${comment.replies}">
                                                 <c:set var="comment" value="${reply}" scope="request"/>
-                                                <c:set var="currentUserId" value="${currentUserId}" scope="request"/>
-                                                <c:set var="boardId" value="${boardId}" scope="request"/>
-                                                <c:set var="postId" value="${postId}" scope="request"/>
                                                 <jsp:include page="commentReply.jsp"/>
                                             </c:forEach>
                                         </ul>
