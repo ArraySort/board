@@ -1,3 +1,4 @@
+<%@ page import="arraysort.project.board.app.utils.UserUtil" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
@@ -20,6 +21,12 @@
     </div>
 </div>
 
+<%
+    // 로그인 한 유저인지 확인하는 값
+    boolean isAuthenticatedUser = UserUtil.isAuthenticatedUser();
+    pageContext.setAttribute("isAuthenticatedUser", isAuthenticatedUser);
+%>
+
 <!-- 사이드 메뉴 시작 -->
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
@@ -37,26 +44,35 @@
                     <i class="ti ti-dashboard"></i>
                 </li>
                 <li class="pc-item">
-                    <a href="${pageContext.request.contextPath}/home" class="pc-link"><span class="pc-micon"><i
-                            class="ti ti-dashboard"></i></span><span
-                            class="pc-mtext">홈페이지로 이동</span></a>
+                    <a href="${pageContext.request.contextPath}/home" class="pc-link">
+                        <span class="pc-micon"><i class="ti ti-home"></i></span>
+                        <span class="pc-mtext">홈페이지로 이동</span>
+                    </a>
                 </li>
 
-                <!-- 로그인, 로그아웃 / 회원가입 -->
+                <!-- 로그인, 로그아웃 -->
                 <li class="pc-item pc-caption">
                     <label>계정</label>
                     <i class="ti ti-news"></i>
                 </li>
 
-                <li class="pc-item">
-                    <a href="${pageContext.request.contextPath}/user/signup" class="pc-link">
-                        <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
-                        <span class="pc-mtext">회원가입</span>
-                    </a>
-                </li>
+                <c:if test="${!isAuthenticatedUser}">
+                    <li class="pc-item">
+                        <a href="${pageContext.request.contextPath}/user/login" class="pc-link">
+                            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+                            <span class="pc-mtext">로그인</span>
+                        </a>
+                    </li>
 
-                <li class="pc-item">
-                    <c:if test="${isAuthenticatedUser}">
+                    <li class="pc-item">
+                        <a href="${pageContext.request.contextPath}/user/signup" class="pc-link">
+                            <span class="pc-micon"><i class="ti ti-user-plus"></i></span>
+                            <span class="pc-mtext">회원가입</span>
+                        </a>
+                    </li>
+                </c:if>
+                <c:if test="${isAuthenticatedUser}">
+                    <li class="pc-item">
                         <a href="javascript:void(0);" class="pc-link"
                            onclick="document.getElementById('logout-form').submit(); return false;">
                             <span class="pc-micon"><i class="ti ti-lock"></i></span>
@@ -68,13 +84,12 @@
                             <sec:csrfInput/>
                             <button type="submit"></button>
                         </form>
-                    </c:if>
-                </li>
+                    </li>
+                </c:if>
 
                 <!-- 게시판 메뉴 타이틀 -->
                 <li class="pc-item pc-caption">
                     <label>게시판</label>
-                    <i class="ti ti-brand-chrome"></i>
                 </li>
 
                 <!-- 게시판 메뉴 시작 -->
@@ -92,8 +107,13 @@
                             </a>
                             <!-- 2뎁스 -->
                             <ul class="pc-submenu">
-                                <li class="pc-item"><a class="pc-link" href="#!">Level 3.1</a></li>
-                                <li class="pc-item"><a class="pc-link" href="#!">Level 3.2</a></li>
+                                <c:forEach var="board" items="${allBoards}">
+                                    <c:if test="${board.boardType == 'GENERAL'}">
+                                        <li class="pc-item">
+                                            <a class="pc-link" href="/${board.boardId}/post">${board.boardName}</a>
+                                        </li>
+                                    </c:if>
+                                </c:forEach>
                             </ul>
                         </li>
 
@@ -104,8 +124,13 @@
                             </a>
                             <!-- 2뎁스 -->
                             <ul class="pc-submenu">
-                                <li class="pc-item"><a class="pc-link" href="#!">Level 3.1</a></li>
-                                <li class="pc-item"><a class="pc-link" href="#!">Level 3.2</a></li>
+                                <c:forEach var="board" items="${allBoards}">
+                                    <c:if test="${board.boardType == 'GALLERY'}">
+                                        <li class="pc-item">
+                                            <a class="pc-link" href="/${board.boardId}/post">${board.boardName}</a>
+                                        </li>
+                                    </c:if>
+                                </c:forEach>
                             </ul>
                         </li>
                     </ul>
@@ -206,7 +231,7 @@
                         <c:set var="postNumber"
                                value="${pagination.totalPostCount - ((pagination.currentPage - 1) * 10) - status.index}"/>
                         <div class="list-group-item mb-3 rounded-3 custom-hover"
-                             onclick="location.href=location.href='/${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}'">
+                             onclick="location.href=location.href='/${boardId}/post/temp/${post.postId}/edit'">
                             <!-- 제목, 작성자, 카테고리-->
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <div>

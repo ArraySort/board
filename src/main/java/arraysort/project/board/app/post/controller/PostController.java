@@ -41,6 +41,7 @@ public class PostController {
 	public String showBoardPage(@PathVariable long boardId, @ModelAttribute("page") PageReqDTO dto, Model model) {
 		model.addAttribute("pagination", postService.findPostListWithPaging(dto, boardId));
 		model.addAttribute("boardDetail", boardService.findBoardDetailById(boardId));
+		model.addAttribute("allBoards", boardService.findAllBoards());
 		return MAV_POST;
 	}
 
@@ -51,6 +52,7 @@ public class PostController {
 
 		model.addAttribute("boardDetail", boardService.findBoardDetailById(boardId));
 		model.addAttribute("categories", categoryService.findCategoryList(boardId));
+		model.addAttribute("allBoards", boardService.findAllBoards());
 		return MAV_ADD_POST;
 	}
 
@@ -74,6 +76,7 @@ public class PostController {
 		model.addAttribute("postDetail", postService.findPostDetailByPostId(postId, boardId));
 		model.addAttribute("images", imageService.findImagesByPostId(postId));
 		model.addAttribute("commentPagination", commentService.findCommentListWithPaging(dto, boardId, postId));
+		model.addAttribute("allBoards", boardService.findAllBoards());
 		return MAV_DETAIL_POST;
 	}
 
@@ -86,6 +89,7 @@ public class PostController {
 		model.addAttribute("postDetail", postService.findPostDetailByPostId(postId, boardId));
 		model.addAttribute("categories", categoryService.findCategoryList(boardId));
 		model.addAttribute("images", imageService.findImagesByPostId(postId));
+		model.addAttribute("allBoards", boardService.findAllBoards());
 		return MAV_EDIT_POST;
 	}
 

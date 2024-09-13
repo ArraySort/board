@@ -38,6 +38,7 @@ public class TempPostController {
 	public String showBoardPage(@PathVariable long boardId, @ModelAttribute("page") PageReqDTO dto, Model model) {
 		model.addAttribute("pagination", tempPostService.findTempPostListWithPaging(dto, boardId));
 		model.addAttribute("boardDetail", boardService.findBoardDetailById(boardId));
+		model.addAttribute("allBoards", boardService.findAllBoards());
 		return MAV_TEMP_POST;
 	}
 
@@ -59,6 +60,7 @@ public class TempPostController {
 		model.addAttribute("postDetail", tempPostService.findTempPostDetailByPostId(boardId, tempPostId));
 		model.addAttribute("categories", categoryService.findCategoryList(boardId));
 		model.addAttribute("images", imageService.findImagesByTempPostId(tempPostId));
+		model.addAttribute("allBoards", boardService.findAllBoards());
 		return MAV_EDIT_TEMP_POST;
 	}
 
