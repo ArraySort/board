@@ -21,12 +21,6 @@ public class AdminLoginController {
 
 	private final AdminService adminService;
 
-	// 관리자 메인 페이지
-	@GetMapping
-	public String showMainPage() {
-		return MAV_ADMIN;
-	}
-
 	// 관리자 로그인 페이지
 	@GetMapping("/login")
 	public String showLoginPage() {
