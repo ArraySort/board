@@ -50,4 +50,7 @@ public interface PostMapper {
 
 	// 관리자 : 총 게시글 조회수 조회
 	long selectAllViews();
+
+	// 관리자 : 총 게시글 수 조회
+	long selectAllPostsCount();
 }

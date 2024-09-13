@@ -265,6 +265,12 @@ public class PostService {
 		return postMapper.selectAllViews();
 	}
 
+	// 관리자 : 총 게시글 수 조회
+	@Transactional(readOnly = true)
+	public long findAllPostsCount() {
+		return postMapper.selectAllPostsCount();
+	}
+
 	// 게시글 작성, 수정 페이지 요청에 대한 사용자 검증
 	@Transactional(readOnly = true)
 	public void validateAddByUserLevel() {

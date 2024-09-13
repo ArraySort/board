@@ -288,4 +288,11 @@
         where delete_flag = 'N' and activate_flag = 'Y'
     </select>
 
+    <!-- 관리자 : 총 게시글 조회수 조회 -->
+    <select id="selectAllPostsCount" resultType="long">
+        select count(*)
+        from post
+        where delete_flag = 'N' and activate_flag = 'Y'
+    </select>
+
 </mapper>

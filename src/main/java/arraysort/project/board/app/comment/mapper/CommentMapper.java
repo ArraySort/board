@@ -47,4 +47,6 @@ public interface CommentMapper {
 	// 댓글 채택 여부 초기화
 	void resetAdoptedComment(long postId, String userId);
 
+	// 관리자 : 모든 댓글 수 조회
+	long selectAllCommentsCount();
 }

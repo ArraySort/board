@@ -32,4 +32,7 @@ public interface CommentLikeMapper {
 
 	// 댓글 좋아요 삭제
 	void deleteCommentDislike(CommentDisLikeVO vo);
+
+	// 관리자 : 모든 댓글 좋아요 수 조회
+	long selectAllLikesCount();
 }

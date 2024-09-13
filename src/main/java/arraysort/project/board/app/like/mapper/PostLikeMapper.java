@@ -32,4 +32,7 @@ public interface PostLikeMapper {
 
 	// 게시글 싫어요 삭제
 	void deletePostDislike(PostDislikeVO vo);
+
+	// 관리자 : 모든 게시글 좋아요 수 조회
+	long selectAllLikesCount();
 }

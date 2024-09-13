@@ -224,6 +224,12 @@
         where post_id = #{postId} and adopted_flag = 'Y'
     </update>
 
+    <!-- 관리자 : 모든 댓글 수 조회-->
+    <select id="selectAllCommentsCount" resultType="long">
+        select count(*)
+        from comment
+        where delete_flag = 'N' and activate_flag = 'Y'
+    </select>
 
     <!-- 댓글과 이미지 매핑 정의 -->
     <resultMap id="commentWithImagesResultMap" type="arraysort.project.board.app.comment.domain.CommentVO">

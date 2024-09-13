@@ -159,6 +159,12 @@ public class CommentService {
 		commentMapper.updateIsAdopted(vo);
 	}
 
+	// 관리자 : 모든 댓글 수 조회
+	@Transactional(readOnly = true)
+	public long findAllCommentsCount() {
+		return commentMapper.selectAllCommentsCount();
+	}
+
 	/**
 	 * [댓글 이미지 처리(추가)]
 	 * 게시판 이미지 허용 여부가 Y 일 때만 실행

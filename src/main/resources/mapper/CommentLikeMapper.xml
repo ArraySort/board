@@ -62,4 +62,10 @@
         where user_id = #{userId} and comment_id = #{commentId}
     </delete>
 
+    <!-- 관리자 : 모든 댓글 좋아요 수 조회 -->
+    <select id="selectAllLikesCount" resultType="long">
+        select count(*)
+        from comment_like
+    </select>
+
 </mapper>

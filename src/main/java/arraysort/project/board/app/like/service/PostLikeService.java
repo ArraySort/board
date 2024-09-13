@@ -44,6 +44,12 @@ public class PostLikeService {
 		return getPostLikeDislikeResponse(postId);
 	}
 
+	// 관리자 : 모든 게시글 좋아요 수 조회
+	@Transactional(readOnly = true)
+	public long findAllLikesCount() {
+		return postLikeMapper.selectAllLikesCount();
+	}
+
 	/**
 	 * 좋아요/싫어요 입력 처리
 	 *

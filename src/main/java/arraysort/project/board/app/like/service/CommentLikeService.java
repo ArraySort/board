@@ -40,6 +40,12 @@ public class CommentLikeService {
 		return getCommentLikeDislikeResponse(commentId);
 	}
 
+	// 관리자 : 모든 댓글 좋아요 수 조회
+	@Transactional(readOnly = true)
+	public long findAllLikesCount() {
+		return commentLikeMapper.selectAllLikesCount();
+	}
+
 	/**
 	 * 좋아요/싫어요 입력 처리
 	 *
