@@ -20,6 +20,8 @@ public class PostListResDTO {
 
 	private String title;
 
+	private String content;
+
 	private Date createdAt;
 
 	private Date updatedAt;
@@ -48,6 +50,7 @@ public class PostListResDTO {
 				.imageId(vo.getImageId())
 				.userName(vo.getUserName())
 				.title(vo.getTitle())
+				.content(vo.getContent())
 				.createdAt(vo.getCreatedAt())
 				.updatedAt(vo.getUpdatedAt())
 				.categoryName(vo.getCategoryName())

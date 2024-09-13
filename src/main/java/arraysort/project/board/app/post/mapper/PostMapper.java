@@ -33,6 +33,9 @@ public interface PostMapper {
 	// 게시글 삭제
 	void deletePost(long postId);
 
+	// 홈페이지 : 상위 5개 게시물 조회
+	List<PostVO> selectTopPostsByBoardId(long boardId, int postCount);
+
 	// 조회수 증가
 	void updateViews(long postId);
 

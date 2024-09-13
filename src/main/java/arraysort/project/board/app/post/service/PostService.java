@@ -41,8 +41,6 @@ public class PostService {
 
 	private final UserPointService userPointService;
 
-	private final ViewCountService viewCountService;
-
 	private final PostComponent postComponent;
 
 	private final PostMapper postMapper;
@@ -149,6 +147,17 @@ public class PostService {
 		// 게시글 삭제
 		postMapper.deletePost(postId);
 	}
+
+	// 홈페이지 : 상위 5개 게시물 조회
+	@Transactional(readOnly = true)
+	public List<PostListResDTO> findTopPostsByBoardId(long boardId, int postCount) {
+
+		return postMapper.selectTopPostsByBoardId(boardId, postCount)
+				.stream()
+				.map(PostListResDTO::of)
+				.toList();
+	}
+
 
 	// 관리자 : 게시글 활성화 상태 변경
 	@Transactional
