@@ -158,7 +158,6 @@ public class PostService {
 				.toList();
 	}
 
-
 	// 관리자 : 게시글 활성화 상태 변경
 	@Transactional
 	public void modifyActivateFlag(long boardId, long postId) {
@@ -258,6 +257,12 @@ public class PostService {
 
 		// 게시글 삭제
 		postMapper.deletePost(postId);
+	}
+
+	// 관리자 : 총 게시글 조회수 조회
+	@Transactional(readOnly = true)
+	public long findAllViews() {
+		return postMapper.selectAllViews();
 	}
 
 	// 게시글 작성, 수정 페이지 요청에 대한 사용자 검증

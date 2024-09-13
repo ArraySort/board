@@ -281,4 +281,11 @@
           and activate_flag = 'Y'
     </select>
 
+    <!-- 관리자 : 총 게시글 조회수 조회 -->
+    <select id="selectAllViews" resultType="long">
+        select sum(views)
+        from post
+        where delete_flag = 'N' and activate_flag = 'Y'
+    </select>
+
 </mapper>
