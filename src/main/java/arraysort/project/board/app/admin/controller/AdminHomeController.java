@@ -33,6 +33,7 @@ public class AdminHomeController {
 		model.addAttribute("allCommentsCount", commentService.findAllCommentsCount());
 		model.addAttribute("allLikesCount",
 				postLikeService.findAllLikesCount() + commentLikeService.findAllLikesCount());
+		model.addAttribute("recentPosts", postService.findRecentPosts(10));
 		return MAV_ADMIN;
 	}
 }

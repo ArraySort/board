@@ -158,6 +158,15 @@ public class PostService {
 				.toList();
 	}
 
+	// 관리자 : 관리자 홈페이지 최근 게시글 조회
+	@Transactional(readOnly = true)
+	public List<PostListResDTO> findRecentPosts(int postCount) {
+		return postMapper.selectRecentPosts(postCount)
+				.stream()
+				.map(PostListResDTO::of)
+				.toList();
+	}
+
 	// 관리자 : 게시글 활성화 상태 변경
 	@Transactional
 	public void modifyActivateFlag(long boardId, long postId) {

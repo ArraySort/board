@@ -247,6 +247,41 @@
         limit #{postCount}
     </select>
 
+    <!-- 관리자 : 관리자 홈페이지 최근 게시글 조회 -->
+    <select id="selectRecentPosts" resultType="arraysort.project.board.app.post.domain.PostVO">
+        select p.post_id,
+               p.user_id,
+               p.admin_id,
+               p.category_id,
+               p.image_id,
+               u.user_name,
+               c.category_name,
+               p.title,
+               p.content,
+               p.views,
+               p.private_flag,
+               p.notice_flag,
+               p.created_at,
+               p.updated_at,
+               (select count(*)
+                from comment cmt
+                where cmt.post_id = p.post_id and cmt.delete_flag ='N') as comment_count,
+               (select if(exists(select 1
+                                 from comment cmt
+                                 where cmt.post_id = p.post_id
+                                   and cmt.adopted_flag = 'Y' and cmt.delete_flag ='N'),
+                          'Y', 'N')) as adopted_comment_flag,
+               (select count(*)
+                from post_like
+                where post_id = p.post_id) as like_count
+        from post p
+                 left join user u on p.user_id = u.user_id
+                 inner join category c on p.category_id = c.category_id
+        where p.delete_flag = 'N'
+        order by p.created_at desc
+        limit #{postCount}
+    </select>
+
     <!-- 조회수 증가 -->
     <update id="updateViews" parameterType="long">
         update post
