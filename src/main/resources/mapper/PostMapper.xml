@@ -35,6 +35,7 @@
         select p.post_id,
                p.user_id,
                p.admin_id,
+               p.board_id,
                p.category_id,
                p.image_id,
                u.user_name,
@@ -212,11 +213,12 @@
         where post_id = #{postId}
     </delete>
 
-    <!-- 홈페이지 : 상위 5개 게시물 조회 -->
-    <select id="selectTopPostsByBoardId">
+    <!-- 사용자 홈페이지 : 전체 게시글 중 일부분 조회 -->
+    <select id="selectRecentPostsByBoardId" resultType="arraysort.project.board.app.post.domain.PostVO">
         select p.post_id,
                p.user_id,
                p.admin_id,
+               p.board_id,
                p.category_id,
                p.image_id,
                u.user_name,
@@ -252,6 +254,7 @@
         select p.post_id,
                p.user_id,
                p.admin_id,
+               p.board_id,
                p.category_id,
                p.image_id,
                u.user_name,

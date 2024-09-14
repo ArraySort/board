@@ -14,6 +14,8 @@ public class PostListResDTO {
 
 	private String adminId;
 
+	private long boardId;
+
 	private Long imageId;
 
 	private String userName;
@@ -47,6 +49,7 @@ public class PostListResDTO {
 		return PostListResDTO.builder()
 				.postId(vo.getPostId())
 				.adminId(vo.getAdminId())
+				.boardId(vo.getBoardId())
 				.imageId(vo.getImageId())
 				.userName(vo.getUserName())
 				.title(vo.getTitle())
