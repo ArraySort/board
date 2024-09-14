@@ -241,7 +241,7 @@
                             <div class="card-body card-body-custom">
                                 <ul class="list-group">
                                     <!-- 각 게시판의 TopPosts를 동적으로 참조 -->
-                                    <c:forEach var="post" items="${topPostsMap[board.boardName]}">
+                                    <c:forEach var="post" items="${recentPosts[board.boardName]}">
                                         <li class="list-group-item mb-3"
                                             onclick="location.href='/${board.boardId}/post/detail/${post.postId}'">
                                             <div class="post-header d-flex justify-content-between">

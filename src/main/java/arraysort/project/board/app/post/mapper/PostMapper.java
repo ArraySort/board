@@ -33,8 +33,8 @@ public interface PostMapper {
 	// 게시글 삭제
 	void deletePost(long postId);
 
-	// 홈페이지 : 상위 5개 게시물 조회
-	List<PostVO> selectTopPostsByBoardId(long boardId, int postCount);
+	// 홈페이지 : 전체 게시글 중 일부분 조회
+	List<PostVO> selectRecentPostsByBoardId(long boardId, int postCount);
 
 	// 관리자 : 관리자 홈페이지 최근 게시글 조회
 	List<PostVO> selectRecentPosts(int postCount);

@@ -148,11 +148,10 @@ public class PostService {
 		postMapper.deletePost(postId);
 	}
 
-	// 홈페이지 : 상위 5개 게시물 조회
+	// 사용자 홈페이지 : 전체 게시글 중 일부분 조회
 	@Transactional(readOnly = true)
-	public List<PostListResDTO> findTopPostsByBoardId(long boardId, int postCount) {
-
-		return postMapper.selectTopPostsByBoardId(boardId, postCount)
+	public List<PostListResDTO> findRecentPostsByBoardId(long boardId, int postCount) {
+		return postMapper.selectRecentPostsByBoardId(boardId, postCount)
 				.stream()
 				.map(PostListResDTO::of)
 				.toList();
