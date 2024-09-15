@@ -236,16 +236,16 @@
                (select if(exists(select 1
                                  from comment cmt
                                  where cmt.post_id = p.post_id
-                                   and cmt.adopted_flag = 'Y' and cmt.delete_flag ='N'),
+                                 and cmt.adopted_flag = 'Y' and cmt.delete_flag ='N'),
                           'Y', 'N')) as adopted_comment_flag,
                (select count(*)
                 from post_like
                 where post_id = p.post_id) as like_count
         from post p
         left join user u on p.user_id = u.user_id
-        inner join category c on p.category_id = c.category_id
-        where p.board_id = #{boardId} and p.delete_flag = 'N'
-        order by p.created_at desc
+        left join category c on p.category_id = c.category_id
+        where p.board_id = #{boardId} and p.delete_flag = 'N' and p.activate_flag = 'Y'
+        order by p.post_id desc
         limit #{postCount}
     </select>
 
