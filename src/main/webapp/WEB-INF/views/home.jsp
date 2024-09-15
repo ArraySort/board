@@ -231,7 +231,7 @@
             <div class="row">
                 <!-- boards 반복문을 돌면서 각 게시판 상위 5개 게시물을 출력 -->
                 <c:forEach var="board" items="${boards}">
-                    <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="col-lg-6 col-md-6">
                         <!-- 카드뷰로 게시판 제목과 게시물 리스트 표시 -->
                         <div class="card card-custom">
                             <div class="card-header card-header-custom"
@@ -245,10 +245,13 @@
                                         <li class="list-group-item mb-3"
                                             onclick="location.href='/${board.boardId}/post/detail/${post.postId}'">
                                             <div class="post-header d-flex justify-content-between">
-                                                <span><strong>${post.title}</strong></span>
+                                                <span>
+                                                    <strong>${post.title}</strong>
+                                                    <small class="text-muted"> 카테고리 : ${post.categoryName}</small>
+                                                </span>
                                                 <small class="text-muted">${post.userName}</small>
                                             </div>
-                                            <p class="post-content">${post.content}</p>
+                                            <p class="post-content mt-2">${post.content}</p>
                                             <div class="post-footer d-flex justify-content-between text-muted">
                                                 <span>
                                                     <small><i class="ti ti-eye">${post.views}</i>
