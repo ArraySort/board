@@ -6,10 +6,13 @@ import arraysort.project.board.app.user.domain.UserVO;
 import arraysort.project.board.app.user.mapper.UserMapper;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import static arraysort.project.board.app.common.Constants.*;
 
@@ -18,6 +21,8 @@ import static arraysort.project.board.app.common.Constants.*;
 public class UserPointService {
 
 	private final UserMapper userMapper;
+
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	// 게시글 작성에 따른 사용자 포인트 지급, Level 2 해당
 	@Transactional
@@ -56,32 +61,53 @@ public class UserPointService {
 		}
 	}
 
-	// 일일 댓글 수 초기화
+	// 일일 정보 초기화 : 일일 댓글 개수, 일일 포인트, 랭킹 캐싱 데이터
 	@Transactional
-	public void resetDailyCommentCount() {
+	public void resetDailyInfo() {
 		userMapper.resetAllDailyCommentCounts();
-	}
-
-	// 일일 획득 포인트 초기화
-	@Transactional
-	public void resetDailyPoint() {
 		userMapper.resetAllDailyPoints();
+		redisTemplate.delete("user:ranking");
+		redisTemplate.delete("user:daily_ranking");
 	}
 
 	// 관리자, 사용자 메인페이지 : 유저 전체 랭킹 조회
 	@Transactional(readOnly = true)
 	public List<UserRankingResDTO> findUserRanking() {
-		return userMapper.selectUsersForRanking(10).stream()
-				.map(UserRankingResDTO::of)
-				.toList();
+		return getCachedRanking("user:ranking",
+				() -> userMapper.selectUsersForRanking(10).stream()
+						.map(UserRankingResDTO::of)
+						.toList(), 1, TimeUnit.DAYS);
 	}
 
 	// 사용자 메인페이지 : 오늘의 유저 랭킹 조회
 	@Transactional(readOnly = true)
 	public List<UserRankingResDTO> findUserDailyRanking() {
-		return userMapper.selectUsersForDailyRanking(5).stream()
-				.map(UserRankingResDTO::of)
-				.toList();
+		return getCachedRanking("user:daily_ranking",
+				() -> userMapper.selectUsersForDailyRanking(5).stream()
+						.map(UserRankingResDTO::of)
+						.toList(), 10, TimeUnit.MINUTES);
+	}
+
+	/**
+	 * Redis 유저 랭킹 조회 캐싱 공통 메서드
+	 *
+	 * @param key             캐싱되는 key 값
+	 * @param dbQuerySupplier 랭킹 조회 쿼리
+	 * @param timeout         만료시간
+	 * @param timeUnit        만료 시간 단위
+	 * @return 유저 랭킹 리스트
+	 */
+	private List<UserRankingResDTO> getCachedRanking(String key, Supplier<List<UserRankingResDTO>> dbQuerySupplier, long timeout, TimeUnit timeUnit) {
+		// 캐시에서 데이터 조회
+		List<UserRankingResDTO> cachedRanking = (List<UserRankingResDTO>) redisTemplate.opsForValue().get(key);
+
+		if (cachedRanking == null || cachedRanking.isEmpty()) {
+			// 캐시에 데이터가 없으면 DB 에서 조회
+			cachedRanking = dbQuerySupplier.get();
+			redisTemplate.opsForValue().set(key, cachedRanking, timeout, timeUnit);
+		}
+
+		return cachedRanking;
 	}
 
 	/**

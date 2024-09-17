@@ -13,11 +13,10 @@ public class SchedulingComponent {
 
 	/**
 	 * 매일 자정에 실행되는 스케줄러
-	 * 사용자 일일 댓글 개수를 초기화
+	 * 사용자 일일 댓글 개수, 일일 획득 포인트, redis 캐싱 랭킹 데이터 초기화
 	 */
 	@Scheduled(cron = "0 0 0 * * *")
 	public void resetDailyCount() {
-		userPointService.resetDailyCommentCount();
-		userPointService.resetDailyPoint();
+		userPointService.resetDailyInfo();
 	}
 }
