@@ -279,9 +279,9 @@
                 where post_id = p.post_id) as like_count
         from post p
                  left join user u on p.user_id = u.user_id
-                 inner join category c on p.category_id = c.category_id
+                 left join category c on p.category_id = c.category_id
         where p.delete_flag = 'N'
-        order by p.created_at desc
+        order by p.post_id desc
         limit #{postCount}
     </select>
 
