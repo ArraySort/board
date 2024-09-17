@@ -3,6 +3,7 @@ package arraysort.project.board.app.user.controller;
 import arraysort.project.board.app.user.domain.UserSignupReqDTO;
 import arraysort.project.board.app.user.service.UserService;
 import arraysort.project.board.app.utils.ControllerUtil;
+import arraysort.project.board.app.utils.UserUtil;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +26,18 @@ public class UserController {
 	// 로그인 페이지로 이동
 	@GetMapping("/login")
 	public String showLoginPage() {
+		if (UserUtil.isAuthenticatedUser()) {
+			return REDIRECT_HOME;
+		}
 		return MAV_USER_LOGIN;
 	}
 
 	// 회원가입 페이지로 이동
 	@GetMapping("/signup")
 	public String showSignupPage() {
+		if (UserUtil.isAuthenticatedUser()) {
+			return REDIRECT_HOME;
+		}
 		return MAV_USER_SIGNUP;
 	}
 

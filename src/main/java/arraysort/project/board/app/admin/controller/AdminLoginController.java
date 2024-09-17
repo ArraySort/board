@@ -3,6 +3,7 @@ package arraysort.project.board.app.admin.controller;
 import arraysort.project.board.app.admin.domain.AdminAddReqDTO;
 import arraysort.project.board.app.admin.service.AdminService;
 import arraysort.project.board.app.utils.ControllerUtil;
+import arraysort.project.board.app.utils.UserUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,9 @@ public class AdminLoginController {
 	// 관리자 로그인 페이지
 	@GetMapping("/login")
 	public String showLoginPage() {
+		if (UserUtil.isAdmin()) {
+			return REDIRECT_ADMIN_HOME;
+		}
 		return MAV_ADMIN_LOGIN;
 	}
 

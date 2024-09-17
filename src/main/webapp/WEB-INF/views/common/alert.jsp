@@ -12,6 +12,8 @@
 
         // POST 요청 경로
         const requestRoutes = {
+            "LOGIN": "/user/login",
+            "ADMIN_LOGIN": "/admin/login",
             "SIGNUP": "/home",
             "ADD_POST": "/${boardId}/post",
             "MODIFY_POST": "/${boardId}/post/detail/${postId}",

@@ -59,6 +59,7 @@ public class Constants {
 
 	public static final String MAV_HOME = "home";
 	public static final String REDIRECT_HOME = "redirect:/home";
+	public static final String REDIRECT_ADMIN_HOME = "redirect:/admin";
 
 	public static final String MAV_POST = "post/post";
 	public static final String MAV_ADD_POST = "post/addPost";
