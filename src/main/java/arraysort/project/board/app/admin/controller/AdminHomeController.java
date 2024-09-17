@@ -4,6 +4,7 @@ import arraysort.project.board.app.comment.service.CommentService;
 import arraysort.project.board.app.like.service.CommentLikeService;
 import arraysort.project.board.app.like.service.PostLikeService;
 import arraysort.project.board.app.post.service.PostService;
+import arraysort.project.board.app.user.service.UserPointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,8 @@ public class AdminHomeController {
 
 	private final CommentLikeService commentLikeService;
 
+	private final UserPointService userPointService;
+
 	// 관리자 메인 페이지
 	@GetMapping
 	public String showMainPage(Model model) {
@@ -34,6 +37,7 @@ public class AdminHomeController {
 		model.addAttribute("allLikesCount",
 				postLikeService.findAllLikesCount() + commentLikeService.findAllLikesCount());
 		model.addAttribute("recentPosts", postService.findRecentPosts(10));
+		model.addAttribute("userRanking", userPointService.findUserRanking());
 		return MAV_ADMIN;
 	}
 }

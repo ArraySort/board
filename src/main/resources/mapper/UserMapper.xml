@@ -108,7 +108,8 @@
     <!-- 게시글 작성에 따른 사용자 포인트 업데이트 -->
     <update id="updateUserPointForPost">
         update user
-        set point = point + #{point}
+        set point = point + #{point},
+            daily_point = daily_point + #{point}
         where user_id = #{userId} and delete_flag = 'N' and activate_flag = 'Y'
     </update>
 
@@ -116,14 +117,16 @@
     <update id="updateUserPointForComment">
         update user
         set daily_comment_count = daily_comment_count + 1,
-            point = point + #{point}
+            point = point + #{point},
+            daily_point = daily_point + #{point}
         where user_id = #{userId} and delete_flag = 'N' and activate_flag = 'Y'
     </update>
 
     <!-- 일일 최초 로그인 시 포인트 지급 -->
     <update id="updateUserPointForAttendance">
         update user
-        set point = point + #{point}
+        set point = point + #{point},
+            daily_point = daily_point + #{point}
         where user_id = #{userId} and delete_flag = 'N' and activate_flag = 'Y'
     </update>
 
@@ -140,5 +143,44 @@
         set daily_comment_count = 0
         where delete_flag = 'N' and activate_flag = 'Y'
     </update>
+
+    <!-- 모든 사용자 일일 댓글 수 초기화(스케줄러) -->
+    <update id="resetAllDailyPoints">
+        update user
+        set daily_point = 0
+        where delete_flag = 'N' and activate_flag = 'Y'
+    </update>
+
+    <!-- 관리자, 사용자 메인페이지 : 유저 전체 랭킹 조회 -->
+    <select id="selectUsersForRanking" resultType="arraysort.project.board.app.user.domain.UserVO">
+        select user_id,
+               user_name,
+               provider,
+               access_level,
+               point,
+               activate_flag,
+               delete_flag,
+               daily_point
+        from user
+        where delete_flag = 'N' and activate_flag = 'Y'
+        order by point desc
+        limit #{userCount}
+    </select>
+
+    <!-- 사용자 메인페이지 : 오늘의 유저 랭킹 조회 -->
+    <select id="selectUsersForDailyRanking" resultType="arraysort.project.board.app.user.domain.UserVO">
+        select user_id,
+               user_name,
+               provider,
+               access_level,
+               point,
+               activate_flag,
+               delete_flag,
+               daily_point
+        from user
+        where delete_flag = 'N' and activate_flag = 'Y'
+        order by daily_point desc
+        limit #{userCount}
+    </select>
 
 </mapper>

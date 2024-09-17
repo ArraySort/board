@@ -16,7 +16,8 @@ public class SchedulingComponent {
 	 * 사용자 일일 댓글 개수를 초기화
 	 */
 	@Scheduled(cron = "0 0 0 * * *")
-	public void resetDailyCommentCount() {
+	public void resetDailyCount() {
 		userPointService.resetDailyCommentCount();
+		userPointService.resetDailyPoint();
 	}
 }

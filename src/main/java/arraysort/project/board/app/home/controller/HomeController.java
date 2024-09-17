@@ -2,6 +2,7 @@ package arraysort.project.board.app.home.controller;
 
 import arraysort.project.board.app.board.service.BoardService;
 import arraysort.project.board.app.home.service.HomeService;
+import arraysort.project.board.app.user.service.UserPointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,8 @@ public class HomeController {
 
 	private final HomeService homeService;
 
+	private final UserPointService userPointService;
+
 	// 기본 경로 홈페이지로 리다이렉트
 	@GetMapping("/")
 	public String index() {
@@ -29,6 +32,8 @@ public class HomeController {
 	public String showHomePage(Model model) {
 		model.addAttribute("boards", boardService.findAllBoards());
 		model.addAttribute("recentPosts", homeService.findRecentPostPerBoard());
+		model.addAttribute("userRanking", userPointService.findUserRanking());
+		model.addAttribute("userDailyRanking", userPointService.findUserDailyRanking());
 		return MAV_HOME;
 	}
 }

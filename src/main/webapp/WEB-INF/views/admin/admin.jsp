@@ -346,17 +346,19 @@
                             </div>
                             <div class="col-auto"></div>
                         </div>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item px-0">
-                                <div class="row align-items-start">
-                                    <div class="col">
-                                        <h5 class="mb-0">사용자 이름</h5>
+                        <ul class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+                            <c:forEach var="user" items="${userRanking}">
+                                <li class="list-group-item px-0">
+                                    <div class="row align-items-start">
+                                        <div class="col">
+                                            <h5 class="mb-0">${user.userName}</h5>
+                                        </div>
+                                        <div class="col-auto">
+                                            <h4 class="mb-0">${user.point} Point</h4>
+                                        </div>
                                     </div>
-                                    <div class="col-auto">
-                                        <h4 class="mb-0">10000(사용자 포인트)</h4>
-                                    </div>
-                                </div>
-                            </li>
+                                </li>
+                            </c:forEach>
                         </ul>
                         <div class="text-center">
                             <a href="${pageContext.request.contextPath}/admin/user" class="b-b-primary text-primary">회원관리

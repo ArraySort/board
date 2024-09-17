@@ -1,12 +1,15 @@
 package arraysort.project.board.app.user.service;
 
 import arraysort.project.board.app.exception.UserNotFoundException;
+import arraysort.project.board.app.user.domain.UserRankingResDTO;
 import arraysort.project.board.app.user.domain.UserVO;
 import arraysort.project.board.app.user.mapper.UserMapper;
 import arraysort.project.board.app.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static arraysort.project.board.app.common.Constants.*;
 
@@ -57,6 +60,28 @@ public class UserPointService {
 	@Transactional
 	public void resetDailyCommentCount() {
 		userMapper.resetAllDailyCommentCounts();
+	}
+
+	// 일일 획득 포인트 초기화
+	@Transactional
+	public void resetDailyPoint() {
+		userMapper.resetAllDailyPoints();
+	}
+
+	// 관리자, 사용자 메인페이지 : 유저 전체 랭킹 조회
+	@Transactional(readOnly = true)
+	public List<UserRankingResDTO> findUserRanking() {
+		return userMapper.selectUsersForRanking(10).stream()
+				.map(UserRankingResDTO::of)
+				.toList();
+	}
+
+	// 사용자 메인페이지 : 오늘의 유저 랭킹 조회
+	@Transactional(readOnly = true)
+	public List<UserRankingResDTO> findUserDailyRanking() {
+		return userMapper.selectUsersForDailyRanking(5).stream()
+				.map(UserRankingResDTO::of)
+				.toList();
 	}
 
 	/**

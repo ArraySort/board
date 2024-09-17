@@ -4,6 +4,7 @@ import arraysort.project.board.app.user.domain.OAuthVO;
 import arraysort.project.board.app.user.domain.UserVO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
 import java.util.Optional;
 
 @Mapper
@@ -47,4 +48,13 @@ public interface UserMapper {
 
 	// 모든 사용자 일일 댓글 수 초기화(스케줄러)
 	void resetAllDailyCommentCounts();
+
+	// 모든 사용자 일일 획득 포인트 초기화(스케줄러)
+	void resetAllDailyPoints();
+
+	// 관리자, 사용자 메인페이지 : 유저 전체 랭킹 조회
+	List<UserVO> selectUsersForRanking(int userCount);
+
+	// 사용자 메인페이지 : 오늘의 유저 랭킹 조회
+	List<UserVO> selectUsersForDailyRanking(int userCount);
 }

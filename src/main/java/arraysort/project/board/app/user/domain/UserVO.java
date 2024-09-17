@@ -55,6 +55,8 @@ public class UserVO {
 
 	private int dailyCommentCount;    // 일일 댓글 개수
 
+	private int dailyPoint;        // 일일 획득 포인트
+
 	// 로그인
 	public static UserVO of(UserSignupReqDTO dto) {
 		return UserVO.builder()

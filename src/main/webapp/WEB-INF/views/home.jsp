@@ -134,55 +134,56 @@
                     </li>
                 </c:if>
 
-                <!-- 게시판 메뉴 타이틀 -->
+                <!-- 랭킹 메뉴 타이틀 -->
                 <li class="pc-item pc-caption">
-                    <label>유저 랭킹</label>
+                    <label>랭킹</label>
                 </li>
 
-                <!-- 게시판 메뉴 시작 -->
+                <!-- 랭킹 메뉴 시작 -->
                 <li class="pc-item pc-hasmenu">
                     <a href="javascript:void(0);" class="pc-link">
                         <span class="pc-micon"><i class="ti ti-menu"></i></span>
-                        <span class="pc-mtext">오늘의 유저</span>
-                        <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
+                        <span class="pc-mtext">유저 랭킹</span>
                     </a>
                     <ul class="pc-submenu">
-                        <!-- 일반게시판 : 1뎁스 -->
+                        <!-- 오늘의 유저 랭킹 표시 -->
                         <li class="pc-item pc-hasmenu">
-                            <a href="javascript:void(0);" class="pc-link">일반 게시판
+                            <a href="javascript:void(0);" class="pc-link"> 오늘의 유저
                                 <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
                             </a>
-                            <!-- 2뎁스 -->
                             <ul class="pc-submenu">
-                                <c:forEach var="board" items="${allBoards}">
-                                    <c:if test="${board.boardType == 'GENERAL'}">
-                                        <li class="pc-item">
-                                            <a class="pc-link" href="/${board.boardId}/post">${board.boardName}</a>
-                                        </li>
-                                    </c:if>
+                                <c:forEach var="user" items="${userDailyRanking}">
+                                    <li class="pc-item">
+                                        <a class="pc-link" href="${pageContext.request.contextPath}/home">
+                                                ${user.userName}
+                                            <br>
+                                                ${user.dailyPoint}
+                                        </a>
+                                    </li>
                                 </c:forEach>
                             </ul>
                         </li>
 
-                        <!-- 갤러리 게시판 : 1뎁스 -->
+                        <!-- 유저 TOP 10 랭킹 표시 -->
                         <li class="pc-item pc-hasmenu">
-                            <a href="javascript:void(0);" class="pc-link">갤러리 게시판
+                            <a href="javascript:void(0);" class="pc-link"> TOP 10
                                 <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
                             </a>
-                            <!-- 2뎁스 -->
                             <ul class="pc-submenu">
-                                <c:forEach var="board" items="${allBoards}">
-                                    <c:if test="${board.boardType == 'GALLERY'}">
-                                        <li class="pc-item">
-                                            <a class="pc-link" href="/${board.boardId}/post">${board.boardName}</a>
-                                        </li>
-                                    </c:if>
+                                <c:forEach var="user" items="${userRanking}">
+                                    <li class="pc-item">
+                                        <a class="pc-link" href="javascript:void(0);">
+                                                ${user.userName}
+                                            <br>
+                                                ${user.point}
+                                        </a>
+                                    </li>
                                 </c:forEach>
                             </ul>
                         </li>
                     </ul>
                 </li>
-                <!-- 게시판 메뉴 끝 -->
+                <!-- 랭킹 메뉴 끝 -->
             </ul>
         </div>
     </div>
