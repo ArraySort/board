@@ -8,6 +8,10 @@ plugins {
 group = 'arraysort.project'
 version = '0.0.1-SNAPSHOT'
 
+// 외장 톰캣 사용 bootWar 비활성화
+bootWar.enabled = false
+war.enabled = true
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
@@ -68,6 +72,28 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.session:spring-session-data-redis'
 
+}
+
+// active profile 설정 : 환경에 따른 디렉터리 선택 (dev, prod) -> 환경변수 지정 필요
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'dev' : profile
+
+// active profile 지정 : 환경에 따른 디렉터리 지정 (dev, prod)
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources", "src/main/resources-${profile}"
+        }
+    }
+}
+
+// [resources] 리소스 중복 허용
+tasks {
+    processResources {
+        filesMatching('**/application.yaml') {
+            expand(project.properties)
+        }
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
 }
 
 test {
