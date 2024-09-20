@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.session.data.redis.config.ConfigureRedisAction;
 
 @Configuration
 public class RedisConfig {
@@ -40,5 +41,10 @@ public class RedisConfig {
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
 		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
 		return redisTemplate;
+	}
+
+	@Bean
+	ConfigureRedisAction configureRedisAction() {
+		return ConfigureRedisAction.NO_OP;
 	}
 }
