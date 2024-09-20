@@ -66,7 +66,7 @@ public class UserVO {
 				.zipcode(dto.getZipcode())
 				.address(dto.getAddress())
 				.addressDetail(dto.getAddressDetail())
-				.accessLevel(2)
+				.accessLevel(1)                            // 회원가입 시 기본 레벨 1
 				.createdBy(dto.getUserId())
 				.build();
 	}
