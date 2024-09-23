@@ -47,14 +47,14 @@
 - OAuth2.0 을 통한 소셜 로그인 (Google, Naver, KaKao)
 - 비밀번호 5회 오류 시 계정 잠금
 - Spring Security Remember-me 를 통한 로그인 유지
-- Spring Security Session Management 를 통한 중복로그인 제어(Redis 를 이용한 세션 클러스터링)
+- Spring Security Session Management 를 통한 중복로그인 제어(Redis 를 이용한 세션 관리)
 
 ### [사용자] - 등급
 
 - LEVEL0(비로그인) : 게시글 조회
 - LEVEL1(회원) : 게시글 조회, 댓글 작성, 좋아요/싫어요
 - LEVEL2(등업) : 게시글 조회, 게시글 작성, 댓글 작성 좋아요/싫어요 (자동등업 - 관리자 지정 포인트)
-- Sheduler 를 통한 포인트 지급(출석, 일일 댓글), 자동 등업, 등급에 따른 포인트 지급
+- Scheduler 를 통한 포인트 지급(출석, 일일 댓글), 자동 등업, 등급에 따른 포인트 지급
 - 게시글 홈페이지 오늘의 유저(Redis 를 이용한 캐싱), 상위 랭킹 조회
 
 ### [사용자] - 게시글
