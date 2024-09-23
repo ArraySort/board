@@ -231,7 +231,7 @@
                         <c:set var="postNumber"
                                value="${pagination.totalPostCount - ((pagination.currentPage - 1) * 10) - status.index}"/>
                         <div class="list-group-item mb-3 rounded-3 custom-hover"
-                             onclick="location.href=location.href='/${boardId}/post/temp/${post.postId}/edit'">
+                             onclick="location.href='/${boardId}/post/temp/${post.postId}/edit'">
                             <!-- 제목, 작성자, 카테고리-->
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <div>
@@ -326,7 +326,7 @@
                             </div>
                             <div class="card-body">
                                 <h5 class="card-title">
-                                    <a href="/${boardId}/post/detail/${post.postId}?search=${page.search}&searchType=${page.searchType}&sortType=${page.sortType}&page=${page.page}">
+                                    <a href="/${boardId}/post/temp/${post.postId}/edit">
                                             ${post.title}
                                     </a>
                                 </h5>
