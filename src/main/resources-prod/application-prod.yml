@@ -12,7 +12,7 @@ spring:
 
   data:
     redis:
-      host: ENC(uJFj0Fh/coKS3f+yiYGr5pfdTnrC9bgujMHmtNA/ZN6p8/tQH6FSTU37+5Bme/qM5Ek87XYQ6DNgUhWs+e0phw==)
+      host: ENC(2x6D/nFNwMM8yovyFH2LF2orFb1MZzkw)
       port: 6379
 
   security:
